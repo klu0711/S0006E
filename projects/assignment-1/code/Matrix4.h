@@ -10,7 +10,8 @@ public:
 	Matrix4(const Matrix4& mat);
 	Matrix4(float mat[16]);
 	~Matrix4();
-	float getMatrixValue(int index);
+	float operator[](const int index) const;
+	float & operator[](const int index);
 	Matrix4 operator*(const Matrix4& rhs) const;
 	Vector4D operator*(const Vector4D& rhs) const;
 	Matrix4 operator+(const Matrix4& rhs) const;
@@ -23,8 +24,14 @@ public:
 	static Matrix4 inverse(const Matrix4& mat);
 	void print();
 };
-/// Get a specific value from the matrix
-float Matrix4::getMatrixValue(int index)
+
+/// Getter
+float Matrix4::operator[](const int index) const
+{
+	return matrix[index];
+}
+/// Setter
+float & Matrix4::operator[](const int index)
 {
 	return matrix[index];
 }
@@ -212,7 +219,7 @@ Matrix4 Matrix4::operator*(const Matrix4& rhs) const
 
 
 }
-/// Product of		
+/// Product of a matrix and a vector	
 Vector4D Matrix4::operator*(const Vector4D& rhs) const
 {
 	return(Vector4D(
@@ -225,7 +232,7 @@ Vector4D Matrix4::operator*(const Vector4D& rhs) const
 Matrix4 Matrix4::operator+(const Matrix4& rhs) const
 {
 	float returnVector[16];
-
+	/// adds all the corresponding elements in both matricies to eachother
 	returnVector[0] = matrix[0] + rhs.matrix[0];
 	returnVector[1] = matrix[1] + rhs.matrix[1];
 	returnVector[2] = matrix[2] + rhs.matrix[2];
@@ -443,8 +450,7 @@ Matrix4 Matrix4::inverse(const Matrix4& mat)
 		return Matrix4(out);
 		
 }
-
-
+/// Print function used for testing the output from a matrix
 void Matrix4::print()
 {
 	for (int i = 0; i < 16; i++)
