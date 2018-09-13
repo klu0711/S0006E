@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['getmatrixvalue',['getMatrixValue',['../class_matrix4.html#a4733d9680ee4de7f9df3b83ab41b1767',1,'Matrix4']]]
+  ['inverse',['inverse',['../class_matrix4.html#ac023c2fde9c362babf91761f97d5b814',1,'Matrix4']]]
 ];

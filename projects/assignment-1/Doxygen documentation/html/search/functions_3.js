@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['inverse',['inverse',['../class_matrix4.html#ac023c2fde9c362babf91761f97d5b814',1,'Matrix4']]]
+  ['length',['length',['../class_vector4_d.html#ae43dfa6eed13c50019c17b6f324aff0c',1,'Vector4D']]]
 ];
