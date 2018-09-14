@@ -46,10 +46,10 @@ Matrix4::Matrix4(const Matrix4& mat)
 /// Constructor for identity matrix
 Matrix4::Matrix4()
 {
-	matrix[0] = 1;
-	matrix[1] = 0;
-	matrix[2] = 0;
-	matrix[3] = 0;
+	matrix[0] = 1.0f;
+	matrix[1] = 0.0f;
+	matrix[2] = 0.0f;
+	matrix[3] = 0.0f;
 
 	matrix[4] = 0;
 	matrix[5] = 1;
