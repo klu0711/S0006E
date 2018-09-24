@@ -8,26 +8,68 @@
 
 
 
+
 using namespace Display;
 namespace Example
 {
 
-	float buffer[] =
-	{
-		-0.5f,	-0.5f,	-1,			// pos 0
-		1,		0,		0,		1,	// color 0
-		-0.5f,	0.5f,	-1,			// pos 1
-		0,		1,		0,		1,	// color 0
-		0.5f,	0.5f,	-1,			// pos 2
-		0,		0,		1,		1,
-		0.5f,   -0.5f,   1,
-		1,       0,      1,     1// color 0
+	float buffer[56]{
+		-0.5f, -0.5f, 0.5f,
+		 1, 1, 1,1,
+
+		0.5f,  -0.5f, 0.5f,
+		 1, 1, 1,1,
+
+		 0.5f,  0.5f, 0.5f,
+		 1, 0, 1,1,
+
+		 -0.5f, 0.5f, 0.5f,
+		 1, 0, 1,1,
+
+		-0.5f, -0.5f, -0.5f,
+		 0, 1, 0,1,
+
+		0.5f,  -0.5f, -0.5f,
+		 0, 1, 0,1,
+
+		 0.5f,  0.5f, -0.5f,
+		 0, 0, 1,1,
+
+		 -0.5f, 0.5f, -0.5f,
+		 0, 0, 1,1
 	};
-	int indexBuffer[] =
-	{ 0,1,2,
-	 0,2,3};
+	int indexBuffer[36]{
+		// front
+		0, 1, 2,
+		2, 3, 0,
+		// right
+		1, 5, 6,
+		6, 2, 1,
+		// back
+		7, 6, 5,
+		5, 4, 7,
+		// left
+		4, 0, 3,
+		3, 7, 4,
+		// bottom
+		4, 5, 1,
+		1, 0, 4,
+		// top
+		3, 2, 6,
+		6, 7, 3,
+	};
 
 	MeshResource meshResource(buffer, indexBuffer, sizeof(buffer), sizeof(indexBuffer));
+	Vector4D cameraPos = Vector4D(0.0f, 0.0f, 3.0f, 1.0f);
+	Vector4D cameraTarget = Vector4D(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector4D cameraReverseDirectionTemp = (cameraPos - cameraTarget);
+	Vector4D cameraReverseDirection = cameraReverseDirectionTemp.normalize();
+	Vector4D upX = Vector4D(0.0f, 1.0f, 0.0f, 1.0f);
+	Vector4D temp = upX.crossProduct(cameraReverseDirection);
+	Vector4D cameraRight = temp.normalize();
+	Vector4D cameraUp = cameraReverseDirection.crossProduct(cameraRight);
+
+	
 //------------------------------------------------------------------------------
 /**
 */
@@ -56,6 +98,7 @@ ExampleApp::Open()
 	window->SetKeyPressFunction([this](int32, int32, int32, int32)
 	{
 		this->window->Close();
+		meshResource.destroy();
 
 
 	});
@@ -95,13 +138,18 @@ ExampleApp::Open()
 		glUseProgram(program);
 
 		
-
+		glEnable(GL_DEPTH_TEST);
 		// setup
 		meshResource.setup();
 		meshResource.bindVertexBuffer();
 		meshResource.bindIndexBuffer();
 		meshResource.bindPointer();
+
+
+		
+
 		return true;
+		
 	}
 	return false;
 }
@@ -116,7 +164,7 @@ ExampleApp::Run()
 	float movementn = 0;
 	while (this->window->IsOpen())
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
 
 		glUseProgram(this->program);
@@ -124,11 +172,18 @@ ExampleApp::Run()
 		meshResource.bind();
 		/// This code sets a mat4 in the vertex shader to a matrix that rotates and moves the quadrilateral
 		unsigned int transformLoc = glGetUniformLocation(program, "transform");
-		Matrix4 mat = Matrix4().rotZ(rotation);
-		Matrix4 mat2 = Matrix4::getPositionMatrix(Vector4D(sinf(movementn), 0, 0, 1));
-		glUniformMatrix4fv(transformLoc, 1, GL_TRUE, (mat2 * mat).getPointer());
+		/*Matrix4 mat = Matrix4::rotX(rotation);
+		Matrix4 mat1 = Matrix4::rotY(rotation);
+		Matrix4 mat2 = Matrix4::getPositionMatrix(Vector4D(sinf(movementn), 0, 0, 1));*/
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+		float radius = 15.0f;
+		float camX = sin(glfwGetTime()) * radius;
+		float camZ = cos(glfwGetTime()) * radius;
+		Matrix4 view = Matrix4::lookAt(cameraRight, upX, cameraReverseDirection, Vector4D(-camX, -0.0f,-camZ,1));
+		glUniformMatrix4fv(transformLoc, 1, GL_TRUE,view.getPointer());
+
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		
 		meshResource.unBindBuffers();
 		//glBindBuffer(GL_ARRAY_BUFFER, 0);

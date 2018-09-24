@@ -25,6 +25,7 @@ namespace {
 		static Matrix4 inverse(const Matrix4& mat);
 		float* getPointer();
 		static Matrix4 getPositionMatrix(Vector4D& inVector);
+		static Matrix4 lookAt(Vector4D &R, Vector4D &U, Vector4D &D, Vector4D &pos);
 	};
 
 	/// Getter
@@ -481,6 +482,19 @@ namespace {
 		tempArr[14] = 0;
 		tempArr[15] = inVector.getVectorValue(3);
 		return Matrix4(tempArr);
+	}
+
+	inline Matrix4 Matrix4::lookAt(Vector4D &R, Vector4D &U, Vector4D &D, Vector4D &pos)
+	{
+		float temp[16] = { R[0],R[1] ,R[2], 0,
+							U[0],U[1],U[2],0,
+							D[0],D[1],D[2],0,
+							0,0,0,1 };
+		 Matrix4 temp2 = Matrix4(temp);
+		 Matrix4 temp3 = Matrix4::getPositionMatrix(pos);
+		 
+
+		return (temp2*temp3);
 	}
 	
 }

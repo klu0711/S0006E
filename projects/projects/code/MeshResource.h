@@ -27,6 +27,7 @@ public:
 	void bindPointer();
 	void bind();
 	void setup();
+	void destroy();
 
 
 

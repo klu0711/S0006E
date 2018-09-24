@@ -64,4 +64,14 @@ void MeshResource::setup()
 	glBindVertexArray(this->VAO);
 }
 
+void MeshResource::destroy()
+{
+	glBindVertexArray(0);
+	glDeleteBuffers(1, &EBO);
+	glDeleteBuffers(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	delete indexBuffer;
+	delete vertexBuffer;
+}
+
 
