@@ -5,6 +5,7 @@
 #include "config.h"
 #include "exampleapp.h"
 #include <cstring>
+#include "TextureResource.h"
 
 
 
@@ -13,30 +14,38 @@ using namespace Display;
 namespace Example
 {
 
-	float buffer[56]{
-		-0.5f, -0.5f, 0.5f,
+	float buffer[72]{
+		-0.25f, -0.25f, 0.25f,
 		 1, 1, 1,1,
+		 0,0,
 
-		0.5f,  -0.5f, 0.5f,
+		0.25f,  -0.25f, 0.25f,
 		 1, 1, 1,1,
+		 1,0,
 
-		 0.5f,  0.5f, 0.5f,
+		 0.25f,  0.25f, 0.25f,
 		 1, 0, 1,1,
+		 1,1,
 
-		 -0.5f, 0.5f, 0.5f,
+		 -0.25f, 0.25f, 0.25f,
 		 1, 0, 1,1,
+		 0,1,
 
-		-0.5f, -0.5f, -0.5f,
+		-0.25f, -0.25f, -0.25f,
 		 0, 1, 0,1,
+		 0,0,
 
-		0.5f,  -0.5f, -0.5f,
+		0.25f,  -0.25f, -0.25f,
 		 0, 1, 0,1,
+		 1,0, 
 
-		 0.5f,  0.5f, -0.5f,
+		 0.25f,  0.25f, -0.25f,
 		 0, 0, 1,1,
+		 0,1, 
 
-		 -0.5f, 0.5f, -0.5f,
-		 0, 0, 1,1
+		 -0.25f, 0.25f, -0.25f,
+		 0, 0, 1,1,
+		 1,1
 	};
 	int indexBuffer[36]{
 		// front
@@ -60,14 +69,11 @@ namespace Example
 	};
 
 	MeshResource meshResource(buffer, indexBuffer, sizeof(buffer), sizeof(indexBuffer));
-	Vector4D cameraPos = Vector4D(0.0f, 0.0f, 3.0f, 1.0f);
-	Vector4D cameraTarget = Vector4D(0.0f, 0.0f, 0.0f, 1.0f);
-	Vector4D cameraReverseDirectionTemp = (cameraPos - cameraTarget);
-	Vector4D cameraReverseDirection = cameraReverseDirectionTemp.normalize();
-	Vector4D upX = Vector4D(0.0f, 1.0f, 0.0f, 1.0f);
-	Vector4D temp = upX.crossProduct(cameraReverseDirection);
-	Vector4D cameraRight = temp.normalize();
-	Vector4D cameraUp = cameraReverseDirection.crossProduct(cameraRight);
+
+
+	Matrix4 perspectiveProjection;
+
+	TextureResource tex;
 
 	
 //------------------------------------------------------------------------------
@@ -119,12 +125,13 @@ ExampleApp::Open()
 		glShaderSource(vertexShader, 1, &this->vs, &length);
 		glCompileShader(vertexShader);
 
+
+
 		// setup pixel shader
 		pixelShader = glCreateShader(GL_FRAGMENT_SHADER);
 		length = std::strlen(this->ps);
 		glShaderSource(pixelShader, 1, &this->ps, &length);
 		glCompileShader(pixelShader);
-
 
 
 
@@ -135,6 +142,7 @@ ExampleApp::Open()
 		glAttachShader(this->program, pixelShader);
 		glLinkProgram(this->program);
 
+
 		glUseProgram(program);
 
 		
@@ -143,7 +151,17 @@ ExampleApp::Open()
 		meshResource.setup();
 		meshResource.bindVertexBuffer();
 		meshResource.bindIndexBuffer();
+		tex.loadFromFile("texture.jpg");
 		meshResource.bindPointer();
+
+		float n = 0.08, f = 10, r = 0.5, l = -0.5, t = 0.5, b = -0.5;
+		perspectiveProjection = Matrix4(
+			2 * n / (r - l), 0, 0, 0,
+			0, 2 * n / (t - b), 0, 0,
+			((r + l) / (r - l)), ((t + b) / (t - b)), -((f + n) / (f - n)), -1,
+			0, 0, -((2 * f*n) / (f - n)), 0
+		);
+		
 
 
 		
@@ -170,19 +188,34 @@ ExampleApp::Run()
 		glUseProgram(this->program);
 		// do stuff
 		meshResource.bind();
+
 		/// This code sets a mat4 in the vertex shader to a matrix that rotates and moves the quadrilateral
 		unsigned int transformLoc = glGetUniformLocation(program, "transform");
-		/*Matrix4 mat = Matrix4::rotX(rotation);
+
+		Matrix4 mat = Matrix4::rotX(rotation);
 		Matrix4 mat1 = Matrix4::rotY(rotation);
-		Matrix4 mat2 = Matrix4::getPositionMatrix(Vector4D(sinf(movementn), 0, 0, 1));*/
+		Matrix4 mat2 = Matrix4::getPositionMatrix(Vector4D(sinf(movementn), 0, 0, 1));
 
-
-		float radius = 15.0f;
+		float radius = 0.5f;
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
-		Matrix4 view = Matrix4::lookAt(cameraRight, upX, cameraReverseDirection, Vector4D(-camX, -0.0f,-camZ,1));
-		glUniformMatrix4fv(transformLoc, 1, GL_TRUE,view.getPointer());
+		Vector4D cameraPos = Vector4D(camX, 0, camZ, 1.0f);
+		Vector4D cameraTarget = Vector4D(0.0f, 0.0f, 0.0f, 1.0f);
+		Vector4D cameraReverseDirection = (cameraPos - cameraTarget).normalize();
+		cameraReverseDirection[3] = 1;
+		Vector4D upX = Vector4D(0.0f, 1.0f, 0.0f, 1.0f);
+		Vector4D cameraRight = (upX.crossProduct(cameraReverseDirection)).normalize();
+		Vector4D cameraUp = cameraReverseDirection.crossProduct(cameraRight);
 
+
+
+		//std::cout << cameraPos[0] << " : " << cameraPos[1] << " : " << cameraPos[2] << std::endl;
+		Matrix4 lookAt = Matrix4::lookAt(cameraRight, upX, cameraReverseDirection, cameraPos);
+
+		//Matrix4::transpose(perspectiveProjection);
+
+		glUniformMatrix4fv(transformLoc, 1, GL_TRUE,(Matrix4::transpose(perspectiveProjection)*lookAt*mat).getPointer());
+		tex.bind(0);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		
 		meshResource.unBindBuffers();

@@ -8,6 +8,7 @@ namespace {
 		float matrix[16];
 	public:
 		Matrix4();
+		Matrix4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p);
 		Matrix4(const Matrix4& mat);
 		Matrix4(float mat[16]);
 		~Matrix4();
@@ -26,6 +27,7 @@ namespace {
 		float* getPointer();
 		static Matrix4 getPositionMatrix(Vector4D& inVector);
 		static Matrix4 lookAt(Vector4D &R, Vector4D &U, Vector4D &D, Vector4D &pos);
+		static Matrix4 perspectiveProjection(float n, float f, float r, float l,float t, float b);
 	};
 
 	/// Getter
@@ -70,6 +72,25 @@ namespace {
 		matrix[15] = 1;
 
 	}
+	Matrix4::Matrix4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p)
+	{
+		matrix[0] = a;
+		matrix[1] = b;
+		matrix[2] = c;
+		matrix[3] = d;
+		matrix[4] = e;
+		matrix[5] = f;
+		matrix[6] = g;
+		matrix[7] = h;
+		matrix[8] = i;
+		matrix[9] = j;
+		matrix[10] = k;
+		matrix[11] = l;
+		matrix[12] = m;
+		matrix[13] = n;
+		matrix[14] = o;
+		matrix[15] = p;
+	}
 	/// Constructor that takes an array and builds a new matrix
 	Matrix4::Matrix4(float mat[16])
 	{
@@ -107,14 +128,17 @@ namespace {
 		returnMatrix[1] = 0;
 		returnMatrix[2] = 0;
 		returnMatrix[3] = 0;
+
 		returnMatrix[4] = 0;
 		returnMatrix[5] = cosAng;
 		returnMatrix[6] = -sinAng;
 		returnMatrix[7] = 0;
+
 		returnMatrix[8] = 0;
 		returnMatrix[9] = sinAng;
 		returnMatrix[10] = cosAng;
 		returnMatrix[11] = 0;
+
 		returnMatrix[12] = 0;
 		returnMatrix[13] = 0;
 		returnMatrix[14] = 0;
@@ -134,14 +158,17 @@ namespace {
 		returnMatrix[1] = 0;
 		returnMatrix[2] = sinAng;
 		returnMatrix[3] = 0;
+
 		returnMatrix[4] = 0;
 		returnMatrix[5] = 1;
 		returnMatrix[6] = 0;
 		returnMatrix[7] = 0;
+
 		returnMatrix[8] = -sinAng;
 		returnMatrix[9] = 0;
 		returnMatrix[10] = cosAng;
 		returnMatrix[11] = 0;
+
 		returnMatrix[12] = 0;
 		returnMatrix[13] = 0;
 		returnMatrix[14] = 0;
@@ -161,14 +188,17 @@ namespace {
 		returnMatrix[1] = -sinAng;
 		returnMatrix[2] = 0;
 		returnMatrix[3] = 0;
+
 		returnMatrix[4] = sinAng;
 		returnMatrix[5] = cosAng;
 		returnMatrix[6] = 0;
 		returnMatrix[7] = 0;
+
 		returnMatrix[8] = 0;
 		returnMatrix[9] = 0;
 		returnMatrix[10] = 1;
 		returnMatrix[11] = 0;
+
 		returnMatrix[12] = 0;
 		returnMatrix[13] = 0;
 		returnMatrix[14] = 0;
@@ -491,10 +521,15 @@ namespace {
 							D[0],D[1],D[2],0,
 							0,0,0,1 };
 		 Matrix4 temp2 = Matrix4(temp);
-		 Matrix4 temp3 = Matrix4::getPositionMatrix(pos);
+		 Matrix4 temp3 = Matrix4::getPositionMatrix(Vector4D(-pos.getVectorValue(0), -pos.getVectorValue(1), -pos.getVectorValue(2),1));
 		 
 
 		return (temp2*temp3);
+	}
+
+	inline Matrix4 Matrix4::perspectiveProjection(float n, float f, float r, float l, float t, float b)
+	{
+		return Matrix4();
 	}
 	
 }

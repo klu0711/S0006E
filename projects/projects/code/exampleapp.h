@@ -11,6 +11,7 @@
 #include "MeshResource.h"
 #include "Matrix4.h"
 #include "Vector4D.h"
+#include <iostream>
 namespace Example
 {
 class ExampleApp : public Core::App
@@ -32,21 +33,26 @@ private:
 		"#version 430\n"
 		"layout(location=0) in vec3 pos;\n"
 		"layout(location=1) in vec4 color;\n"
-		"layout(location=0) out vec4 Color;\n"
+		"layout(location=2) in vec2 texCords;\n"
+		"out vec2 texCords2;\n"
+		"out vec4 Color;\n"
 		"uniform mat4 transform;\n"
 		"void main()\n"
 		"{\n"
 		"	gl_Position = transform * vec4(pos, 1.0f);\n"
-		"	Color = color;\n"
+		"	texCords2 = texCords;\n"	
+		"	Color = color;\n"	
 		"}\n";
 
 	const GLchar* ps =
 		"#version 430\n"
-		"layout(location=0) in vec4 color;\n"
-		"out vec4 Color;\n"
+		"out vec4 fragColor;\n "
+		"in vec2 texCords2;\n"
+		"in vec4 Color;\n"
+		"uniform sampler2D diffuse;\n"
 		"void main()\n"
 		"{\n"
-		"	Color = color;\n"
+		"	fragColor = texture(diffuse, texCords2);\n"
 		"}\n";
 	GLuint program;
 	GLuint vertexShader;
