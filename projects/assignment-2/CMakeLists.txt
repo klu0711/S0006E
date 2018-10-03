@@ -1,14 +1,14 @@
 #--------------------------------------------------------------------------
-# projects project
+# assignment-2 project
 #--------------------------------------------------------------------------
 
-PROJECT(projects)
-FILE(GLOB projects_headers code/*.h)
-FILE(GLOB projects_sources code/*.cc)
+PROJECT(assignment-2)
+FILE(GLOB assignment-2_headers code/*.h)
+FILE(GLOB assignment-2_sources code/*.cc)
 
-SET(files_projects ${projects_headers} ${projects_sources})
-SOURCE_GROUP("projects" FILES ${files_projects})
+SET(files_assignment-2 ${assignment-2_headers} ${assignment-2_sources})
+SOURCE_GROUP("assignment-2" FILES ${files_assignment-2})
 
-ADD_EXECUTABLE(projects ${files_projects})
-TARGET_LINK_LIBRARIES(projects core render)
-ADD_DEPENDENCIES(projects core render)
+ADD_EXECUTABLE(assignment-2 ${files_assignment-2})
+TARGET_LINK_LIBRARIES(assignment-2 core render)
+ADD_DEPENDENCIES(assignment-2 core render)
