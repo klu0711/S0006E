@@ -5,8 +5,12 @@
 #include "config.h"
 #include "exampleapp.h"
 #include <cstring>
-#include "TextureResource.h"
 
+#define KEY_UP 72
+#define KEY_DOWN 80
+#define KEY_LEFT 75
+#define KEY_RIGHT 77
+#define KEY_X 120
 
 
 
@@ -68,12 +72,15 @@ namespace Example
 		6, 7, 3,
 	};
 
-	MeshResource meshResource(buffer, indexBuffer, sizeof(buffer), sizeof(indexBuffer));
+	
+	MeshResource * meshResource = new MeshResource(buffer, indexBuffer, sizeof(buffer), sizeof(indexBuffer));
+	TextureResource tex;
 
-
+	//TextureResource tex;
 	Matrix4 perspectiveProjection;
 
-	TextureResource tex;
+
+	
 
 	
 //------------------------------------------------------------------------------
@@ -96,15 +103,40 @@ ExampleApp::~ExampleApp()
 //------------------------------------------------------------------------------
 /**
 */
-bool
-ExampleApp::Open()
+
+void ExampleApp::keyListener() {
+	char key = getch();
+	int value = key;
+
+	while (key != KEY_X) {
+		switch (getch())
+		{
+		case KEY_UP:
+			//do something
+			break;
+		case KEY_DOWN:
+			//do something
+			break;
+		case KEY_LEFT:
+			//do something
+			break;
+		case KEY_RIGHT:
+			//do something
+			break;
+
+		}
+		key = getch();
+		value = key;
+	}
+}
+bool ExampleApp::Open()
 {
 	App::Open();
 	this->window = new Display::Window;
 	window->SetKeyPressFunction([this](int32, int32, int32, int32)
 	{
 		this->window->Close();
-		meshResource.destroy();
+		meshResource->destroy();
 
 
 	});
@@ -116,9 +148,9 @@ ExampleApp::Open()
 		// set clear color to gray
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-
+		/*
 		// setup vertex shader
-
+		
 
 		vertexShader = glCreateShader(GL_VERTEX_SHADER);
 		int32 length = std::strlen(this->vs);
@@ -146,13 +178,13 @@ ExampleApp::Open()
 		glUseProgram(program);
 
 		
-		glEnable(GL_DEPTH_TEST);
+		
 		// setup
 		meshResource.setup();
 		meshResource.bindVertexBuffer();
 		meshResource.bindIndexBuffer();
 		tex.loadFromFile("texture.jpg");
-		meshResource.bindPointer();
+		meshResource.bindPointer();*/
 
 		float n = 0.5, f = 5, r = 0.3, l = -0.3, t = 0.3, b = -0.3;
 		perspectiveProjection = Matrix4(
@@ -163,6 +195,15 @@ ExampleApp::Open()
 		);
 		
 
+		TextureResource* tex = new TextureResource();
+		Shader* shader = new Shader();
+		
+		glEnable(GL_DEPTH_TEST);
+		node.setShaderClass(shader);
+		node.setMeshCLass(meshResource);
+		node.setTextureclass(tex);
+
+		node.loadTexture("texture.jpg");
 
 		
 
@@ -175,8 +216,7 @@ ExampleApp::Open()
 //------------------------------------------------------------------------------
 /**
 */
-void
-ExampleApp::Run()
+void ExampleApp::Run()
 {
 	float rotation = 0;
 	float movementn = 0;
@@ -184,7 +224,13 @@ ExampleApp::Run()
 	{
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
+		node.draw("vertexShader.txt", "fragmentShader.txt", "texture.jpg");
 
+	
+		Matrix4 mat = Matrix4::rotX(rotation);
+		Matrix4 mat1 = Matrix4::rotY(rotation);
+		//node.getTransform() = mat;
+/*
 		glUseProgram(this->program);
 		// do stuff
 		meshResource.bind();
@@ -216,7 +262,7 @@ ExampleApp::Run()
 		tex.bind(0);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		
-		meshResource.unBindBuffers();
+		meshResource.unBindBuffers();*/
 		rotation += 0.01;
 		movementn += 0.01;
 		this->window->SwapBuffers();

@@ -2,12 +2,28 @@
 #include <iostream>
 #include "core/app.h"
 #include <string>
+#include <fstream>
+#include <sstream>
+#include "Matrix4.h"
+#include "Vector4D.h"
 
-class Shader {
-private:
-	GLchar* vertexShader;
+	class Shader {
+	private:
+		const char* vertexShader;
+		const char* fragmentShader;
+		unsigned int fragmentShaderHandle;
+		unsigned int vertexShaderHandle;
+		unsigned int program;
 
-public:
-	void loadVertexShader();
-	void loadFragmentShader();
-};
+
+
+	public:
+		void loadVertexShader(const char * filename);
+		void loadFragmentShader(const char * filename);
+		void setupVertexShader();
+		void setupFragmentShader();
+		void linkShaders();
+		void modifyUniformMatrix(std::string name, float* mat);
+		void modifyUniformVector(std::string name, Vector4D vec);
+		void useProgram();
+	};

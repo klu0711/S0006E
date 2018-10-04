@@ -37,6 +37,8 @@ void TextureResource::loadFromFile(const char * filename)
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	stbi_image_free(imageData);
+
+	
 }
 /// choose and active texture to use for drawing textures from
 void TextureResource::bind(unsigned int unit)

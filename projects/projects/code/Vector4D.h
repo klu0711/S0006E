@@ -20,6 +20,7 @@ namespace {
 		float dotProduct(const Vector4D& vec) const;
 		Vector4D crossProduct(const Vector4D& vec) const;
 		float getVectorValue(int index);
+		float* getPointer();
 	};
 
 
@@ -83,9 +84,13 @@ namespace {
 		return(Vector4D((vector[1]*vec[2])-(vector[2]*vec[1]), (vector[2]*vec[0])-(vector[0]*vec[2]),
 						(vector[0]*vec[1])-(vector[1]*vec[0]),1));
 	}
-	inline float Vector4D::getVectorValue(int index)
+	float Vector4D::getVectorValue(int index)
 	{
 		return vector[index];
+	}
+	float * Vector4D::getPointer()
+	{
+		return vector;
 	}
 	/// standard constructor to set all four values of the vactor
 	Vector4D::Vector4D(float x, float y, float z, float w)

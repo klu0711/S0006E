@@ -18,6 +18,7 @@ namespace {
 		Vector4D operator*(const Vector4D& rhs) const;
 		Matrix4 operator+(const Matrix4& rhs) const;
 		Matrix4 operator*(const float scalar) const;
+		void operator=(const Matrix4& rhs);
 		static Matrix4 rotX(float angle);
 		static Matrix4 rotY(float angle);
 		static Matrix4 rotZ(float angle);
@@ -309,6 +310,29 @@ namespace {
 
 		return Matrix4(returnVector);
 
+	}
+
+	void Matrix4::operator=(const Matrix4 & rhs) 
+	{
+		matrix[0] = rhs.matrix[0];
+		matrix[1] = rhs.matrix[1];
+		matrix[2] = rhs.matrix[2];
+		matrix[3] = rhs.matrix[3];
+
+		matrix[4] = rhs.matrix[4];
+		matrix[5] = rhs.matrix[5];
+		matrix[6] = rhs.matrix[6];
+		matrix[7] = rhs.matrix[7];
+
+		matrix[8] = rhs.matrix[8];
+		matrix[9] = rhs.matrix[9];
+		matrix[10] = rhs.matrix[10];
+		matrix[11] = rhs.matrix[11];
+
+		matrix[12] = rhs.matrix[12];
+		matrix[13] = rhs.matrix[13];
+		matrix[14] = rhs.matrix[14];
+		matrix[15] = rhs.matrix[15];
 	}
 	/// Transposes the given matrix and return the transpose as a new matrix
 	Matrix4 Matrix4::transpose(const Matrix4& mat)

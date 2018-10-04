@@ -12,6 +12,11 @@
 #include "Matrix4.h"
 #include "Vector4D.h"
 #include <iostream>
+#include "Shader.h"
+#include "TextureResource.h"
+#include "GraphicsNode.h"
+#include <conio.h>
+#include <thread>
 namespace Example
 {
 class ExampleApp : public Core::App
@@ -21,6 +26,7 @@ public:
 	ExampleApp();
 	/// destructor
 	~ExampleApp();
+	void keyListener();
 
 	/// open app
 	bool Open();
@@ -54,12 +60,12 @@ private:
 		"{\n"
 		"	fragColor = texture(diffuse, texCords2);\n"
 		"}\n";
-	GLuint program;
-	GLuint vertexShader;
-	GLuint pixelShader;
+	//GLuint program;
+	//GLuint vertexShader;
+	//GLuint pixelShader;
 	GLuint triangle;
 	Display::Window* window;
-
+	GraphicsNode node;
 
 };
 } // namespace Example
