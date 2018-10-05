@@ -5,7 +5,7 @@
 #include "config.h"
 #include "exampleapp.h"
 #include <cstring>
-
+#include "MeshResource.h"
 #define KEY_UP 72
 #define KEY_DOWN 80
 #define KEY_LEFT 75
@@ -18,67 +18,57 @@ using namespace Display;
 namespace Example
 {
 	/// Buffer containing verticies, colors, and texture coordinates
-	float buffer[72]{
-		-0.25f, -0.25f, 0.25f,
-		 1, 1, 1,1,
-		 0,0,
+	float buffer[108]{
+		// positions            // colors                    // texture coords
+		 0.5f,  0.5f, 0.5f,        1.0f, 0.0f, 0.0f, 1,        1.0f, 1.0f,    //0    // top right
+		 0.5f, -0.5f, 0.5f,        0.0f, 1.0f, 0.0f, 1,        1.0f, 0.0f,    //1    // bottom right
+		-0.5f, -0.5f, 0.5f,        0.0f, 0.0f, 1.0f, 1,        0.0f, 0.0f,    //2    // bottom left
+		-0.5f,  0.5f, 0.5f,        1.0f, 1.0f, 0.0f, 1,        0.0f, 1.0f,    //3    // top left
 
-		0.25f,  -0.25f, 0.25f,
-		 1, 1, 1,1,
-		 1,0,
+		 0.5f,  0.5f, -0.5f,    1.0f, 0.0f, 0.0f, 1,        0.0f, 1.0f,    //4    // top right
+		 0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f, 1,        0.0f, 0.0f,    //5    // bottom right
+		-0.5f, -0.5f, -0.5f,    0.0f, 0.0f, 1.0f, 1,        1.0f, 0.0f,    //6    // bottom left
+		-0.5f,  0.5f, -0.5f,    1.0f, 1.0f, 0.0f, 1,        1.0f, 1.0f,    //7    // top left
 
-		 0.25f,  0.25f, 0.25f,
-		 1, 0, 1,1,
-		 1,1,
-
-		 -0.25f, 0.25f, 0.25f,
-		 1, 0, 1,1,
-		 0,1,
-
-		-0.25f, -0.25f, -0.25f,
-		 0, 1, 0,1,
-		 0,1,
-
-		0.25f,  -0.25f, -0.25f,
-		 0, 1, 0,1,
-		 1,0, 
-
-		 0.25f,  0.25f, -0.25f,
-		 0, 0, 1,1,
-		 0,1, 
-
-		 -0.25f, 0.25f, -0.25f,
-		 0, 0, 1,1,
-		 1,1
+		 0.5f,  0.5f, -0.5f,    0.0f, 0.0f, 0.0f, 1,        1.0f, 0.0f,    //8    // top right
+		 0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f, 1,        1.0f, 1.0f,    //9    // bottom right
+		-0.5f, -0.5f, -0.5f,    0.0f, 0.0f, 1.0f, 1,        0.0f, 1.0f,    //10// bottom left
+		-0.5f,  0.5f, -0.5f,    1.0f, 1.0f, 0.0f, 1,        0.0f, 0.0f    //11// top left
 	};
 	int indexBuffer[36]{
-		// front
-		0, 1, 2,
-		2, 3, 0,
-		// right
-		1, 5, 6,
-		6, 2, 1,
-		// back
-		7, 6, 5,
-		5, 4, 7,
-		// left
-		4, 0, 3,
-		3, 7, 4,
-		// bottom
-		4, 5, 1,
-		1, 0, 4,
-		// top
-		3, 2, 6,
-		6, 7, 3,
+		0,1,3,        //first triangle        Front
+		1,2,3,        //second triangle
+
+		4,5,7,        //third triangle        Back
+		5,6,7,        //fourth triangle
+
+		0,5,4,        //fifth triangle        Left
+		0,1,5,        //sixth triangle
+
+		3,7,2,        //seventh triangle        Right
+		2,7,6,        //eigth triangle
+
+		0,8,11,        //nineth triangle        Top
+		0,11,3,        //tenth triangle
+
+		1,2,9,        //eleventh triangle        Bottom
+		2,10,9        //twelth triangle
 	};
 
 	
-	MeshResource * meshResource = new MeshResource(buffer, indexBuffer, sizeof(buffer), sizeof(indexBuffer));
+	//MeshResource * meshResource = new MeshResource(buffer, indexBuffer, sizeof(buffer), sizeof(indexBuffer));
 	TextureResource tex;
 
 	//TextureResource tex;
 	Matrix4 perspectiveProjection;
 
+	Vector4D cameraPos = Vector4D(0.0f, 0.0f, 3.0f,1);
+	Vector4D cameraFront = Vector4D(0.0f, 0.0f, -1.0f, 1);
+	Vector4D cameraUp = Vector4D(0.0f, 1.0f, 0.0f, 1);
+
+	Vector4D position = Vector4D(0.0f, 0.0f, -1.0f, 1.0f);
+	Matrix4 rotX = Matrix4::rotX(0);
+	Matrix4 rotY = Matrix4::rotY(0);
 
 	
 
@@ -133,10 +123,31 @@ bool ExampleApp::Open()
 {
 	App::Open();
 	this->window = new Display::Window;
-	window->SetKeyPressFunction([this](int32, int32, int32, int32)
+
+	window->SetKeyPressFunction([this](int32 key, int32, int32, int32)
 	{
-		this->window->Close();
-		meshResource->destroy();
+			float speed = 0.05f;
+			float cameraSpeed = 0.05f;
+			if (key == GLFW_KEY_W)
+			{
+				position[1] = position[1] + speed;
+			}
+			if (key == GLFW_KEY_A) {
+				position[0] = position[0] - speed;
+			}
+			if (key == GLFW_KEY_S)
+			{
+				position[1] = position[1] - speed;
+			}
+			if (key == GLFW_KEY_D)
+			{
+				position[0] = position[0] + speed;
+			}
+			if (key == GLFW_KEY_ESCAPE)
+			{
+				this->window->Close();
+			}
+//		meshResource->destroy();
 
 
 	});
@@ -148,45 +159,7 @@ bool ExampleApp::Open()
 		// set clear color to gray
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-		/*
-		// setup vertex shader
-		
-
-		vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		int32 length = std::strlen(this->vs);
-		glShaderSource(vertexShader, 1, &this->vs, &length);
-		glCompileShader(vertexShader);
-
-
-
-		// setup pixel shader
-		pixelShader = glCreateShader(GL_FRAGMENT_SHADER);
-		length = std::strlen(this->ps);
-		glShaderSource(pixelShader, 1, &this->ps, &length);
-		glCompileShader(pixelShader);
-
-
-
-
-		// create a program object
-		this->program = glCreateProgram();
-		glAttachShader(this->program, vertexShader);
-		glAttachShader(this->program, pixelShader);
-		glLinkProgram(this->program);
-
-
-		glUseProgram(program);
-
-		
-		
-		// setup
-		meshResource.setup();
-		meshResource.bindVertexBuffer();
-		meshResource.bindIndexBuffer();
-		tex.loadFromFile("texture.jpg");
-		meshResource.bindPointer();*/
-
-		float n = 0.5, f = 5, r = 0.3, l = -0.3, t = 0.3, b = -0.3;
+		float n = 0.1, f = 10, r = 0.2, l = -0.2, t = 0.2, b = -0.2;
 		perspectiveProjection = Matrix4(
 			2 * n / (r - l), 0, 0, 0,
 			0, 2 * n / (t - b), 0, 0,
@@ -195,15 +168,16 @@ bool ExampleApp::Open()
 		);
 		
 
-		TextureResource* tex = new TextureResource();
-		Shader* shader = new Shader();
-		
+		std::shared_ptr<TextureResource> tex = std::make_shared<TextureResource>();
+		std::shared_ptr<Shader> shader = std::make_shared<Shader>();
+		std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>(buffer, indexBuffer, sizeof(buffer), sizeof(indexBuffer));
+
 		glEnable(GL_DEPTH_TEST);
 		node.setShaderClass(shader);
-		node.setMeshCLass(meshResource);
+		node.setMeshCLass(mesh);
 		node.setTextureclass(tex);
 
-		node.loadTexture("texture.jpg");
+		node.load("texture.jpg", "vertexShader.txt", "fragmentShader.txt");
 
 		
 
@@ -224,12 +198,26 @@ void ExampleApp::Run()
 	{
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
-		node.draw("vertexShader.txt", "fragmentShader.txt", "texture.jpg");
+		node.draw();
 
 	
 		Matrix4 mat = Matrix4::rotX(rotation);
 		Matrix4 mat1 = Matrix4::rotY(rotation);
-		//node.getTransform() = mat;
+		float posY, posX, posZ;
+
+		//Vector4D cameraPos = Vector4D(posX, 0, posZ, 1.0f);
+		Vector4D cameraTarget = Vector4D(0.0f, 0.0f, 0.0f, 1.0f);
+		Vector4D cameraReverseDirection = (cameraPos - cameraTarget).normalize();
+		Vector4D upX = Vector4D(0.0f, 1.0f, 0.0f, 1.0f);
+		Vector4D cameraRight = (upX.crossProduct(cameraReverseDirection)).normalize();
+		Vector4D cameraUp = cameraReverseDirection.crossProduct(cameraRight);
+
+
+		Matrix4 bounce = Matrix4::getPositionMatrix(position);
+		
+		node.setTransform(Matrix4::transpose(perspectiveProjection)*bounce * mat * mat1);
+
+
 /*
 		glUseProgram(this->program);
 		// do stuff
@@ -245,16 +233,7 @@ void ExampleApp::Run()
 		float radius = 1.0f;
 		float camX = sin(glfwGetTime()) * radius;
 		float camZ = cos(glfwGetTime()) * radius;
-		Vector4D cameraPos = Vector4D(camX, 0, camZ, 1.0f);
-		Vector4D cameraTarget = Vector4D(0.0f, 0.0f, 0.0f, 1.0f);
-		Vector4D cameraReverseDirection = (cameraPos - cameraTarget).normalize();
-		Vector4D upX = Vector4D(0.0f, 1.0f, 0.0f, 1.0f);
-		Vector4D cameraRight = (upX.crossProduct(cameraReverseDirection)).normalize();
-		Vector4D cameraUp = cameraReverseDirection.crossProduct(cameraRight);
 
-
-
-		Matrix4 lookAt = Matrix4::lookAt(cameraRight, upX, cameraReverseDirection, cameraPos);
 
 
 

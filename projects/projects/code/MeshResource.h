@@ -21,15 +21,20 @@ public:
 	MeshResource(float *buffer, int *indexBuffer, int sizeBuffer, int sizeIndexBuffer);
 	MeshResource();
 	~MeshResource();
+	void setupBuffers();
 	void bindVertexBuffer();
 	void bindIndexBuffer();
 	void unBindBuffers();
-	void bindPointer();
+	void bindAttrPointer();
 	void bind();
-	void setup();
+	void setupHandles();
+	void bindVAO();
+	void unbindVAO();
 	void destroy();
 
 
 
 
 };
+
+

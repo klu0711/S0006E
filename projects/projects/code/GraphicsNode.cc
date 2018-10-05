@@ -10,21 +10,24 @@ GraphicsNode::GraphicsNode()
 
 GraphicsNode::~GraphicsNode()
 {
+	this->shader = 0;
+	this->meshResource = 0;
+	this->textureResource = 0;
 }
 
-void GraphicsNode::setShaderClass(Shader *shader)
+void GraphicsNode::setShaderClass(std::shared_ptr<Shader> shader)
 {
-	this->shader.reset(shader);
+	this->shader = shader;
 }
 
-void GraphicsNode::setTextureclass(TextureResource* textureResource)
+void GraphicsNode::setTextureclass(std::shared_ptr<TextureResource> textureResource)
 {
-	this->textureResource.reset(textureResource);
+	this->textureResource = textureResource;
 }
 
-void GraphicsNode::setMeshCLass(MeshResource* meshResource)
+void GraphicsNode::setMeshCLass(std::shared_ptr<MeshResource> meshResource)
 {
-	this->meshResource.reset(meshResource);
+	this->meshResource =meshResource;
 }
 
 Shader* GraphicsNode::getShader()
@@ -47,31 +50,40 @@ Matrix4 GraphicsNode::getTransform()
 	return transform;
 }
 
-void GraphicsNode::loadTexture(std::string filename)
+void GraphicsNode::setTransform(Matrix4 mat)
 {
-	textureResource.get()->loadFromFile(filename.c_str());
+	transform = mat;
 }
 
-void GraphicsNode::draw(std::string vertexShaderName, std::string fragmentShaderName, std::string textureName)
+void GraphicsNode::load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName)
 {
+	textureResource.get()->loadFromFile(filename.c_str());
 	shader.get()->loadVertexShader(vertexShaderName.c_str());
 	shader.get()->loadFragmentShader(fragmentShaderName.c_str());
 	shader.get()->linkShaders();
-	
-	meshResource.get()->setup();
+	meshResource.get()->setupHandles();
+	textureResource.get()->bind(0);
+
+
+}
+
+void GraphicsNode::draw()
+{
+
 	meshResource.get()->bindVertexBuffer();
 	meshResource.get()->bindIndexBuffer();
 	
 	//textureResource.get()->loadFromFile(textureName.c_str());
-	meshResource.get()->bindPointer();
+	meshResource.get()->bindAttrPointer();
 
 	shader.get()->useProgram();
 	shader.get()->modifyUniformMatrix("transform", transform.getPointer());
 
-	textureResource.get()->bind(0);
+	
 	meshResource.get()->bind();
+	//meshResource.get()->bindVAO();
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 	meshResource.get()->unBindBuffers();
-	//transform = Matrix4::rotY(rotaion) * Matrix4::rotX(rotaion);
-	//rotaion += 0.01;
+	transform = Matrix4::rotY(rotaion) * Matrix4::rotX(rotaion);
+	rotaion += 0.01;
 }

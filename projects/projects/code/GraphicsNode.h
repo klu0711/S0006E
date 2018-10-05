@@ -4,19 +4,21 @@
 #include "MeshResource.h"
 #include <memory>
 
+
 	class GraphicsNode {
 	public:
 		GraphicsNode();
 		~GraphicsNode();
-		void setShaderClass(Shader* shader);
-		void setTextureclass(TextureResource* textureResource);
-		void setMeshCLass(MeshResource * meshresource);
+		void setShaderClass(std::shared_ptr<Shader> shader);
+		void setTextureclass(std::shared_ptr<TextureResource> textureResource);
+		void setMeshCLass(std::shared_ptr<MeshResource> meshresource);
 		Shader* getShader();
 		TextureResource* getTextureResource();
 		MeshResource* getMeshResource();
 		Matrix4 getTransform();
-		void loadTexture(std::string filename);
-		void draw(std::string vertexShaderName, std::string fragmentShaderName, std::string textureName);
+		void setTransform(Matrix4 mat);
+		void load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName);
+		void draw();
 	private:
 		std::shared_ptr<Shader> shader;
 		std::shared_ptr<TextureResource> textureResource;

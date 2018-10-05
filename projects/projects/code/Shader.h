@@ -18,6 +18,9 @@
 
 
 	public:
+		Shader();
+		~Shader();
+		void createProgram();
 		void loadVertexShader(const char * filename);
 		void loadFragmentShader(const char * filename);
 		void setupVertexShader();

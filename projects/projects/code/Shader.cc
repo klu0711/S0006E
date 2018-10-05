@@ -1,5 +1,19 @@
 #include "Shader.h"
 
+Shader::Shader()
+{
+	//this->program = glCreateProgram();
+}
+
+Shader::~Shader()
+{
+}
+
+void Shader::createProgram()
+{
+	this->program = glCreateProgram();
+}
+
 void Shader::loadVertexShader(const char * filename)
 {
 	std::ifstream inFile;

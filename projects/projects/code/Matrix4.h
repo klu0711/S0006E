@@ -1,7 +1,6 @@
 #pragma once
 #include <math.h>
 #include "Vector4D.h"
-namespace {
 	class Matrix4
 	{
 	private:
@@ -27,22 +26,22 @@ namespace {
 		static Matrix4 inverse(const Matrix4& mat);
 		float* getPointer();
 		static Matrix4 getPositionMatrix(Vector4D& inVector);
-		static Matrix4 lookAt(Vector4D &R, Vector4D &U, Vector4D &D, Vector4D &pos);
+		static Matrix4 lookAt(Vector4D &position, Vector4D &target, Vector4D &up);
 		static Matrix4 perspectiveProjection(float n, float f, float r, float l,float t, float b);
 	};
 
 	/// Getter
-	float Matrix4::operator[](const int index) const
+	inline float Matrix4::operator[](const int index) const
 	{
 		return matrix[index];
 	}
 	/// Setter
-	float & Matrix4::operator[](const int index)
+	inline float & Matrix4::operator[](const int index)
 	{
 		return matrix[index];
 	}
 	/// Copy constructor
-	Matrix4::Matrix4(const Matrix4& mat)
+	inline Matrix4::Matrix4(const Matrix4& mat)
 	{
 		for (int i = 0; i < 16; i++)
 		{
@@ -50,7 +49,7 @@ namespace {
 		}
 	}
 	/// Constructor for identity matrix
-	Matrix4::Matrix4()
+	inline Matrix4::Matrix4()
 	{
 		matrix[0] = 1.0f;
 		matrix[1] = 0.0f;
@@ -73,7 +72,7 @@ namespace {
 		matrix[15] = 1;
 
 	}
-	Matrix4::Matrix4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p)
+	inline Matrix4::Matrix4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p)
 	{
 		matrix[0] = a;
 		matrix[1] = b;
@@ -93,7 +92,7 @@ namespace {
 		matrix[15] = p;
 	}
 	/// Constructor that takes an array and builds a new matrix
-	Matrix4::Matrix4(float mat[16])
+	inline Matrix4::Matrix4(float mat[16])
 	{
 		matrix[0] = mat[0];
 		matrix[1] = mat[1];
@@ -114,12 +113,12 @@ namespace {
 
 	}
 	/// Deconstructor
-	Matrix4::~Matrix4()
+	inline Matrix4::~Matrix4()
 	{
 
 	}
 	/// Rotation matrix around x-axis
-	Matrix4 Matrix4::rotX(float angle)
+	inline Matrix4 Matrix4::rotX(float angle)
 	{
 		const float cosAng = cos(angle);
 		const float sinAng = sin(angle);
@@ -149,7 +148,7 @@ namespace {
 
 	}
 	/// Rotation matrix around y-axis
-	Matrix4 Matrix4::rotY(float angle)
+	inline Matrix4 Matrix4::rotY(float angle)
 	{
 		const float cosAng = cos(angle);
 		const float sinAng = sin(angle);
@@ -179,7 +178,7 @@ namespace {
 
 	}
 	/// Rotation matrix around z-axis
-	Matrix4 Matrix4::rotZ(float angle)
+	inline Matrix4 Matrix4::rotZ(float angle)
 	{
 		const float cosAng = cos(angle);
 		const float sinAng = sin(angle);
@@ -208,7 +207,7 @@ namespace {
 		return Matrix4(returnMatrix);
 	}
 	/// Rotate around a vector a certain, given angle
-	Matrix4 Matrix4::rotVec(Vector4D& vec, float angle)
+	inline Matrix4 Matrix4::rotVec(Vector4D& vec, float angle)
 	{
 		Vector4D normVec = vec.normalize();
 
@@ -225,7 +224,7 @@ namespace {
 
 	}
 	/// Product of two matrices
-	Matrix4 Matrix4::operator*(const Matrix4& rhs) const
+	inline Matrix4 Matrix4::operator*(const Matrix4& rhs) const
 	{
 		float returnMatrix[16];
 
@@ -254,7 +253,7 @@ namespace {
 
 	}
 	/// Product of a matrix and a vector	
-	Vector4D Matrix4::operator*(const Vector4D& rhs) const
+	inline Vector4D Matrix4::operator*(const Vector4D& rhs) const
 	{
 		return(Vector4D(
 			rhs[0] * matrix[0] + rhs[1] * matrix[1] + rhs[2] * matrix[2] + rhs[3] * matrix[3],
@@ -263,7 +262,7 @@ namespace {
 			rhs[0] * matrix[12] + rhs[1] * matrix[13] + rhs[2] * matrix[14] + rhs[3] * matrix[15]));
 	}
 	/// Needed to perform rotation around a vector
-	Matrix4 Matrix4::operator+(const Matrix4& rhs) const
+	inline Matrix4 Matrix4::operator+(const Matrix4& rhs) const
 	{
 		float returnVector[16];
 		/// adds all the corresponding elements in both matricies to eachother
@@ -288,7 +287,7 @@ namespace {
 		return Matrix4(returnVector);
 	}
 	/// Needed to perform rotation around a vector
-	Matrix4 Matrix4::operator*(const float scalar) const
+	inline Matrix4 Matrix4::operator*(const float scalar) const
 	{
 		float returnVector[16];
 		returnVector[0] = matrix[0] * scalar;
@@ -312,7 +311,7 @@ namespace {
 
 	}
 
-	void Matrix4::operator=(const Matrix4 & rhs) 
+	inline void Matrix4::operator=(const Matrix4 & rhs)
 	{
 		matrix[0] = rhs.matrix[0];
 		matrix[1] = rhs.matrix[1];
@@ -335,7 +334,7 @@ namespace {
 		matrix[15] = rhs.matrix[15];
 	}
 	/// Transposes the given matrix and return the transpose as a new matrix
-	Matrix4 Matrix4::transpose(const Matrix4& mat)
+	inline Matrix4 Matrix4::transpose(const Matrix4& mat)
 	{
 		float returnMatrix[16];
 		returnMatrix[0] = mat.matrix[0];
@@ -361,7 +360,7 @@ namespace {
 		return Matrix4(returnMatrix);
 	}
 	/// Calculate the invere of a matrix, if the determinant is zerothe function returns the same matrix otherwise the inverse is returned as a new matrix
-	Matrix4 Matrix4::inverse(const Matrix4& mat)
+	inline Matrix4 Matrix4::inverse(const Matrix4& mat)
 	{
 		float inv[16], determinant, out[16];
 
@@ -507,13 +506,13 @@ namespace {
 		return Matrix4(out);
 
 	}
-	float * Matrix4::getPointer()
+	inline float * Matrix4::getPointer()
 	{ 
 		return matrix;
 	}
 	/// Print function used for testing the output from a matrix
 
-	Matrix4 Matrix4::getPositionMatrix(Vector4D& inVector) {
+	inline 	Matrix4 Matrix4::getPositionMatrix(Vector4D& inVector) {
 		float tempArr[16];
 		tempArr[0] = 1;
 		tempArr[1] = 0;
@@ -538,17 +537,30 @@ namespace {
 		return Matrix4(tempArr);
 	}
 	/// Function for creating a "look at" matrix the glm librari already has one but by writing my own the project has less dependencies
-	inline Matrix4 Matrix4::lookAt(Vector4D &R, Vector4D &U, Vector4D &D, Vector4D &pos)
+	inline Matrix4 Matrix4::lookAt(Vector4D &position, Vector4D &target, Vector4D &up)
 	{
-		float temp[16] = { R[0],R[1] ,R[2], 0,
+		Vector4D direction = (target - position).normalize();
+		Vector4D upX = up.normalize();
+		Vector4D right = (direction.crossProduct(upX)).normalize();
+		upX = right.crossProduct(direction);
+
+		float temp[] = {right[0], right[1], right[2], -right.dotProduct(position),
+						upX[0], upX[1], upX[2], -upX.dotProduct(position),
+						-direction[0], -direction[1] , -direction[2], direction.dotProduct(position),
+						0,0,0,1};
+		return Matrix4(temp);
+
+
+		// Old implementation
+		/*float temp[16] = { R[0],R[1] ,R[2], 0,
 							U[0],U[1],U[2],0,
 							D[0],D[1],D[2],0,
 							0,0,0,1 };
 		 Matrix4 temp2 = Matrix4(temp);
-		 Matrix4 temp3 = Matrix4::getPositionMatrix(Vector4D(-pos.getVectorValue(0), -pos.getVectorValue(1), -pos.getVectorValue(2),1));
+		 Matrix4 temp3 = Matrix4::getPositionMatrix(Vector4D(-pos.getVectorValue(0), -pos.getVectorValue(1), -pos.getVectorValue(2),1));*/
 		 
 
-		return (temp2*temp3);
+		return (0);
 	}
 
 	inline Matrix4 Matrix4::perspectiveProjection(float n, float f, float r, float l, float t, float b)
@@ -556,4 +568,3 @@ namespace {
 		return Matrix4();
 	}
 	
-}

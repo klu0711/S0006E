@@ -17,6 +17,18 @@ MeshResource::MeshResource(float *buffer, int *indexBuffer, int sizeBuffer, int 
 
 MeshResource::~MeshResource()
 {
+	glDeleteBuffers(1, &EBO);
+	glDeleteBuffers(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+}
+
+void MeshResource::setupBuffers()
+{
+	glGenBuffers(1, &this->VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+
+	glGenBuffers(1, &this->EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 }
 
 
@@ -24,27 +36,31 @@ MeshResource::~MeshResource()
 void MeshResource::bindVertexBuffer()
 {
 	
-	glGenBuffers(1, &this->VBO);
+
 	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeBuffer, vertexBuffer, GL_STATIC_DRAW);
+
 	
 
 }
 /// Setup the buffer which contains the indexes which will become the triangles
 void MeshResource::bindIndexBuffer()
 {
-	glGenBuffers(1, &this->EBO);
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeIndexBuffer, indexBuffer, GL_STATIC_DRAW);
+
 	
 }
 /// Unbind the vertex array object
 void MeshResource::unBindBuffers()
 {
 	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 /// Tell the shaders how the buffers are layed out and enable both of them
-void MeshResource::bindPointer()
+void MeshResource::bindAttrPointer()
 {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -61,20 +77,28 @@ void MeshResource::bind()
 	glBindVertexArray(VAO);
 }
 /// Create the vertex array object
-void MeshResource::setup()
+void MeshResource::setupHandles()
 {
+	glGenBuffers(1, &this->EBO);
+	glGenBuffers(1, &this->VBO);
+
 	glGenVertexArrays(1, &this->VAO);
 	glBindVertexArray(this->VAO);
 }
 
-void MeshResource::destroy()
+void MeshResource::bindVAO()
+{
+	glBindVertexArray(this->VAO);
+}
+
+void MeshResource::unbindVAO()
 {
 	glBindVertexArray(0);
-	glDeleteBuffers(1, &EBO);
-	glDeleteBuffers(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	delete indexBuffer;
-	delete vertexBuffer;
+}
+
+void MeshResource::destroy()
+{
+
 }
 
 
