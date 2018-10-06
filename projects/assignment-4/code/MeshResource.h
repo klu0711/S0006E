@@ -1,0 +1,40 @@
+#pragma once
+#include "core/app.h"
+#include "config.h"
+class MeshResource {
+private:
+
+
+
+	// Buffer containing the verticies and the colors
+	float* vertexBuffer;
+	int* indexBuffer;
+
+	int sizeBuffer;
+	int sizeIndexBuffer;
+	uint32 EBO;
+	uint32 VBO;
+	uint32 VAO;
+public:
+
+
+	MeshResource(float *buffer, int *indexBuffer, int sizeBuffer, int sizeIndexBuffer);
+	MeshResource();
+	~MeshResource();
+	void setupBuffers();
+	void bindVertexBuffer();
+	void bindIndexBuffer();
+	void unBindBuffers();
+	void bindAttrPointer();
+	void bind();
+	void setupHandles();
+	void bindVAO();
+	void unbindVAO();
+	void destroy();
+
+
+
+
+};
+
+

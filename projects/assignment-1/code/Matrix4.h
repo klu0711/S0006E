@@ -453,12 +453,5 @@ Matrix4 Matrix4::inverse(const Matrix4& mat)
 /// Print function used for testing the output from a matrix
 void Matrix4::print()
 {
-	for (int i = 0; i < 16; i++)
-	{
-		std::cout << matrix[i] << " ";
-		if (i % 4 == 3 && i != 0)
-		{
-			std::cout << "\n";
-		}
-	}
+
 }
