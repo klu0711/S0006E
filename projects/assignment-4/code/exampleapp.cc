@@ -75,7 +75,7 @@ namespace Example
 
 	float lastX, lastY, yaw = -90.0f, pitch = 0.0f;
 	
-	float radianConversion = 3.14159265 / 180;
+	const float radianConversion = 3.14159265 / 180;
 
 	
 //------------------------------------------------------------------------------

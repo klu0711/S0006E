@@ -1,6 +1,8 @@
 #pragma once
 #include "core/app.h"
 #include "config.h"
+#include <vector>
+#include "Vector4D.h"
 class MeshResource {
 private:
 
@@ -21,8 +23,9 @@ public:
 	MeshResource(float *buffer, int *indexBuffer, int sizeBuffer, int sizeIndexBuffer);
 	MeshResource();
 	~MeshResource();
+	bool loadOBJFile(std::vector<Vector4D> &verticies, std::vector<Vector4D>& indices, std::vector<Vector4D>& normals);
 	void setupBuffers();
-	void bindVertexBuffer();
+	void bindVertexBuffer(std::vector<Vector4D> vector);
 	void bindIndexBuffer();
 	void unBindBuffers();
 	void bindAttrPointer();
@@ -31,6 +34,7 @@ public:
 	void bindVAO();
 	void unbindVAO();
 	void destroy();
+
 
 
 

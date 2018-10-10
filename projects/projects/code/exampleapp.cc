@@ -15,6 +15,7 @@
 
 
 
+
 using namespace Display;
 namespace Example
 {
@@ -223,7 +224,7 @@ bool ExampleApp::Open()
 		// set clear color to gray
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-		float n = 0.4, f = 20, r = 0.5, l = -0.5, t = 0.5, b = -0.5;
+		float n = 0.3, f = 1000, r = 0.5, l = -0.5, t = 0.5, b = -0.5;
 		perspectiveProjection = Matrix4(
 			2 * n / (r - l), 0, 0, 0,
 			0, 2 * n / (t - b), 0, 0,
@@ -241,7 +242,7 @@ bool ExampleApp::Open()
 		node.setMeshCLass(mesh);
 		node.setTextureclass(tex);
 
-		node.load("texture.jpg", "vertexShader.txt", "fragmentShader.txt");
+		node.load("texture.jpg", "vertexShader.txt", "fragmentShader.txt", 0);
 
 		
 
@@ -281,7 +282,7 @@ void ExampleApp::Run()
 		
 	//	node.setTransform(Matrix4::transpose(perspectiveProjection)*bounce * mat * mat1);
 		Matrix4 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		node.setTransform(perspectiveProjection*lookAt);
+		node.setTransform(Matrix4::transpose(perspectiveProjection)*lookAt);
 		
 
 /*

@@ -55,14 +55,15 @@ void GraphicsNode::setTransform(Matrix4 mat)
 	transform = mat;
 }
 
-void GraphicsNode::load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName)
+void GraphicsNode::load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName, int texture)
 {
 	textureResource.get()->loadFromFile(filename.c_str());
 	shader.get()->loadVertexShader(vertexShaderName.c_str());
 	shader.get()->loadFragmentShader(fragmentShaderName.c_str());
 	shader.get()->linkShaders();
 	meshResource.get()->setupHandles();
-	textureResource.get()->bind(0);
+	meshResource.get()->loadOBJFile(vertices, indicies, normals);
+	textureResource.get()->bind(texture);
 
 
 }
@@ -70,7 +71,7 @@ void GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 void GraphicsNode::draw()
 {
 
-	meshResource.get()->bindVertexBuffer();
+	meshResource.get()->bindVertexBuffer(vertices);
 	meshResource.get()->bindIndexBuffer();
 	
 	//textureResource.get()->loadFromFile(textureName.c_str());
@@ -82,7 +83,8 @@ void GraphicsNode::draw()
 	
 	meshResource.get()->bind();
 	//meshResource.get()->bindVAO();
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	//glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	meshResource.get()->unBindBuffers();
 	//transform = Matrix4::rotY(rotaion) * Matrix4::rotX(rotaion);
 	//rotaion += 0.01;
