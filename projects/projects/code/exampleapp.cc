@@ -133,7 +133,7 @@ bool ExampleApp::Open()
 
 	window->SetKeyPressFunction([this](int32 key, int32, int32, int32)
 	{
-			float speed = 0.05f;
+			float speed = 0.5f;
 			float cameraSpeed = 0.04f;
 			if (key == GLFW_KEY_W)
 			{
@@ -195,7 +195,7 @@ bool ExampleApp::Open()
 			lastX = x;
 			lastY = y;
 
-			float sensitivity = 0.05;
+			float sensitivity = 0.1;
 			xoffset *= sensitivity;
 			yoffset *= sensitivity;
 
@@ -242,10 +242,10 @@ bool ExampleApp::Open()
 		node.setMeshCLass(mesh);
 		node.setTextureclass(tex);
 
-		node.load("texture.jpg", "vertexShader.txt", "fragmentShader.txt", 0);
+		node.load("tractor.png", "vertexShader.txt", "fragmentShader.txt", 0);
 
 		
-
+		glDisable(GL_FRAMEBUFFER_SRGB);
 		return true;
 		
 	}

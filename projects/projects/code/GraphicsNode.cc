@@ -62,7 +62,9 @@ void GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 	shader.get()->loadFragmentShader(fragmentShaderName.c_str());
 	shader.get()->linkShaders();
 	meshResource.get()->setupHandles();
-	meshResource.get()->loadOBJFile(vertices, indicies, normals);
+	meshResource.get()->loadOBJFile(vertices, uv, normals);
+	combinedbuffer = meshResource.get()->combineBuffers(vertices, uv);
+	//meshResource.get()->convertToFloatPointer(vertices, indicies, normals);
 	textureResource.get()->bind(texture);
 
 
@@ -71,8 +73,8 @@ void GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 void GraphicsNode::draw()
 {
 
-	meshResource.get()->bindVertexBuffer(vertices);
-	meshResource.get()->bindIndexBuffer();
+	meshResource.get()->bindVertexBuffer(combinedbuffer);
+	//meshResource.get()->bindIndexBuffer();
 	
 	//textureResource.get()->loadFromFile(textureName.c_str());
 	meshResource.get()->bindAttrPointer();

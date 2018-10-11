@@ -16,6 +16,7 @@ TextureResource::~TextureResource()
 void TextureResource::loadFromFile(const char * filename)
 {
 	int width, heigth, numComponents;
+	stbi_set_flip_vertically_on_load(1);
 	unsigned char*  imageData = stbi_load(filename, &width, &heigth, &numComponents, 4);
 
 	if (imageData == NULL)

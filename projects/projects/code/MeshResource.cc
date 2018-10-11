@@ -22,7 +22,7 @@ MeshResource::~MeshResource()
 	glDeleteBuffers(1, &VBO);
 }
 
-bool MeshResource::loadOBJFile(std::vector<Vector4D>& vertices, std::vector<Vector4D>& indices, std::vector<Vector4D>&normals)
+bool MeshResource::loadOBJFile(std::vector<Vector4D> &vertices, std::vector<Vector4D>& uv, std::vector<Vector4D>& normals)
 {
 	std::vector<unsigned int> vertexIndices, indexIndices, normalIndices;
 	std::vector<Vector4D> temp_vertices;
@@ -42,14 +42,14 @@ bool MeshResource::loadOBJFile(std::vector<Vector4D>& vertices, std::vector<Vect
 		}
 		// Compare the first char of each string
 		if (strcmp(lineheader, "v") == 0) {
-			Vector4D vertex;
-			fscanf(file, "%f %f %f\n", &vertex[0], &vertex[1], &vertex[2]);
-			temp_vertices.push_back(vertex);
+			Vector4D position;
+			fscanf(file, "%f %f %f\n", &position[0], &position[1], &position[2]);
+			temp_vertices.push_back(position);
 		}
 		else if (strcmp(lineheader, "vt") == 0) {
-			Vector4D index;
-			fscanf(file, "%f %f\n", &index[0], &index[1]);
-			temp_indicies.push_back(index);
+			Vector4D uv;
+			fscanf(file, "%f %f\n", &uv[0], &uv[1]);
+			temp_indicies.push_back(uv);
 		}
 		else if (strcmp(lineheader, "vn") == 0) {
 			Vector4D normal;
@@ -89,7 +89,7 @@ bool MeshResource::loadOBJFile(std::vector<Vector4D>& vertices, std::vector<Vect
 	{
 		unsigned int indexIndex = indexIndices[i];
 		Vector4D index = temp_indicies[indexIndex - 1];
-		indices.push_back(index);
+		uv.push_back(index);
 	}
 	for (unsigned int i = 0; i < normalIndices.size(); i++)
 	{
@@ -98,10 +98,32 @@ bool MeshResource::loadOBJFile(std::vector<Vector4D>& vertices, std::vector<Vect
 		normals.push_back(normal);
 	}
 	sizeBuffer = vertexIndices.size();
+
 	
 
 
 	return true;
+}
+
+void MeshResource::convertToFloatPointer(std::vector<Vector4D>& verticies, std::vector<Vector4D>& indices, std::vector<Vector4D>& normals)
+{
+	int j = 0;
+	float *vertexAndTextureBuf = new float[(verticies.size()*3 + indices.size() * 3)];
+	for (int i = 0; i < verticies.size(); i++)
+	{
+		for (int x = 0; x < 3; x++)
+		{
+			vertexAndTextureBuf[(i*3)+x] = verticies[i].getVectorValue(x);
+		}
+	}
+	for (int i = verticies.size(); i < (verticies.size() + indices.size()); i++)
+	{
+		for (int x = 0; x < 3; x++)
+		{
+			vertexAndTextureBuf[(i * 3) + x] = verticies[i-verticies.size()].getVectorValue(x);
+		}
+	}
+	vertexAndIndexBuffer = vertexAndTextureBuf;
 }
 
 void MeshResource::setupBuffers()
@@ -118,7 +140,7 @@ void MeshResource::setupBuffers()
 void MeshResource::bindVertexBuffer(std::vector<Vector4D> vector)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeBuffer * sizeof(Vector4D), &vector[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vector.size() * sizeof(Vector4D), &vector[0], GL_STATIC_DRAW);
 }
 /// Setup the buffer which contains the indexes which will become the triangles
 void MeshResource::bindIndexBuffer()
@@ -145,8 +167,8 @@ void MeshResource::bindAttrPointer()
 	//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
 	//glEnableVertexAttribArray(1);	
 	
-	//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));
-	//glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(sizeBuffer * sizeof(Vector4D)));
+	glEnableVertexAttribArray(2);
 }	
 /// Bind the vertex array object
 void MeshResource::bind()
@@ -176,6 +198,14 @@ void MeshResource::unbindVAO()
 void MeshResource::destroy()
 {
 
+}
+
+std::vector<Vector4D> MeshResource::combineBuffers(std::vector<Vector4D> vertices, std::vector<Vector4D> indices)
+{
+	std::vector<Vector4D> combinedBuffers;
+	combinedBuffers.insert(combinedBuffers.end(), vertices.begin(), vertices.end());
+	combinedBuffers.insert(combinedBuffers.end(), indices.begin(), indices.end());
+	return combinedBuffers;
 }
 
 

@@ -26,6 +26,7 @@
 		Matrix4 transform;
 		float rotaion = 0;
 		std::vector<Vector4D> vertices;
-		std::vector<Vector4D> indicies;
+		std::vector<Vector4D> uv;
 		std::vector<Vector4D> normals;
+		std::vector<Vector4D> combinedbuffer;
 	};
