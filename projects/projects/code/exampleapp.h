@@ -66,6 +66,15 @@ private:
 	GLuint triangle;
 	Display::Window* window;
 	GraphicsNode node;
+	GraphicsNode node2;
+	GraphicsNode node3;
+	GraphicsNode node4;
+	GraphicsNode node5;
+	GraphicsNode node6;
+	GraphicsNode node7;
+	GraphicsNode node8;
+	GraphicsNode node9;
+	GraphicsNode node10;
 
 };
 } // namespace Example

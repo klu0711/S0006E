@@ -6,6 +6,8 @@
 #include "exampleapp.h"
 #include <cstring>
 #include "MeshResource.h"
+#include <Windows.h>
+#include <chrono>
 #define KEY_UP 72
 #define KEY_DOWN 80
 #define KEY_LEFT 75
@@ -100,6 +102,23 @@ ExampleApp::~ExampleApp()
 /**
 */
 
+void fps()
+{
+	static float fps = 0.0f;
+	static float before = 0.0f;
+	static char strFPS[20] = { 0 };
+	static float now = (GetTickCount()*0.001f);
+
+	++fps;
+
+	if (now - before > 1.0f)
+	{
+		before = now;
+		sprintf(strFPS, "FPS: %d", int(fps));
+		fps = 0.0f;
+	}
+	std::cout << strFPS << std::endl;
+}
 void ExampleApp::keyListener() {
 	char key = getch();
 	int value = key;
@@ -134,7 +153,7 @@ bool ExampleApp::Open()
 	window->SetKeyPressFunction([this](int32 key, int32, int32, int32)
 	{
 			float speed = 0.5f;
-			float cameraSpeed = 0.04f;
+			float cameraSpeed = 0.3f;
 			if (key == GLFW_KEY_W)
 			{
 				cameraPos = cameraPos + (cameraFront * cameraSpeed);
@@ -195,7 +214,7 @@ bool ExampleApp::Open()
 			lastX = x;
 			lastY = y;
 
-			float sensitivity = 0.1;
+			float sensitivity = 0.2;
 			xoffset *= sensitivity;
 			yoffset *= sensitivity;
 
@@ -224,7 +243,7 @@ bool ExampleApp::Open()
 		// set clear color to gray
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-		float n = 0.3, f = 1000, r = 0.5, l = -0.5, t = 0.5, b = -0.5;
+		float n = 0.1, f = 1000, r = 0.1, l = -0.1, t = 0.1, b = -0.1;
 		perspectiveProjection = Matrix4(
 			2 * n / (r - l), 0, 0, 0,
 			0, 2 * n / (t - b), 0, 0,
@@ -237,14 +256,19 @@ bool ExampleApp::Open()
 		std::shared_ptr<Shader> shader = std::make_shared<Shader>();
 		std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>(buffer, indexBuffer, sizeof(buffer), sizeof(indexBuffer));
 
+
 		glEnable(GL_DEPTH_TEST);
+
 		node.setShaderClass(shader);
 		node.setMeshCLass(mesh);
 		node.setTextureclass(tex);
+		node.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
 
-		node.load("tractor.png", "vertexShader.txt", "fragmentShader.txt", 0);
+		node2.setShaderClass(shader);
+		node2.setMeshCLass(mesh);
+		node2.setTextureclass(tex);
+		node2.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
 
-		
 		glDisable(GL_FRAMEBUFFER_SRGB);
 		return true;
 		
@@ -259,11 +283,25 @@ void ExampleApp::Run()
 {
 	float rotation = 0;
 	float movementn = 0;
+	auto clock = std::chrono::high_resolution_clock();     auto start = clock.now();     int frames = 0;
 	while (this->window->IsOpen())
 	{
+		frames++;
+		if (std::chrono::duration_cast<std::chrono::seconds>(clock.now() - start).count() > 1)
+		{
+			auto end = clock.now();
+			auto t = ((std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / (double)frames) / 1000.0);
+			std::cout << t << "\t" << 1 / (t / 1000.0) << "\t" << frames << "\r\n";
+			//this->window->SwapBuffers();
+			start = clock.now();
+			frames = 0;
+		}
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
 		node.draw();
+		node2.draw();
+
+
 
 	
 		Matrix4 mat = Matrix4::rotX(rotation);
@@ -281,7 +319,13 @@ void ExampleApp::Run()
 		Matrix4 bounce = Matrix4::getPositionMatrix(position);
 		
 	//	node.setTransform(Matrix4::transpose(perspectiveProjection)*bounce * mat * mat1);
+
+		Matrix4 move = Matrix4(1, 0, 0, 10,
+								0, 1, 0, 0, 
+								0, 0, 1, 0,
+								0, 0, 0, 1);
 		Matrix4 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		node2.setTransform(Matrix4::transpose(perspectiveProjection)*lookAt * move);
 		node.setTransform(Matrix4::transpose(perspectiveProjection)*lookAt);
 		
 
