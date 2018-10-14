@@ -63,10 +63,11 @@ void GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 	shader.get()->linkShaders();
 	meshResource.get()->setupHandles();
 	meshResource.get()->loadOBJFile(vertices, uv, normals);
-	combinedbuffer = meshResource.get()->combineBuffers(vertices, uv);
+	combinedbuffer = meshResource.get()->combineBuffers(vertices, uv, normals);
 	//meshResource.get()->convertToFloatPointer(vertices, indicies, normals);
 	textureResource.get()->bind(texture);
-
+	light = LightingNode(Vector4D(15, 2, 0, 1), Vector4D(0.5f, 0.5f, 0.5f, 1), 1);
+	shader.get()->useProgram();
 
 }
 
@@ -81,6 +82,10 @@ void GraphicsNode::draw()
 
 	shader.get()->useProgram();
 	shader.get()->modifyUniformMatrix("transform", transform.getPointer());
+
+
+	shader->modifyUniformVector("lightPos", light.getPosition());
+	shader->modifyUniformVector("lightColor", light.getColor());
 
 	
 	meshResource.get()->bind();

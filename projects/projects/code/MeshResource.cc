@@ -22,6 +22,8 @@ MeshResource::~MeshResource()
 	glDeleteBuffers(1, &VBO);
 }
 
+
+
 bool MeshResource::loadOBJFile(std::vector<Vector4D> &vertices, std::vector<Vector4D>& uv, std::vector<Vector4D>& normals)
 {
 	std::vector<unsigned int> vertexIndices, indexIndices, normalIndices;
@@ -98,6 +100,7 @@ bool MeshResource::loadOBJFile(std::vector<Vector4D> &vertices, std::vector<Vect
 		normals.push_back(normal);
 	}
 	sizeBuffer = vertexIndices.size();
+	sizeOfNormals = normalIndices.size();
 
 	
 
@@ -161,14 +164,20 @@ void MeshResource::unBindBuffers()
 /// Tell the shaders how the buffers are layed out and enable both of them
 void MeshResource::bindAttrPointer()
 {
+	glBindVertexArray(VAO);
+	//verticies
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-
+	//Colors
 	//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
 	//glEnableVertexAttribArray(1);	
-	
+	//uv cordinates
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(sizeBuffer * sizeof(Vector4D)));
 	glEnableVertexAttribArray(2);
+	//normals
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(sizeBuffer * sizeof(Vector4D)+(sizeOfNormals * sizeof(Vector4D))));
+	glEnableVertexAttribArray(3);
+	glBindVertexArray(0);
 }	
 /// Bind the vertex array object
 void MeshResource::bind()
@@ -200,11 +209,12 @@ void MeshResource::destroy()
 
 }
 
-std::vector<Vector4D> MeshResource::combineBuffers(std::vector<Vector4D> vertices, std::vector<Vector4D> indices)
+std::vector<Vector4D> MeshResource::combineBuffers(std::vector<Vector4D> vertices, std::vector<Vector4D> indices, std::vector<Vector4D> normals)
 {
 	std::vector<Vector4D> combinedBuffers;
 	combinedBuffers.insert(combinedBuffers.end(), vertices.begin(), vertices.end());
 	combinedBuffers.insert(combinedBuffers.end(), indices.begin(), indices.end());
+	combinedBuffers.insert(combinedBuffers.end(), normals.begin(), normals.end());
 	return combinedBuffers;
 }
 

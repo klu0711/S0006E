@@ -3,6 +3,7 @@
 #include "Shader.h"
 #include "MeshResource.h"
 #include <memory>
+#include "LightingNode.h"
 
 
 	class GraphicsNode {
@@ -29,4 +30,6 @@
 		std::vector<Vector4D> uv;
 		std::vector<Vector4D> normals;
 		std::vector<Vector4D> combinedbuffer;
+
+		LightingNode light;
 	};

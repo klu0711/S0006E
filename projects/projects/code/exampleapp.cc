@@ -253,16 +253,23 @@ bool ExampleApp::Open()
 		
 
 		std::shared_ptr<TextureResource> tex = std::make_shared<TextureResource>();
-		std::shared_ptr<Shader> shader = std::make_shared<Shader>();
 		std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>(buffer, indexBuffer, sizeof(buffer), sizeof(indexBuffer));
+		
+		std::shared_ptr<TextureResource> tex1 = std::make_shared<TextureResource>();
+		std::shared_ptr<MeshResource> mesh1 = std::make_shared<MeshResource>(buffer, indexBuffer, sizeof(buffer), sizeof(indexBuffer));
 
 
 		glEnable(GL_DEPTH_TEST);
+
+
+
 
 		node.setShaderClass(shader);
 		node.setMeshCLass(mesh);
 		node.setTextureclass(tex);
 		node.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
+
+
 
 		node2.setShaderClass(shader);
 		node2.setMeshCLass(mesh);
@@ -298,8 +305,23 @@ void ExampleApp::Run()
 		}
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
+		Matrix4 move = Matrix4(1, 0, 0, 10,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1);
+		Matrix4 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		
+		node.setTransform(Matrix4::transpose(perspectiveProjection)*lookAt);
+		node2.setTransform(Matrix4::transpose(perspectiveProjection)*lookAt * move);
+
+		shader->modifyUniformMatrix("objPosition",Matrix4().getPointer());
 		node.draw();
+		shader->modifyUniformMatrix("objPosition", move.getPointer());
 		node2.draw();
+
+
+		
+		
 
 
 
@@ -320,13 +342,8 @@ void ExampleApp::Run()
 		
 	//	node.setTransform(Matrix4::transpose(perspectiveProjection)*bounce * mat * mat1);
 
-		Matrix4 move = Matrix4(1, 0, 0, 10,
-								0, 1, 0, 0, 
-								0, 0, 1, 0,
-								0, 0, 0, 1);
-		Matrix4 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		node2.setTransform(Matrix4::transpose(perspectiveProjection)*lookAt * move);
-		node.setTransform(Matrix4::transpose(perspectiveProjection)*lookAt);
+
+
 		
 
 /*

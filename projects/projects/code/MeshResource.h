@@ -14,6 +14,7 @@ private:
 	
 
 	int sizeBuffer;
+	int sizeOfNormals;
 	int sizeIndexBuffer;
 	int temp;
 	uint32 EBO;
@@ -37,7 +38,7 @@ public:
 	void bindVAO();
 	void unbindVAO();
 	void destroy();
-	std::vector<Vector4D> combineBuffers(std::vector<Vector4D> vertices, std::vector<Vector4D> indices);
+	std::vector<Vector4D> combineBuffers(std::vector<Vector4D> vertices, std::vector<Vector4D> indices, std::vector<Vector4D> normals);
 
 
 
