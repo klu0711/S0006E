@@ -99,7 +99,7 @@ ExampleApp::Open()
 		// setup
 		meshResource.setup();
 		meshResource.bindVertexBuffer();
-		meshResource.bindIndexBuffer();
+		meshResource.bindIndexBuffer(,);
 		meshResource.bindPointer();
 		return true;
 	}

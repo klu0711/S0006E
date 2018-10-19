@@ -20,15 +20,21 @@ void main()
 	//Diffuse light
 	vec3 posToLightDirVec = normalize(vec3(LightPos) - position);
 	vec3 diffuseColor = vec3(LightColor);
+	
 	float diffuse = clamp(dot(posToLightDirVec, uNormal),0,1);
-	vec3 finalDiffuse = diffuseColor * diffuse;
+	vec3 finalDiffuse = diffuseColor * diffuse * intensity;
 	
 	//Specular light
 	vec3 lightToPosVec = normalize(vec3(LightPos) - position);
 	vec3 reflectDirection = normalize(reflect(lightToPosVec, normalize(uNormal)));
 	vec3 posToViewVec = normalize(position - vec3(CameraPosition));
-	float specularConst = pow(max(dot(posToViewVec, reflectDirection), 0), 30);
-	vec3 specFinal = vec3(LightColor) * specularConst;
+	vec3 specFinal;
+	if(dot(uNormal, lightToPosVec) < 0.0){
+		specFinal = vec3(0,0,0);
+	}else{
+		float specularConst = pow(max(dot(posToViewVec, reflectDirection), 0), 30);
+		specFinal = vec3(LightColor) * specularConst;
+	}
 	//Attenuation light
 	
 	

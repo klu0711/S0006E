@@ -1,6 +1,8 @@
 #pragma once
 #include "core/app.h"
 #include "config.h"
+#include <vector>
+
 class MeshResource {
 private:
 
@@ -22,7 +24,7 @@ public:
 	MeshResource();
 	~MeshResource();
 	void bindVertexBuffer();
-	void bindIndexBuffer();
+	void bindIndexBuffer(std::vector<int> buffer, <unknown>);
 	void unBindBuffers();
 	void bindPointer();
 	void bind();

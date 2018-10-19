@@ -21,15 +21,18 @@
 		void load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName, int texture);
 		void draw();
 	private:
+
 		std::shared_ptr<Shader> shader;
 		std::shared_ptr<TextureResource> textureResource;
 		std::shared_ptr<MeshResource> meshResource;
 		Matrix4 transform;
 		float rotaion = 0;
-		std::vector<Vector4D> vertices;
+		std::vector<Vertex> vertices;
+		std::vector<int> indices;
 		std::vector<Vector4D> uv;
 		std::vector<Vector4D> normals;
 		std::vector<Vector4D> combinedbuffer;
 
 		LightingNode light;
+
 	};

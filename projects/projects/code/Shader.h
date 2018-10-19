@@ -28,5 +28,6 @@
 		void linkShaders();
 		void modifyUniformMatrix(std::string name, float* mat);
 		void modifyUniformVector(std::string name, Vector4D vec);
+		void modifyUniformFloat(std::string name, float value);
 		void useProgram();
 	};

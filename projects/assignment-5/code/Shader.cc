@@ -8,12 +8,12 @@ Shader::Shader()
 Shader::~Shader()
 {
 }
-
+/// Create the program handle
 void Shader::createProgram()
 {
 	this->program = glCreateProgram();
 }
-
+/// Load the shader file with the provided filename
 void Shader::loadVertexShader(const char * filename)
 {
 	std::ifstream inFile;
@@ -35,7 +35,7 @@ void Shader::loadVertexShader(const char * filename)
 
 
 }
-
+/// Load the shader file with the provided filename
 void Shader::loadFragmentShader(const char * filename)
 {
 	std::ifstream inFile;
@@ -58,7 +58,7 @@ void Shader::loadFragmentShader(const char * filename)
 		
 
 }
-
+/// Create the vertex shader handle and compile the shader
 void Shader::setupVertexShader()
 {
 	vertexShaderHandle = glCreateShader(GL_VERTEX_SHADER);
@@ -77,7 +77,7 @@ void Shader::setupVertexShader()
 	}
 	//delete vertexShader;
 }
-
+/// Create the fragment shader handle and compile the shader
 void Shader::setupFragmentShader()
 {
 	fragmentShaderHandle = glCreateShader(GL_FRAGMENT_SHADER);
@@ -97,7 +97,7 @@ void Shader::setupFragmentShader()
 	}
 	//delete fragmentShader;
 }
-
+/// Link the shaders with the program
 void Shader::linkShaders()
 {
 
@@ -116,19 +116,25 @@ void Shader::linkShaders()
 		delete[] buf;
 	}
 }
-
+/// Modify a uniform matric in the shaders
 void Shader::modifyUniformMatrix(std::string name, float * mat)
 {
 	unsigned int uniform = glGetUniformLocation(this->program, name.c_str());
 	glUniformMatrix4fv(uniform, 1, GL_TRUE, mat);
 
 }
-
+/// Modify a uniform vector in the shader
 void Shader::modifyUniformVector(std::string name, Vector4D vec)
 {
 	unsigned int uniform = glGetUniformLocation(this->program, name.c_str());
 	glUniform4fv(uniform,1,vec.getPointer());
 
+}
+/// Modify a uniform float in the shader
+void Shader::modifyUniformFloat(std::string name, float value)
+{
+	unsigned int uniform = glGetUniformLocation(this->program, name.c_str());
+	glUniform1f(uniform, value);
 }
 
 void Shader::useProgram()

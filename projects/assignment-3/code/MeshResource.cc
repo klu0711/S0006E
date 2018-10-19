@@ -1,4 +1,5 @@
 #include "MeshResource.h"
+#include <vector>
 
 MeshResource::MeshResource()
 {
@@ -31,7 +32,7 @@ void MeshResource::bindVertexBuffer()
 
 }
 /// Setup the buffer which contains the indexes which will become the triangles
-void MeshResource::bindIndexBuffer()
+void MeshResource::bindIndexBuffer(std::vector<int> buffer, <unknown>)
 {
 	glGenBuffers(1, &this->EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);

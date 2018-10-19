@@ -1,19 +1,13 @@
 #include "MeshResource.h"
+#include <map>
+#include <string>
+
 
 MeshResource::MeshResource()
 {
 	
 }
-/// Constructor that takes two pointers to the index and the vertex arrays, it also accepts the "sizeof" both of them
-MeshResource::MeshResource(float *buffer, int *indexBuffer, int sizeBuffer, int sizeIndexBuffer)
-{
-	//vertexBuffer = buffer;
-	//this->indexBuffer = indexBuffer;
-	//this->sizeBuffer = sizeBuffer;
-	//this->sizeIndexBuffer = sizeIndexBuffer;
 
-
-}
 
 MeshResource::~MeshResource()
 {
@@ -21,16 +15,21 @@ MeshResource::~MeshResource()
 	glDeleteBuffers(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 }
-
-
-
-bool MeshResource::loadOBJFile(std::vector<Vector4D> &vertices, std::vector<Vector4D>& uv, std::vector<Vector4D>& normals)
+/// Load an obj file
+bool MeshResource::loadOBJ(char* filename)
 {
-	std::vector<unsigned int> vertexIndices, indexIndices, normalIndices;
+
+	std::map<std::string, int> indexMap;
+	std::vector<int> indexBuffer;
+	std::vector<Vertex> vertexBuffer;
+	int index = 0;
+	bool quad = false;
+
+	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
 	std::vector<Vector4D> temp_vertices;
 	std::vector<Vector4D> temp_indicies;
 	std::vector<Vector4D> temp_normals;
-	char* path = "tractor.obj";
+	char* path = filename;
 	FILE * file = fopen(path, "r");
 	if (file == NULL) {
 		printf("File failed to load\n");
@@ -59,74 +58,104 @@ bool MeshResource::loadOBJFile(std::vector<Vector4D> &vertices, std::vector<Vect
 			temp_normals.push_back(normal);
 		}
 		else if (strcmp(lineheader, "f") == 0) {
+			unsigned int vIndex[4], uIndex[4], nIndex[4];
+			/// The changes the operation depending on the number of faces in the obj file
+			if (fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d\n", &vIndex[0], &uIndex[0], &nIndex[0], &vIndex[1], &uIndex[1], &nIndex[1], &vIndex[2], &uIndex[2], &nIndex[2], &vIndex[3], &uIndex[3], &nIndex[3]) == 12)
+			{
+				quad = true;
+				vertexIndices.push_back(vIndex[0]);
+				vertexIndices.push_back(vIndex[1]);
+				vertexIndices.push_back(vIndex[2]);
+				uvIndices.push_back(uIndex[0]);
+				uvIndices.push_back(uIndex[1]);
+				uvIndices.push_back(uIndex[2]);
+				normalIndices.push_back(nIndex[0]);
+				normalIndices.push_back(nIndex[1]);
+				normalIndices.push_back(nIndex[2]);
 
-			std::string vertex1, vertex2, vertex3;
-			unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-			int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
-			if (matches != 9) {
-				printf("File can't be read by our simple parser : ( Try exporting with other options\n");
-				return false;
+				vertexIndices.push_back(vIndex[0]);
+				vertexIndices.push_back(vIndex[2]);
+				vertexIndices.push_back(vIndex[3]);
+				uvIndices.push_back(uIndex[0]);
+				uvIndices.push_back(uIndex[2]);
+				uvIndices.push_back(uIndex[3]);
+				normalIndices.push_back(nIndex[0]);
+				normalIndices.push_back(nIndex[2]);
+				normalIndices.push_back(nIndex[3]);
+
 			}
-			vertexIndices.push_back(vertexIndex[0]);
-			vertexIndices.push_back(vertexIndex[1]);
-			vertexIndices.push_back(vertexIndex[2]);
-			indexIndices.push_back(uvIndex[0]);
-			indexIndices.push_back(uvIndex[1]);
-			indexIndices.push_back(uvIndex[2]);
-			normalIndices.push_back(normalIndex[0]);
-			normalIndices.push_back(normalIndex[1]);
-			normalIndices.push_back(normalIndex[2]);
+			else
+			{
+				vertexIndices.push_back(vIndex[0]);
+				vertexIndices.push_back(vIndex[1]);
+				vertexIndices.push_back(vIndex[2]);
+				uvIndices.push_back(uIndex[0]);
+				uvIndices.push_back(uIndex[1]);
+				uvIndices.push_back(uIndex[2]);
+				normalIndices.push_back(nIndex[0]);
+				normalIndices.push_back(nIndex[1]);
+				normalIndices.push_back(nIndex[2]);
+			}
+
+			/*int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vIndex[0], &uIndex[0], &nIndex[0], &vIndex[1], &uIndex[1], &nIndex[1], &vIndex[2], &uIndex[2], &nIndex[2]);
+			if (matches != 9) {
+				printf("This can only read files with nine face indices");
+				return false;
+			}*/
+
+			
+
 		}
 
 
 	}
-
-	for (unsigned int i = 0; i < vertexIndices.size(); i++)
-	{
-		unsigned int vertexIndex = vertexIndices[i];
-		Vector4D vertex = temp_vertices[vertexIndex - 1];
-		vertices.push_back(vertex);
-	}
-	for (unsigned int i = 0; i < indexIndices.size(); i++)
-	{
-		unsigned int indexIndex = indexIndices[i];
-		Vector4D index = temp_indicies[indexIndex - 1];
-		uv.push_back(index);
-	}
-	for (unsigned int i = 0; i < normalIndices.size(); i++)
-	{
-		unsigned int normalIndex = normalIndices[i];
-		Vector4D normal = temp_normals[normalIndex - 1];
-		normals.push_back(normal);
-	}
-	sizeBuffer = vertexIndices.size();
-	sizeOfNormals = normalIndices.size();
-
 	
+	for (unsigned int  i = 0; i <vertexIndices.size(); i++	)
+	{
+		std::string faceVertex = std::to_string(vertexIndices[i]) + "/" + std::to_string(uvIndices[i]) + "/" + std::to_string(normalIndices[i]);
 
+		if (indexMap.count(faceVertex))
+		{
+			indexBuffer.push_back(indexMap[faceVertex]);
+		}
+		else
+		{
+			unsigned int vIndex = vertexIndices[i];
+			Vertex v;
+			v.pos[0] = temp_vertices[vIndex - 1][0];
+			v.pos[1] = temp_vertices[vIndex - 1][1];
+			v.pos[2] = temp_vertices[vIndex - 1][2];
 
-	return true;
+			unsigned int uIndex = uvIndices[i];
+			v.uv[0] = temp_indicies[uIndex - 1][0];
+			v.uv[1] = temp_indicies[uIndex - 1][1];
+
+			unsigned int nIndex = normalIndices[i];
+			v.normal[0] = temp_normals[nIndex - 1][0];
+			v.normal[1] = temp_normals[nIndex - 1][1];
+			v.normal[2] = temp_normals[nIndex - 1][2];
+
+			vertexBuffer.push_back(v);
+			indexBuffer.push_back(index);
+			indexMap[faceVertex] = index;
+			index++;
+		}
+	}
+	sizeOfIndexBuffer = indexBuffer.size();
+	sizeOfVertexBuffer = vertexBuffer.size();
+	bindVertexBuffer(vertexBuffer);
+	bindIndexBuffer(indexBuffer);
+
 }
 
-void MeshResource::convertToFloatPointer(std::vector<Vector4D>& verticies, std::vector<Vector4D>& indices, std::vector<Vector4D>& normals)
+int MeshResource::getVertexSize()
 {
-	int j = 0;
-	float *vertexAndTextureBuf = new float[(verticies.size()*3 + indices.size() * 3)];
-	for (int i = 0; i < verticies.size(); i++)
-	{
-		for (int x = 0; x < 3; x++)
-		{
-			vertexAndTextureBuf[(i*3)+x] = verticies[i].getVectorValue(x);
-		}
-	}
-	for (int i = verticies.size(); i < (verticies.size() + indices.size()); i++)
-	{
-		for (int x = 0; x < 3; x++)
-		{
-			vertexAndTextureBuf[(i * 3) + x] = verticies[i-verticies.size()].getVectorValue(x);
-		}
-	}
-	vertexAndIndexBuffer = vertexAndTextureBuf;
+	return sizeOfVertexBuffer;
+}
+
+int MeshResource::getIndexSize()
+{
+	return sizeOfIndexBuffer;
 }
 
 void MeshResource::setupBuffers()
@@ -140,17 +169,19 @@ void MeshResource::setupBuffers()
 
 
 /// Setup the buffer which contains the verticies and the colors
-void MeshResource::bindVertexBuffer(std::vector<Vector4D> vector)
+void MeshResource::bindVertexBuffer(const std::vector<Vertex> &vector)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-	glBufferData(GL_ARRAY_BUFFER, vector.size() * sizeof(Vector4D), &vector[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeOfVertexBuffer * sizeof(Vertex), &vector[0], GL_STATIC_DRAW);
 }
 /// Setup the buffer which contains the indexes which will become the triangles
-void MeshResource::bindIndexBuffer()
+void MeshResource::bindIndexBuffer(const std::vector<int>& buffer)
 {
 
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeIndexBuffer, indexBuffer, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+	int test = sizeOfIndexBuffer * sizeof(int);
+	int test2 = buffer[0];
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfIndexBuffer * sizeof(int), &buffer[0], GL_STATIC_DRAW);
 
 	
 }
@@ -164,18 +195,18 @@ void MeshResource::unBindBuffers()
 /// Tell the shaders how the buffers are layed out and enable both of them
 void MeshResource::bindAttrPointer()
 {
-	glBindVertexArray(VAO);
+	//glBindVertexArray(VAO);
 	//verticies
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
 	//Colors
 	//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
 	//glEnableVertexAttribArray(1);	
 	//uv cordinates
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(sizeBuffer * sizeof(Vector4D)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	//normals
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(sizeBuffer * sizeof(Vector4D)+(sizeOfNormals * sizeof(Vector4D))));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(5 * sizeof(float)));
 	glEnableVertexAttribArray(3);
 	glBindVertexArray(0);
 }	
@@ -194,28 +225,24 @@ void MeshResource::setupHandles()
 	glBindVertexArray(this->VAO);
 }
 
-void MeshResource::bindVAO()
-{
-	glBindVertexArray(this->VAO);
-}
+
 
 void MeshResource::unbindVAO()
 {
 	glBindVertexArray(0);
 }
 
-void MeshResource::destroy()
-{
 
+/// Does all the setup requierd setup in order to draw something to the screen
+void MeshResource::setupMesh(char* filename)
+{
+	setupHandles();
+	setupBuffers();
+	bind();
+	loadOBJ(filename);
+	bindAttrPointer();
+	unBindBuffers();
 }
 
-std::vector<Vector4D> MeshResource::combineBuffers(std::vector<Vector4D> vertices, std::vector<Vector4D> indices, std::vector<Vector4D> normals)
-{
-	std::vector<Vector4D> combinedBuffers;
-	combinedBuffers.insert(combinedBuffers.end(), vertices.begin(), vertices.end());
-	combinedBuffers.insert(combinedBuffers.end(), indices.begin(), indices.end());
-	combinedBuffers.insert(combinedBuffers.end(), normals.begin(), normals.end());
-	return combinedBuffers;
-}
 
 

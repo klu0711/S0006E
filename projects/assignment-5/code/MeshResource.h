@@ -3,43 +3,41 @@
 #include "config.h"
 #include <vector>
 #include "Vector4D.h"
+struct Vertex
+{
+	GLfloat pos[3];
+	GLfloat uv[2];
+	GLfloat normal[3];
+};
+
 class MeshResource {
 private:
+	int sizeOfIndexBuffer;
+	int sizeOfVertexBuffer;
 
-
-
-	// Buffer containing the vertices and the colors
-	float* vertexAndIndexBuffer;
-	int* indexBuffer;
-	
-
-	int sizeBuffer;
-	int sizeOfNormals;
-	int sizeIndexBuffer;
-	int temp;
 	uint32 EBO;
 	uint32 VBO;
 	uint32 VAO;
 public:
 
 
-	MeshResource(float *buffer, int *indexBuffer, int sizeBuffer, int sizeIndexBuffer);
+
 	MeshResource();
 	~MeshResource();
-	bool loadOBJFile(std::vector<Vector4D> &vertices, std::vector<Vector4D>& uv, std::vector<Vector4D>& normals);
-	void convertToFloatPointer(std::vector<Vector4D> &verticies, std::vector<Vector4D>& indices, std::vector<Vector4D>& normals);
+	bool loadOBJ(char* filename);
+	int getVertexSize();
+	int getIndexSize();
 	void setupBuffers();
-	void bindVertexBuffer(std::vector<Vector4D> vector);
-	void bindIndexBuffer();
+	void bindVertexBuffer(const std::vector<Vertex>& vector);
+	void bindIndexBuffer(const std::vector<int>& buffer);
 	void unBindBuffers();
 	void bindAttrPointer();
 	void bind();
 	void setupHandles();
-	void bindVAO();
 	void unbindVAO();
 	void destroy();
-	std::vector<Vector4D> combineBuffers(std::vector<Vector4D> vertices, std::vector<Vector4D> indices, std::vector<Vector4D> normals);
-
+	void setupMesh(char* filename);
+	
 
 
 
