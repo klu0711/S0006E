@@ -150,7 +150,7 @@ ExampleApp::Open()
 		// setup
 		meshResource.setup();
 		meshResource.bindVertexBuffer();
-		meshResource.bindIndexBuffer(,);
+		meshResource.bindIndexBuffer();
 		tex.loadFromFile("texture.jpg");
 		meshResource.bindPointer();
 

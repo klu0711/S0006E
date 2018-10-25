@@ -18,6 +18,10 @@ MeshResource::MeshResource(float *buffer, int *indexBuffer, int sizeBuffer, int 
 
 MeshResource::~MeshResource()
 {
+	glBindVertexArray(0);
+	glDeleteBuffers(1, &EBO);
+	glDeleteBuffers(1, &VAO);
+	glDeleteBuffers(1, &VBO);
 }
 
 
@@ -32,7 +36,7 @@ void MeshResource::bindVertexBuffer()
 
 }
 /// Setup the buffer which contains the indexes which will become the triangles
-void MeshResource::bindIndexBuffer(std::vector<int> buffer, <unknown>)
+void MeshResource::bindIndexBuffer()
 {
 	glGenBuffers(1, &this->EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
@@ -74,8 +78,7 @@ void MeshResource::destroy()
 	glDeleteBuffers(1, &EBO);
 	glDeleteBuffers(1, &VAO);
 	glDeleteBuffers(1, &VBO);
-	delete indexBuffer;
-	delete vertexBuffer;
+
 }
 
 

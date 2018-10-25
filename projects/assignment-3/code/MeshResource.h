@@ -24,7 +24,7 @@ public:
 	MeshResource();
 	~MeshResource();
 	void bindVertexBuffer();
-	void bindIndexBuffer(std::vector<int> buffer, <unknown>);
+	void bindIndexBuffer();
 	void unBindBuffers();
 	void bindPointer();
 	void bind();
