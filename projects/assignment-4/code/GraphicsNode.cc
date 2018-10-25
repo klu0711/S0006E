@@ -71,7 +71,7 @@ void GraphicsNode::draw()
 {
 
 	meshResource.get()->bindVertexBuffer();
-	meshResource.get()->bindIndexBuffer(,);
+	meshResource.get()->bindIndexBuffer();
 	
 	//textureResource.get()->loadFromFile(textureName.c_str());
 	meshResource.get()->bindAttrPointer();
