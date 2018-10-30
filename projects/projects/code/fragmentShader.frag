@@ -35,9 +35,7 @@ void main()
 		float specularConst = pow(max(dot(posToViewVec, reflectDirection), 0), 30);
 		specFinal = vec3(LightColor) * specularConst;
 	}
-	//Attenuation light
-	
-	
+
 	//Calculate final color per pixel
 	fragColor = texture(diffuser, texCords2) * (vec4(ambientLight,1.0f)
 	+ vec4(finalDiffuse, 1.0f) + vec4(specFinal, 1.0f));

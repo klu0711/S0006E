@@ -14,6 +14,8 @@ class MeshResource {
 private:
 	int sizeOfIndexBuffer;
 	int sizeOfVertexBuffer;
+	std::vector<Vertex> faces;
+	std::vector<int> indices;
 
 	uint32 EBO;
 	uint32 VBO;
@@ -37,6 +39,8 @@ public:
 	void unbindVAO();
 	void destroy();
 	void setupMesh(char* filename);
+	std::vector<Vertex> getFaces();
+	std::vector<int> getIndicies();
 	
 
 

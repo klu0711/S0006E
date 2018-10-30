@@ -41,6 +41,28 @@ void TextureResource::loadFromFile(const char * filename)
 
 	
 }
+void TextureResource::loadFromArray(char * buffer, int width, int heigth)
+{
+	if (buffer == NULL)
+	{
+		std::cerr << "Texture loading failed "<< std::endl;
+	}
+
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	stbi_image_free(buffer);
+}
 /// choose and active texture to use for drawing textures from
 void TextureResource::bind(unsigned int unit)
 {

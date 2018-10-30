@@ -143,6 +143,8 @@ bool MeshResource::loadOBJ(char* filename)
 	}
 	sizeOfIndexBuffer = indexBuffer.size();
 	sizeOfVertexBuffer = vertexBuffer.size();
+	faces = vertexBuffer;
+	indices = indexBuffer;
 	bindVertexBuffer(vertexBuffer);
 	bindIndexBuffer(indexBuffer);
 
@@ -242,6 +244,16 @@ void MeshResource::setupMesh(char* filename)
 	loadOBJ(filename);
 	bindAttrPointer();
 	unBindBuffers();
+}
+
+std::vector<Vertex> MeshResource::getFaces()
+{
+	return faces;
+}
+
+std::vector<int> MeshResource::getIndicies()
+{
+	return indices;
 }
 
 

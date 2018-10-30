@@ -18,6 +18,7 @@
 #include "LightingNode.h"
 #include <conio.h>
 #include <thread>
+#include "Renderer.h"
 namespace Example
 {
 class ExampleApp : public Core::App

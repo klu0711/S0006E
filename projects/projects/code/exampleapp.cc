@@ -176,6 +176,9 @@ namespace Example
 
 
 			glEnable(GL_DEPTH_TEST);
+
+			Renderer rend;
+			rend.setBuffers();
 			mesh->setupMesh("plane.obj");
 			node.setShaderClass(shader);
 			node.setMeshCLass(mesh);
@@ -187,6 +190,7 @@ namespace Example
 			node2.setTextureclass(tex);
 			node2.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
 
+			
 
 			glDisable(GL_FRAMEBUFFER_SRGB);
 			return true;
@@ -222,9 +226,10 @@ namespace Example
 			                       0, 0, 1, 0,
 			                       0, 0, 0, 1);
 			Matrix4 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+			Matrix4 roty = Matrix4::rotX(-3.141592 / 2);
 
-			node.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt);
-			node2.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt * move);
+			node.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt * roty);
+			node2.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt * move * roty);
 
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);

@@ -11,6 +11,10 @@ public:
 	~TextureResource();
 
 	void loadFromFile(const char* filename);
+
+	void loadFromArray(char* buffer, int width, int height);
+
+
 	void bind(unsigned int unit);
 
 
