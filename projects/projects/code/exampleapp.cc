@@ -76,8 +76,8 @@ namespace Example
 
 		window->SetKeyPressFunction([this](int32 key, int32, int32, int32)
 		{
-			float speed = 0.5f;
-			float cameraSpeed = 5;
+			float speed = 0.05f;
+			float cameraSpeed = 0.55;
 			if (key == GLFW_KEY_W)
 			{
 				cameraPos = cameraPos + (cameraFront * cameraSpeed);
@@ -177,9 +177,7 @@ namespace Example
 
 			glEnable(GL_DEPTH_TEST);
 
-			Renderer rend;
-			rend.setBuffers();
-			mesh->setupMesh("plane.obj");
+			mesh->setupMesh("quad.obj");
 			node.setShaderClass(shader);
 			node.setMeshCLass(mesh);
 			node.setTextureclass(tex);
@@ -228,7 +226,7 @@ namespace Example
 			Matrix4 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 			Matrix4 roty = Matrix4::rotX(-3.141592 / 2);
 
-			node.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt * roty);
+			node.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt /** roty*/);
 			node2.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt * move * roty);
 
 			glEnable(GL_CULL_FACE);

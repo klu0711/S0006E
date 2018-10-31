@@ -11,7 +11,8 @@ uniform sampler2D diffuser;
 uniform float intensity;
 void main()
 {
-	
+	 //* (vec4(ambientLight,1.0f)
+	//+ vec4(finalDiffuse, 1.0f) + vec4(specFinal, 1.0f));
 
 	
 	//Ambient light
@@ -37,6 +38,5 @@ void main()
 	}
 
 	//Calculate final color per pixel
-	fragColor = texture(diffuser, texCords2) * (vec4(ambientLight,1.0f)
-	+ vec4(finalDiffuse, 1.0f) + vec4(specFinal, 1.0f));
+	fragColor = texture(diffuser, texCords2);
 }

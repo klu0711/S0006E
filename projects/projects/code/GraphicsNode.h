@@ -4,7 +4,7 @@
 #include "MeshResource.h"
 #include <memory>
 #include "LightingNode.h"
-
+#include "Renderer.h"
 
 	class GraphicsNode {
 	public:
@@ -22,6 +22,7 @@
 		void draw();
 	private:
 
+		Renderer rend;
 		std::shared_ptr<Shader> shader;
 		std::shared_ptr<TextureResource> textureResource;
 		std::shared_ptr<MeshResource> meshResource;

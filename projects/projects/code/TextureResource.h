@@ -2,6 +2,7 @@
 #include "core/app.h"
 #include "config.h"
 #include "stb_image.h"
+#include "Renderer.h"
 
 class TextureResource {
 private:
@@ -12,7 +13,7 @@ public:
 
 	void loadFromFile(const char* filename);
 
-	void loadFromArray(char* buffer, int width, int height);
+	void loadFromArray(pixel* buffer, int width, int height);
 
 
 	void bind(unsigned int unit);

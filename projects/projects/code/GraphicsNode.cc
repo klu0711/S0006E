@@ -57,7 +57,10 @@ void GraphicsNode::setTransform(Matrix4 mat)
 /// Run all the functions that need to be run to draw something but only the functions that don't need to be ran every frame
 void GraphicsNode::load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName, int texture)
 {
-	textureResource.get()->loadFromFile(filename.c_str());
+	Renderer rend(512, 512);
+	rend.setBuffers();
+	rend.rastTriangle(rend.faces[0], rend.faces[1], rend.faces[2]);
+	textureResource->loadFromArray(rend.getFrameBuffer(), 512, 512);
 	shader.get()->loadVertexShader(vertexShaderName.c_str());
 	shader.get()->loadFragmentShader(fragmentShaderName.c_str());
 	shader.get()->linkShaders();

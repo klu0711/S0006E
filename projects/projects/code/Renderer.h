@@ -4,14 +4,14 @@
 #include "Matrix4.h"
 #include <vector>
 #include "MeshResource.h"
-
+#include <math.h>
+#include <iostream>
 struct pixel
 {
 	unsigned char red;
 	unsigned char green;
 	unsigned char blue;
 };
-
 struct vertexShaderInput
 {
 	Vector4D pos;
@@ -27,6 +27,12 @@ struct  vertexShaderOuput
 	
 };
 
+struct line
+{
+	int* pixels;
+	int size;
+};
+
 class Renderer
 {
 private:
@@ -39,10 +45,11 @@ private:
 	void(*fragmentShader)(vertexShaderOuput);
 	Matrix4 transform;
 
-	std::vector<Vertex> faces;
-	std::vector<int> indices;
+
 
 public:
+	std::vector<Vertex> faces;
+	std::vector<int> indices;
 	Renderer(const int &xSize, const int &ySize);
 	Renderer();
 	~Renderer();
@@ -56,7 +63,8 @@ public:
 	void setTransform(const Matrix4& mat);
 	void setBuffers();
 	void rastTriangle(Vertex v1, Vertex v2, Vertex v3);
-	void putPixel(int x, int y);
+	line createLine(Vertex v1, Vertex v2);
+	void putPixel(int index);
 
 };
 
