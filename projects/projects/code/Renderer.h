@@ -49,6 +49,7 @@ public:
 	void setFragmentShader(Vector4D(*fragmentShader)(Vertex));
 	void setTransform(const Matrix4& mat);
 	void setBuffers();
+	void clearZbuffer();
 	void rastTriangle(Vertex v1, Vertex v2, Vertex v3);
 	Line createLine(Vertex v1, Vertex v2);
 	Line createLine2(Vertex v1, Vertex v2);

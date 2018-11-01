@@ -6,6 +6,11 @@ Renderer::Renderer(const int& xSize, const int& ySize)
 	width = xSize; height = ySize;
 	frameBuffer = new pixel[frameBufferSize];
 	zBuffer = new float[frameBufferSize];
+
+	for (int i = 0; i< frameBufferSize; i++)
+	{
+		zBuffer[i] = -200000;
+	}
 }
 
 Renderer::Renderer()
@@ -44,10 +49,18 @@ void Renderer::setTransform(const Matrix4 &mat)
 void Renderer::setBuffers()
 {
 	MeshResource mesh;
-	mesh.loadOBJ("tractor.obj");
+	mesh.loadOBJ("triangle.obj");
 	faces = mesh.getFaces();
 	indices = mesh.getIndicies();
 
+}
+
+void Renderer::clearZbuffer()
+{
+	for (int i = 0; i < frameBufferSize; i++)
+	{
+		zBuffer[i] = -200000;
+	}
 }
 
 void Renderer::rastTriangle(Vertex v1, Vertex v2, Vertex v3)
@@ -421,6 +434,7 @@ void Renderer::linescan(int x1, int x2, int y, const Vertex &v1, const Vertex &v
 	}
 
 	int temp = y * width + x1 + 1;
+	int zindex = 0;
 	for (int x = x1; x <= x2; x++)
 	{	
 		Vector4D b = getBary(x, y, v1, v2, v3);
@@ -438,8 +452,15 @@ void Renderer::linescan(int x1, int x2, int y, const Vertex &v1, const Vertex &v
 		temp2.normal[2] = (b[0] * v1.normal[2] + b[1] * v2.normal[2] + b[2] * v3.normal[2]);
 
 		Vector4D color = fragmentShader(temp2);
-	
-		putPixel(temp, color);
+		if (zBuffer[temp] > temp2.pos[2])
+		{
+			
+		}
+		else
+		{
+			zBuffer[zindex] = temp2.pos[2];
+			putPixel(temp, color);
+		}
 		temp += 1;
 	}
 }

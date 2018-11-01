@@ -57,9 +57,10 @@ void GraphicsNode::setTransform(Matrix4 mat)
 /// Run all the functions that need to be run to draw something but only the functions that don't need to be ran every frame
 void GraphicsNode::load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName, int texture)
 {
+	bool color = false;
 
-	int width = 200;
-	int height = 200;
+	int width = 1000;
+	int height = 1000;
 	Renderer rend(width, height);
 	rend.setVertexShader([](Vertex vertex)
 	{
@@ -67,14 +68,23 @@ void GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 	});
 	rend.setFragmentShader([](Vertex vertex)
 	{
+
 		return Vector4D(1, 0, 0, 0);
 	});
 	rend.setBuffers();
-	for (int i = 0; i < rend.faces.size() / 3; i+= 3)
+	for (int i = 0; i < rend.faces.size(); i+= 3)
 	{
+		if (i >=3)
+		{
+			rend.setFragmentShader([](Vertex vertex)
+			{
+
+				return Vector4D(0, 255, 0, 0);
+			});
+		}
 		rend.rastTriangle(rend.faces[rend.indices[i]], rend.faces[rend.indices[i+1]], rend.faces[rend.indices[i+2]]);
 	}
-	rend.rastTriangle(rend.faces[0], rend.faces[1], rend.faces[2]);
+	//rend.rastTriangle(rend.faces[0], rend.faces[1], rend.faces[2]);
 	textureResource->loadFromArray(rend.getFrameBuffer(), width, height);
 	shader.get()->loadVertexShader(vertexShaderName.c_str());
 	shader.get()->loadFragmentShader(fragmentShaderName.c_str());
@@ -94,7 +104,7 @@ void GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 void GraphicsNode::draw()
 {
 
-
+	rend.clearZbuffer();
 	shader.get()->modifyUniformMatrix("transform", transform.getPointer());
 
 
