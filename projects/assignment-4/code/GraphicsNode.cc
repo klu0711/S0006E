@@ -63,15 +63,15 @@ void GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 	shader.get()->linkShaders();
 	meshResource.get()->setupHandles();
 	textureResource.get()->bind(0);
-
+	meshResource.get()->bindVertexBuffer();
+    meshResource.get()->bindIndexBuffer();
 
 }
 
 void GraphicsNode::draw()
 {
 
-	meshResource.get()->bindVertexBuffer();
-	meshResource.get()->bindIndexBuffer();
+
 	
 	//textureResource.get()->loadFromFile(textureName.c_str());
 	meshResource.get()->bindAttrPointer();
