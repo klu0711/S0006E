@@ -50,23 +50,6 @@ namespace Example
 		// empty
 	}
 
-	void fps()
-	{
-		static float fps = 0.0f;
-		static float before = 0.0f;
-		static char strFPS[20] = {0};
-		static float now = (GetTickCount() * 0.001f);
-
-		++fps;
-
-		if (now - before > 1.0f)
-		{
-			before = now;
-			sprintf(strFPS, "FPS: %d", int(fps));
-			fps = 0.0f;
-		}
-		std::cout << strFPS << std::endl;
-	}
 
 	bool ExampleApp::Open()
 	{
@@ -103,7 +86,7 @@ namespace Example
 		window->SetMousePressFunction([this](int32 key, int32 action, int32)
 		{
 			float speed = 0.05f;
-			float cameraSpeed = 0.01f;
+			float cameraSpeed = 0.001f;
 			if (key == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 			{
 				click = true;
@@ -176,7 +159,7 @@ namespace Example
 
 
 			glEnable(GL_DEPTH_TEST);
-			mesh->setupMesh("plane.obj");
+			mesh->setupMesh("tractor.obj");
 			node.setShaderClass(shader);
 			node.setMeshCLass(mesh);
 			node.setTextureclass(tex);

@@ -12,7 +12,7 @@ uniform float intensity;
 void main()
 {
 	
-
+// Assignment 5 shader
 	
 	//Ambient light
 	vec3 ambientLight = vec3(0.01f,0.01f,0.01f);

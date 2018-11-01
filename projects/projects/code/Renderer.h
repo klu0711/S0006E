@@ -8,26 +8,13 @@
 #include <iostream>
 struct pixel
 {
-	unsigned char red;
-	unsigned char green;
-	unsigned char blue;
-};
-struct vertexShaderInput
-{
-	Vector4D pos;
-	Vector4D textureCoordinates;
-	Vector4D normals;
+	unsigned char red = 0;
+	unsigned char green = 0;
+	unsigned char blue = 0;
 };
 
-struct  vertexShaderOuput
-{
-	Vector4D pos;
-	Vector4D textureCoordinates;
-	Vector4D normals;
-	
-};
 
-struct line
+struct Line
 {
 	int* pixels;
 	int size;
@@ -41,8 +28,8 @@ private:
 	int frameBufferSize = 0;
 	int width;
 	int height;
-	vertexShaderOuput(*vertexShader)(vertexShaderInput);
-	void(*fragmentShader)(vertexShaderOuput);
+	Vertex(*vertexShader)(Vertex);
+	Vector4D(*fragmentShader)(Vertex);
 	Matrix4 transform;
 
 
@@ -58,13 +45,17 @@ public:
 	int* getIndexHandle(int indicies[]);
 	pixel* getFrameBuffer();
 	int getFrameBufferSize();
-	void setVertexShader(vertexShaderOuput(*vertexShader)(vertexShaderInput));
-	void setFragmentShader(void(*fragmentShader)(vertexShaderOuput));
+	void setVertexShader(Vertex(*vertexShader)(Vertex));
+	void setFragmentShader(Vector4D(*fragmentShader)(Vertex));
 	void setTransform(const Matrix4& mat);
 	void setBuffers();
 	void rastTriangle(Vertex v1, Vertex v2, Vertex v3);
-	line createLine(Vertex v1, Vertex v2);
-	void putPixel(int index);
+	Line createLine(Vertex v1, Vertex v2);
+	Line createLine2(Vertex v1, Vertex v2);
+	void putPixel(int index, Vector4D color);
+	void linescan(int x1, int x2, int y, const Vertex &v1, const Vertex &v2, const Vertex &v3);
+	Vector4D getBary(int x, int y, Vertex v1, Vertex v2, Vertex v3);
+	float areaOfTriangle(Vertex v1, Vertex v2, Vertex v3);
 
 };
 

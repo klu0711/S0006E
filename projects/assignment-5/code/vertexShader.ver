@@ -19,6 +19,7 @@ uniform vec4 lightColor;
 uniform vec4 cameraPosition;
 void main()
 {
+	// Assignment 5 shader
 	gl_Position = transform * vec4(pos, 1.0f);
 	texCords2 = texCords;	
 	Color = color;

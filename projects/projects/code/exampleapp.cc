@@ -77,7 +77,7 @@ namespace Example
 		window->SetKeyPressFunction([this](int32 key, int32, int32, int32)
 		{
 			float speed = 0.05f;
-			float cameraSpeed = 0.55;
+			float cameraSpeed = 0.055;
 			if (key == GLFW_KEY_W)
 			{
 				cameraPos = cameraPos + (cameraFront * cameraSpeed);
@@ -183,10 +183,10 @@ namespace Example
 			node.setTextureclass(tex);
 			node.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
 
-			node2.setShaderClass(shader);
+			/*node2.setShaderClass(shader);
 			node2.setMeshCLass(mesh);
 			node2.setTextureclass(tex);
-			node2.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
+			node2.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);*/
 
 			
 
@@ -204,7 +204,7 @@ namespace Example
 		auto clock = std::chrono::high_resolution_clock();
 		auto start = clock.now();
 		int frames = 0;
-		while (this->window->IsOpen())
+		while (this->window->IsOpen() && true)
 		{
 			frames++;
 			if (std::chrono::duration_cast<std::chrono::seconds>(clock.now() - start).count() > 1)
@@ -227,7 +227,7 @@ namespace Example
 			Matrix4 roty = Matrix4::rotX(-3.141592 / 2);
 
 			node.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt /** roty*/);
-			node2.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt * move * roty);
+			//node2.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt * move * roty);
 
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);
@@ -236,7 +236,7 @@ namespace Example
 			shader->modifyUniformVector("cameraPosition", cameraPos);
 			node.draw();
 			shader->modifyUniformMatrix("objPosition", move.getPointer());
-			node2.draw();
+			//node2.draw();
 
 			this->window->SwapBuffers();
 		}
