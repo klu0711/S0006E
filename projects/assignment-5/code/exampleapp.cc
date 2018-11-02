@@ -27,7 +27,7 @@ namespace Example
 
 	Matrix4 perspectiveProjection;
 
-	Vector4D cameraPos = Vector4D(0.0f, 0.0f, 3.0f, 1);
+	Vector4D cameraPos = Vector4D(0.0f, 3.0f, 3.0f, 1);
 	Vector4D cameraFront = Vector4D(0.0f, 0.0f, -1.0f, 1);
 	Vector4D cameraUp = Vector4D(0.0f, 1.0f, 0.0f, 1);
 
@@ -60,7 +60,7 @@ namespace Example
 		window->SetKeyPressFunction([this](int32 key, int32, int32, int32)
 		{
 			float speed = 0.5f;
-			float cameraSpeed = 5;
+			float cameraSpeed = 0.05;
 			if (key == GLFW_KEY_W)
 			{
 				cameraPos = cameraPos + (cameraFront * cameraSpeed);

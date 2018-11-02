@@ -26,16 +26,20 @@ void main()
 	
 	//Specular light
 	vec3 lightToPosVec = normalize(vec3(LightPos) - position);
-	vec3 reflectDirection = normalize(reflect(lightToPosVec, normalize(uNormal)));
-	vec3 posToViewVec = normalize(position - vec3(CameraPosition));
+	vec3 posToViewVec = normalize(vec3(CameraPosition) - position);
+    //vec3 reflectDirection = normalize(reflect(lightToPosVec, normalize(uNormal)));
+	//vec3 posToViewVec = normalize(position - vec3(CameraPosition));
 	vec3 specFinal;
 	if(dot(uNormal, lightToPosVec) < 0.0){
 		specFinal = vec3(0,0,0);
 	}else{
-		float specularConst = pow(max(dot(posToViewVec, reflectDirection), 0), 30);
-		specFinal = vec3(LightColor) * specularConst;
+		//float specularConst = pow(max(dot(posToViewVec, reflectDirection), 0), 30);
+		vec3 halfway = normalize(lightToPosVec + posToViewVec);
+		float specularConstant = clamp(pow(max(dot(uNormal, halfway), 0.0),16),0,1);
+		specFinal = vec3(LightColor) * specularConstant * intensity;
+		//specFinal = vec3(0,0,0);
+		//specFinal = vec3(LightColor) * specularConst;
 	}
-	//Attenuation light
 	
 	
 	//Calculate final color per pixel
