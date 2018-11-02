@@ -7,10 +7,9 @@ Renderer::Renderer(const int& xSize, const int& ySize)
 	frameBuffer = new pixel[frameBufferSize];
 	zBuffer = new float[frameBufferSize];
 
-	for (int i = 0; i< frameBufferSize; i++)
-	{
-		zBuffer[i] = -200000;
-	}
+
+
+	std::fill_n(zBuffer, frameBufferSize, 20000);
 }
 
 Renderer::Renderer()
@@ -19,7 +18,10 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
+	//delete[] frameBuffer;
+	//delete[] zBuffer;
 }
+
 
 pixel* Renderer::getFrameBuffer()
 {
@@ -31,17 +33,17 @@ int Renderer::getFrameBufferSize()
 	return frameBufferSize;
 }
 
-void Renderer::setVertexShader(Vertex(* vertexShader)(Vertex))
+void Renderer::setVertexShader(std::function<Vertex(Vertex vertex, Matrix4 lookat, Matrix4 modelMatrix)> shader)
 {
-	this->vertexShader = vertexShader;
+	this->vertexShader = shader;
 }
 
-void Renderer::setFragmentShader(Vector4D(* fragmentShader)(Vertex))
+void Renderer::setFragmentShader(std::function<Vector4D(Vertex)> shader)
 {
-	this->fragmentShader = fragmentShader;
+	this->fragmentShader = shader;
 }
 
-void Renderer::setTransform(const Matrix4 &mat)
+void Renderer::setTransform( Matrix4 mat)
 {
 	transform = mat;
 }
@@ -57,15 +59,14 @@ void Renderer::setBuffers()
 
 void Renderer::clearZbuffer()
 {
-	for (int i = 0; i < frameBufferSize; i++)
-	{
-		zBuffer[i] = -200000;
-	}
+	std::fill_n(zBuffer, frameBufferSize, 20000);
+	pixel p;
+	std::fill_n(frameBuffer, frameBufferSize, p);
 }
 
 void Renderer::rastTriangle(Vertex v1, Vertex v2, Vertex v3)
 {
-	v1 = vertexShader(v1);
+	v1 = vertexShader(v1, transform);
 	v2 = vertexShader(v2);
 	v3 = vertexShader(v3);
 	if (v1.pos[1] < v2.pos[1])
@@ -97,38 +98,32 @@ void Renderer::rastTriangle(Vertex v1, Vertex v2, Vertex v3)
 	int vert1Y = v1.pos[1];
 	int vert2Y = v2.pos[1];
 
+	Line lineArray[] = { edge2, edge3 };
 	int u = 0;
 	bool isSwapped = false;
-
+	int z = 0;
 	for (int i = 0; i < edge1.size; i++)
 	{
 		if (!isSwapped && u > edge2.size) {
-			edge2 = edge3;
+		
 
 			u = 1;
+			z = 1;
 			isSwapped = true;
 			vert2Y = v3.pos[1];
 		}
-		//putPixel((vert1Y + i)*width + edge1.pixels[i], Vector4D(1, 0, 0, 0));
-		//putPixel((vert2Y + u)*width + edge2.pixels[u], Vector4D(1, 0, 0, 0));
-		linescan(edge1.pixels[i], edge2.pixels[u], vert1Y + i, v1, v2, v3);
+
+		linescan(edge1.pixels[i], lineArray[z].pixels[u], vert1Y + i, v1, v2, v3);
 
 		u++;
 	}
 
-	/*for (int i = 0; i < edge1.size; i++)
-		frameBuffer[edge1.pixels[i] + (int)((v1.pos[1] + i)*width)].red = 255;
 
-	for (int i = 0; i < edge2.size; i++)
-		frameBuffer[edge2.pixels[i] + (int)(v2.pos[1]+i) * width].red = 255;
-
-	for (int i = 0; i < edge3.size; i++)
-		frameBuffer[edge3.pixels[i] + (int)(v1.pos[1]+i) * width].red = 255;*/
 
 
 	delete[] edge1.pixels;
 	delete[] edge2.pixels;
-	//delete[] edge3.pixels;
+	delete[] edge3.pixels;
 
 }
 
@@ -433,8 +428,8 @@ void Renderer::linescan(int x1, int x2, int y, const Vertex &v1, const Vertex &v
 		return;
 	}
 
+
 	int temp = y * width + x1 + 1;
-	int zindex = 0;
 	for (int x = x1; x <= x2; x++)
 	{	
 		Vector4D b = getBary(x, y, v1, v2, v3);
@@ -451,14 +446,16 @@ void Renderer::linescan(int x1, int x2, int y, const Vertex &v1, const Vertex &v
 		temp2.normal[1] = (b[0] * v1.normal[1] + b[1] * v2.normal[1] + b[2] * v3.normal[1]);
 		temp2.normal[2] = (b[0] * v1.normal[2] + b[1] * v2.normal[2] + b[2] * v3.normal[2]);
 
-		Vector4D color = fragmentShader(temp2);
-		if (zBuffer[temp] > temp2.pos[2])
+
+		if (zBuffer[temp] < temp2.pos[2])
 		{
 			
 		}
 		else
 		{
-			zBuffer[zindex] = temp2.pos[2];
+			Vector4D color = fragmentShader(temp2);
+			zBuffer[temp] = temp2.pos[2];
+			//std::cout << temp2.pos[2] << std::endl;
 			putPixel(temp, color);
 		}
 		temp += 1;
@@ -480,6 +477,6 @@ Vector4D Renderer::getBary(int x, int y, Vertex v1, Vertex v2, Vertex v3)
 
 float Renderer::areaOfTriangle(Vertex v1, Vertex v2, Vertex v3)
 {
-	float area = std::abs(((v1.pos[0] * (v2.pos[1] - v3.pos[1])) + v2.pos[0] * (v3.pos[2] - v1.pos[1]) + v3.pos[0] * (v1.pos[1] - v2.pos[1])) / 2);
+	float area = std::abs(((v1.pos[0] * (v2.pos[1] - v3.pos[1])) + v2.pos[0] * (v3.pos[1] - v1.pos[1]) + v3.pos[0] * (v1.pos[1] - v2.pos[1])) / 2);
 	return area;
 }

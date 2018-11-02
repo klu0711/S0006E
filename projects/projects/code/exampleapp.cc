@@ -23,11 +23,15 @@ namespace Example
 	/// Buffer containing verticies, colors, and texture coordinates
 
 
-	TextureResource tex;
+	std::shared_ptr<TextureResource> tex = std::make_shared<TextureResource>();
+	std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
+
+	std::shared_ptr<TextureResource> tex1 = std::make_shared<TextureResource>();
+	std::shared_ptr<MeshResource> mesh1 = std::make_shared<MeshResource>();
 
 	Matrix4 perspectiveProjection;
 
-	Vector4D cameraPos = Vector4D(0.0f, 0.0f, 3.0f, 1);
+	Vector4D cameraPos = Vector4D(0.0f, 0.0f, 0.0f, 1);
 	Vector4D cameraFront = Vector4D(0.0f, 0.0f, -1.0f, 1);
 	Vector4D cameraUp = Vector4D(0.0f, 1.0f, 0.0f, 1);
 
@@ -40,6 +44,10 @@ namespace Example
 	float lastX, lastY, yaw = -90.0f, pitch = 0.0f;
 
 	float radianConversion = 3.14159265 / 180;
+
+	int width = 1024;
+	int height = 768;
+	Renderer rend(width, height);
 
 	ExampleApp::ExampleApp()
 	{
@@ -168,11 +176,7 @@ namespace Example
 			);
 
 
-			std::shared_ptr<TextureResource> tex = std::make_shared<TextureResource>();
-			std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
 
-			std::shared_ptr<TextureResource> tex1 = std::make_shared<TextureResource>();
-			std::shared_ptr<MeshResource> mesh1 = std::make_shared<MeshResource>();
 
 
 			glEnable(GL_DEPTH_TEST);
@@ -191,6 +195,41 @@ namespace Example
 			
 
 			glDisable(GL_FRAMEBUFFER_SRGB);
+
+			bool color = false;
+
+
+			Matrix4 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+
+			Matrix4 transform;
+			auto vertexShader = [](Vertex vertex, Matrix4 lookat, Matrix4 modelMatrix) -> Vertex {
+				Vector4D position = lookat * Vector4D(vertex.pos[0], vertex.pos[1], vertex.pos[2], 1.0f);
+				Vector4D normal = Matrix4::transpose(Matrix4::inverse(modelMatrix)) * Vector4D(vertex.normal[0], vertex.normal[1], vertex.normal[2], 1.0f);
+
+				Vertex returnVertex;
+
+				returnVertex.pos[0] = position[0];
+				returnVertex.pos[1] = position[1];
+				returnVertex.pos[2] = position[2];
+
+				returnVertex.uv[0] = vertex.uv[0];
+				returnVertex.uv[1] = vertex.uv[1];
+
+				returnVertex.normal[0] = normal[0];
+				returnVertex.normal[1] = normal[1];
+				returnVertex.normal[2] = normal[2];
+				return returnVertex;
+			};
+			rend.setVertexShader(vertexShader);
+
+			auto fragmentShader = [](Vertex vertex)
+			{
+				return Vector4D(1, 0, 0, 0);
+			};
+
+			rend.setFragmentShader(fragmentShader);
+			rend.setBuffers();
+
 			return true;
 		}
 		return false;
@@ -223,11 +262,20 @@ namespace Example
 			                       0, 1, 0, 0,
 			                       0, 0, 1, 0,
 			                       0, 0, 0, 1);
-			Matrix4 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-			Matrix4 roty = Matrix4::rotX(-3.141592 / 2);
+			 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+			//Matrix4 roty = Matrix4::rotX(-3.141592 / 2);
 
-			node.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt /** roty*/);
+			//node.setTransform(Matrix4::transpose(perspectiveProjection)* lookAt /*roty*/);
 			//node2.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt * move * roty);
+			rend.clearZbuffer();
+			rend.setTransform(lookAt);
+			for (int i = 0; i < rend.faces.size(); i += 3)
+			{
+
+				rend.rastTriangle(rend.faces[rend.indices[i]], rend.faces[rend.indices[i + 1]], rend.faces[rend.indices[i + 2]]);
+			}
+			//rend.rastTriangle(rend.faces[0], rend.faces[1], rend.faces[2]);
+			tex->loadFromArray(rend.getFrameBuffer(), width, height);
 
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);

@@ -61,7 +61,7 @@ void TextureResource::loadFromArray(pixel* buffer, int width, int heigth)
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	stbi_image_free(buffer);
+	
 }
 /// choose and active texture to use for drawing textures from
 void TextureResource::bind(unsigned int unit)

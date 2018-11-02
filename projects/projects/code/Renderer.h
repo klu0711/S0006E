@@ -6,6 +6,7 @@
 #include "MeshResource.h"
 #include <math.h>
 #include <iostream>
+#include <iterator>
 struct pixel
 {
 	unsigned char red = 0;
@@ -28,8 +29,8 @@ private:
 	int frameBufferSize = 0;
 	int width;
 	int height;
-	Vertex(*vertexShader)(Vertex);
-	Vector4D(*fragmentShader)(Vertex);
+	std::function<Vertex(Vertex vertex, Matrix4 lookat, Matrix4 modelMatrix)> vertexShader;
+	std::function<Vector4D(Vertex)> fragmentShader;
 	Matrix4 transform;
 
 
@@ -40,14 +41,13 @@ public:
 	Renderer(const int &xSize, const int &ySize);
 	Renderer();
 	~Renderer();
-
+	void setTransform(Matrix4 mat);
 	float* getVertexHandle(float verticies[]);
 	int* getIndexHandle(int indicies[]);
 	pixel* getFrameBuffer();
 	int getFrameBufferSize();
-	void setVertexShader(Vertex(*vertexShader)(Vertex));
-	void setFragmentShader(Vector4D(*fragmentShader)(Vertex));
-	void setTransform(const Matrix4& mat);
+	void setVertexShader(std::function<Vertex(Vertex vertex, Matrix4 lookat, Matrix4 modelMatrix)> shader);
+	void setFragmentShader(std::function<Vector4D(Vertex)> shader);
 	void setBuffers();
 	void clearZbuffer();
 	void rastTriangle(Vertex v1, Vertex v2, Vertex v3);
