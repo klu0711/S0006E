@@ -15,9 +15,9 @@ TextureResource::~TextureResource()
 /// The function also sets the parameters for the textures and clears the cpu side after it's done
 void TextureResource::loadFromFile(const char * filename)
 {
-	int width, heigth, numComponents;
+	int numComponents;
 	stbi_set_flip_vertically_on_load(1);
-	unsigned char*  imageData = stbi_load(filename, &width, &heigth, &numComponents, 4);
+	imageData = stbi_load(filename, &width, &heigth, &numComponents, 4);
 
 	if (imageData == NULL)
 	{
@@ -33,20 +33,19 @@ void TextureResource::loadFromFile(const char * filename)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, heigth, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	stbi_image_free(imageData);
+	//stbi_image_free(imageData);
 
 	
 }
-void TextureResource::loadFromArray(pixel* buffer, int width, int heigth)
+
+/// Load a texture buffer to the gpu and allocates memory for it
+void TextureResource::loadBuffer()
 {
-	if (buffer == NULL)
-	{
-		std::cerr << "Texture loading failed "<< std::endl;
-	}
+
 
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
@@ -56,6 +55,11 @@ void TextureResource::loadFromArray(pixel* buffer, int width, int heigth)
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
+void TextureResource::loadFromArray(pixel* buffer, int width, int heigth)
+{
+
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, heigth, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
 
@@ -63,6 +67,22 @@ void TextureResource::loadFromArray(pixel* buffer, int width, int heigth)
 
 	
 }
+
+pixel* TextureResource::getTextureBuffer()
+{
+	return (pixel*)&imageData;
+}
+
+int TextureResource::getWidth()
+{
+	return width;
+}
+
+int TextureResource::getHeigth()
+{
+	return heigth;
+}
+
 /// choose and active texture to use for drawing textures from
 void TextureResource::bind(unsigned int unit)
 {

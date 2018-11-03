@@ -30,6 +30,7 @@ namespace Example
 	std::shared_ptr<MeshResource> mesh1 = std::make_shared<MeshResource>();
 
 	Matrix4 perspectiveProjection;
+	Matrix4 lookAt;
 
 	Vector4D cameraPos = Vector4D(0.0f, 0.0f, 0.0f, 1);
 	Vector4D cameraFront = Vector4D(0.0f, 0.0f, -1.0f, 1);
@@ -49,6 +50,8 @@ namespace Example
 	int height = 768;
 	Renderer rend(width, height);
 
+
+
 	ExampleApp::ExampleApp()
 	{
 	}
@@ -58,23 +61,7 @@ namespace Example
 		// empty
 	}
 
-	void fps()
-	{
-		static float fps = 0.0f;
-		static float before = 0.0f;
-		static char strFPS[20] = {0};
-		static float now = (GetTickCount() * 0.001f);
-
-		++fps;
-
-		if (now - before > 1.0f)
-		{
-			before = now;
-			sprintf(strFPS, "FPS: %d", int(fps));
-			fps = 0.0f;
-		}
-		std::cout << strFPS << std::endl;
-	}
+	
 
 	bool ExampleApp::Open()
 	{
@@ -167,7 +154,7 @@ namespace Example
 			// set clear color to gray
 			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-			float n = 0.1, f = 1000, r = 0.1, l = -0.1, t = 0.1, b = -0.1;
+			float n = 0.1, f = 1000, r = 1, l = -1, t = 1, b = -1;
 			perspectiveProjection = Matrix4(
 				2 * n / (r - l), 0, 0, 0,
 				0, 2 * n / (t - b), 0, 0,
@@ -201,8 +188,8 @@ namespace Example
 
 			Matrix4 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
-			Matrix4 transform;
-			auto vertexShader = [](Vertex vertex, Matrix4 lookat, Matrix4 modelMatrix) -> Vertex {
+			auto vertexShader = [](Vertex vertex, Matrix4 lookat, Matrix4 modelMatrix) -> Vertex 
+			{
 				Vector4D position = lookat * Vector4D(vertex.pos[0], vertex.pos[1], vertex.pos[2], 1.0f);
 				Vector4D normal = Matrix4::transpose(Matrix4::inverse(modelMatrix)) * Vector4D(vertex.normal[0], vertex.normal[1], vertex.normal[2], 1.0f);
 
@@ -220,15 +207,54 @@ namespace Example
 				returnVertex.normal[2] = normal[2];
 				return returnVertex;
 			};
-			rend.setVertexShader(vertexShader);
 
-			auto fragmentShader = [](Vertex vertex)
+
+			auto g = [](Vertex vertex, Vector4D cameraPosition, pixel* tex, int width, int height) -> Vector4D
 			{
-				return Vector4D(1, 0, 0, 0);
-			};
+				//Constants
+				Vector4D lightpos(0.0f, 5.0f, 0, 0);
+				Vector4D ambient = Vector4D(0.1f, 0.1f, 0.1f, 1);
+				Vector4D color(1,1,1,1);
+				Vector4D normal(vertex.normal[0], vertex.normal[1], vertex.normal[2], 0);
+				Vector4D position(vertex.pos[0], vertex.pos[1], vertex.pos[2], 1.0f);
 
-			rend.setFragmentShader(fragmentShader);
+				int x, y;
+				x = vertex.uv[0] * width;
+				y = vertex.uv[1] * height;
+				int pixel = y * width + x;
+
+
+				Vector4D posToLightDirVec = (lightpos - cameraPosition).normalize();
+				float diffuse = clamp<float>(posToLightDirVec.dotProduct(normal), 0, 1);
+				Vector4D finalDiffuse = color * diffuse;
+
+				Vector4D lightToPosVec = (lightpos - position).normalize();
+				Vector4D posToViewVec = (cameraPosition - position).normalize();
+
+				Vector4D specFinal;
+				if (normal.dotProduct((posToLightDirVec)) < 0)
+				{
+					specFinal = Vector4D(0, 0, 0, 0);
+
+				}
+				else
+				{
+					Vector4D halfWay = (lightToPosVec + posToViewVec).normalize();
+					float specularConstant = clamp<float>(std::pow(std::max<float>(normal.dotProduct(halfWay), 0.0), 16), 0, 1);
+					specFinal = color * specularConstant;
+					
+				}
+				//Vector4D texture(tex[pixel].red, tex[pixel].green, tex[pixel].blue, 1);
+				//Vector4D vector4 = texture.crossProduct(ambient + finalDiffuse + specFinal);
+				return Vector4D(255, 25, 25,1).glProduct(ambient);
+			};
+			rend.setVertexShader(vertexShader);
+			rend.setFragmentShader(g);
 			rend.setBuffers();
+			tex->loadBuffer();
+
+			tex->loadFromFile("tractor.png");
+			rend.setTexture(tex->getTextureBuffer(), tex->getWidth(), tex->getHeigth());
 
 			return true;
 		}
@@ -268,13 +294,14 @@ namespace Example
 			//node.setTransform(Matrix4::transpose(perspectiveProjection)* lookAt /*roty*/);
 			//node2.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt * move * roty);
 			rend.clearZbuffer();
-			rend.setTransform(lookAt);
-			for (int i = 0; i < rend.faces.size(); i += 3)
+			rend.setTransform(Matrix4::transpose(perspectiveProjection)* lookAt);
+			rend.setLookat(Matrix4());
+			rend.setCameraPsition(cameraPos);
+			for (int i = 0; i < rend.indices.size(); i += 3)
 			{
 
 				rend.rastTriangle(rend.faces[rend.indices[i]], rend.faces[rend.indices[i + 1]], rend.faces[rend.indices[i + 2]]);
 			}
-			//rend.rastTriangle(rend.faces[0], rend.faces[1], rend.faces[2]);
 			tex->loadFromArray(rend.getFrameBuffer(), width, height);
 
 			glEnable(GL_CULL_FACE);

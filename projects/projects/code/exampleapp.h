@@ -19,8 +19,21 @@
 #include <conio.h>
 #include <thread>
 #include "Renderer.h"
+#include <algorithm>
 namespace Example
 {
+	template <typename T>
+	T clamp(const T& n, const T& lower, const T& upper) {
+		return std::max(lower, std::min(n, upper));
+	}
+
+	template <class T> const T& max(const T& a, const T& b) {
+		return (a < b) ? b : a;     // or: return comp(a,b)?b:a; for version (2)
+	}
+	template <class T> const T& min(const T& a, const T& b) {
+		return !(b < a) ? a : b;     // or: return !comp(b,a)?a:b; for version (2)
+	}
+
 class ExampleApp : public Core::App
 {
 public:
@@ -36,35 +49,6 @@ public:
 	void Run();
 private:
 
-
-	const GLchar* vs =
-		"#version 430\n"
-		"layout(location=0) in vec3 pos;\n"
-		"layout(location=1) in vec4 color;\n"
-		"layout(location=2) in vec2 texCords;\n"
-		"out vec2 texCords2;\n"
-		"out vec4 Color;\n"
-		"uniform mat4 transform;\n"
-		"void main()\n"
-		"{\n"
-		"	gl_Position = transform * vec4(pos, 1.0f);\n"
-		"	texCords2 = texCords;\n"	
-		"	Color = color;\n"	
-		"}\n";
-
-	const GLchar* ps =
-		"#version 430\n"
-		"out vec4 fragColor;\n "
-		"in vec2 texCords2;\n"
-		"in vec4 Color;\n"
-		"uniform sampler2D diffuse;\n"
-		"void main()\n"
-		"{\n"
-		"	fragColor = texture(diffuse, texCords2);\n"
-		"}\n";
-	//GLuint program;
-	//GLuint vertexShader;
-	//GLuint pixelShader;
 	GLuint triangle;
 	Display::Window* window;
 	GraphicsNode node;
