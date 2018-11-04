@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include <iostream>
 
 Renderer::Renderer(const int& xSize, const int& ySize)
 {
@@ -38,7 +39,7 @@ void Renderer::setVertexShader(std::function<Vertex(Vertex vertex, Matrix4 looka
 	this->vertexShader = shader;
 }
 
-void Renderer::setFragmentShader(std::function<Vector4D(Vertex vertex, Vector4D cameraPosition, pixel* tex, int width, int height)> shader)
+void Renderer::setFragmentShader(std::function<Vector4D(Vertex vertex, Vector4D cameraPosition, TextureResource tex)> shader)
 {
 	this->fragmentShader = shader;
 }
@@ -65,10 +66,16 @@ void Renderer::setTexture(pixel* p, int width, int height)
 	drawTextureWidth = width;
 }
 
+void Renderer::loadTexture(char* filename)
+{
+	texture.loadFromFile(filename);
+}
+
 void Renderer::setBuffers()
 {
 	MeshResource mesh;
 	mesh.loadOBJ("tractor.obj");
+	texture.loadFromFile("tractor.png");
 	faces = mesh.getFaces();
 	indices = mesh.getIndicies();
 
@@ -83,6 +90,9 @@ void Renderer::clearZbuffer()
 
 void Renderer::rastTriangle(Vertex v1, Vertex v2, Vertex v3)
 {
+	w1 = 1 / v1.pos[3];
+	w2 = 1 / v2.pos[3];
+	w3 = 1 / v3.pos[3];
 	v1 = vertexShader(v1, transform, lookAt);
 	v2 = vertexShader(v2, transform, lookAt);
 	v3 = vertexShader(v3, transform, lookAt);
@@ -116,12 +126,14 @@ void Renderer::rastTriangle(Vertex v1, Vertex v2, Vertex v3)
 	coordianteSpace[4] = v3.pos[0];
 	coordianteSpace[5] = v3.pos[1];
 	/// Convert the x and y coordiantes to pixel space
-	v1.pos[0] = v1.pos[0] * width / 2 + width / 2;
-	v1.pos[1] = -v1.pos[1] * height / 2 + height / 2;
-	v2.pos[0] = v2.pos[0] * width / 2 + width / 2;
-	v2.pos[1] = -v2.pos[1] * height / 2 + height / 2;
-	v3.pos[0] = v3.pos[0] * width / 2 + width / 2;
-	v3.pos[1] = -v3.pos[1] * height / 2 + height / 2;
+	v1.pos[0] = std::floor(v1.pos[0] * width +1 / 2 + width / 2);
+	v1.pos[1] = std::floor(-v1.pos[1] * height +1 / 2 + height / 2);
+
+	v2.pos[0] = std::floor(v2.pos[0] * width +1 / 2 + width / 2);
+	v2.pos[1] = std::floor(-v2.pos[1] * height +1 / 2 + height / 2);
+	
+	v3.pos[0] = std::floor(v3.pos[0] * width+1  / 2 + width / 2);
+	v3.pos[1] = std::floor(-v3.pos[1] * height+1  / 2 + height / 2);
 	/// Draw all the lines between the verticeis
 	Line edge1 = createLine2(v1, v3);
 	Line edge2 = createLine2(v1, v2);
@@ -158,198 +170,6 @@ void Renderer::rastTriangle(Vertex v1, Vertex v2, Vertex v3)
 
 }
 
-Line Renderer::createLine(Vertex v1, Vertex v2)
-{
-	Vertex firstVertex = v1;
-	Vertex secondVertex = v2;
-
-	if (firstVertex.pos[1] < v2.pos[1])
-	{
-		secondVertex = firstVertex;
-		firstVertex = v2;
-	}
-
-	// Calculate center and the pixel of each vertex.
-
-	int center = (width * height) / 2 - 1;
-	int vertx = center - (width / 2) + firstVertex.pos[0] * width/2;
-	int verty = (firstVertex.pos[1] * -height/2) * width; 
-	int vert1 = vertx + verty;
-	//int center = (width * height) / 2 -1;
-	//int vert1 = center - width/2 - ((firstVertex.pos[1] * (height/2))* width) + ((firstVertex.pos[0] * (width / 2)));
-
-	// Calculate the diffrense in x- y- pos between two vertex.
-	int deltaX = (secondVertex.pos[0] - firstVertex.pos[0]) * width / 2;
-	int deltaY = (secondVertex.pos[1] - firstVertex.pos[1]) * -height / 2;
-
-
-	Line pixels;
-
-	int twoH;
-	int temp;
-	int F;
-
-	int size = std::abs(deltaY);
-	int absY = std::abs(deltaY);
-	int absX = std::abs(deltaX);
-	if (std::abs(deltaX) > std::abs(deltaY))
-	{
-		twoH = 2 * absY;
-		temp = -2 * (absX - absY);
-		F = twoH - absX;
-	}
-	else
-	{
-		twoH = 2 * absX;
-		temp = -2 * (absY - absX);
-		F = twoH - absY;
-	}
-
-	if (deltaY == 0)
-	{
-
-		firstVertex = v1;
-		secondVertex = v2;
-		if (firstVertex.pos[0] > v2.pos[0])
-		{
-			secondVertex = firstVertex;
-			firstVertex = v2;
-			vert1 = center - ((firstVertex.pos[1] * height / 2)* width) + v1.pos[0] * width / 2;
-			size = std::abs(deltaX);
-		}
-		pixels.pixels = new int[size + 1];
-		pixels.pixels[0] = vert1;
-		for (int i = 0; i < size; i++)
-		{
-			vert1++;
-			pixels.pixels[i + 1] = vert1;
-		}
-		pixels.size = std::abs(deltaX) + 1;
-		return pixels;
-	}
-	else if (deltaX == 0)
-	{
-		if (firstVertex.pos[1] > v2.pos[1])
-		{
-			secondVertex = firstVertex;
-			firstVertex = v2;
-		}
-		pixels.pixels = new int[deltaY + 1];
-		pixels.pixels[0] = vert1;
-		for (int i = 0; i < deltaY; i++)
-		{
-			vert1 -= width;
-			pixels.pixels[i + 1] = vert1;
-		}
-		pixels.size = deltaY + 1;
-		return pixels;
-	}
-
-	pixels.pixels = new int[size + 1];
-	if (std::abs(deltaX) >= std::abs(deltaY) && ((deltaX > 0 && deltaY < 0) || (deltaX < 0 && deltaY > 0)))
-	{
-		// Quadrant 7 and 3
-		
-
-		pixels.pixels[0] = vert1;
-		for (int i = 0; i < deltaY; i++)
-		{
-			vert1 += 1;
-			if (F < 0)
-			{
-				F += twoH;
-			}
-			else
-			{
-				vert1 += width;
-				F += temp;
-			}
-			pixels.pixels[i + 1] = vert1;
-
-			//save Line where index is y and value is x
-			//add vertex pixel coordiante to y when accessing
-		}
-		pixels.size = size + 1;
-		return pixels;
-	}
-	else if (std::abs(deltaX) <= std::abs(deltaY) && ((deltaX > 0 && deltaY < 0) || (deltaX < 0 && deltaY > 0)))
-	{
-		// Quadrant 6 and 2
-		pixels.pixels[0] = vert1;
-		for (int i = 0; i < size; i++)
-		{
-			//std::cout << vert1 << std::endl;
-			vert1 += width;
-			if (F < 0)
-			{
-				F += twoH;
-			}
-			else
-			{
-				vert1 -= 1;
-				F += temp;
-			}
-			pixels.pixels[i + 1] = vert1;
-
-			//save Line where index is y and value is x
-			//add vertex pixel coordiante to y when accessing
-		}
-		pixels.size = size + 1;
-		return pixels;
-	}
-	else if (std::abs(deltaX) > std::abs(deltaY) && ((deltaX > 0 && deltaY > 0) || (deltaX < 0 && deltaY < 0)))
-	{
-		// Quadrant 0 and 4
-		pixels.pixels[0] = vert1;
-		for (int i = 0; i < deltaX; i++)
-		{
-			std::cout << vert1 << std::endl;
-			vert1 += 1;
-			if (F < 0)
-			{
-				F += twoH;
-			}
-			else
-			{
-				vert1 += width;
-				F += temp;
-			}
-			pixels.pixels[i + 1] = vert1;
-
-			//save Line where index is y and value is x
-			//add vertex pixel coordiante to y when accessing
-		}
-		pixels.size = deltaX + 1;
-		return pixels;
-	}
-	else if (std::abs(deltaX) < std::abs(deltaY) && ((deltaX > 0 && deltaY > 0) || (deltaX < 0 && deltaY < 0)))
-	{
-		// Quadrant 1 and 5
-
-		pixels.pixels[0] = vert1;
-		for (int i = 0; i < size; i++)
-		{
-			//std::cout << vert1 << std::endl;
-			vert1 += width;
-			if (F < 0)
-			{
-				F += twoH;
-			}
-			else
-			{
-				vert1 += 1;
-				F += temp;
-			}
-			pixels.pixels[i + 1] = vert1;
-
-			//save Line where index is y and value is x
-			//add vertex pixel coordiante to y when accessing
-		}
-		pixels.size = size + 1;
-		return pixels;
-	}
-
-}
 
 Line Renderer::createLine2(Vertex v1, Vertex v2)
 {
@@ -473,30 +293,47 @@ void Renderer::linescan(int x1, int x2, int y, const Vertex &v1, const Vertex &v
 	int temp = y * width + x1 + 1;
 	for (int x = x1; x <= x2; x++)
 	{	
-		Vector4D b = getBary(x, y, v1, v2, v3);
+		float u, v, w;
+		barycentric(Vector4D(x, y, 0, 1), Vector4D(v1.pos[0], v1.pos[1], 0.0f, 1), Vector4D(v2.pos[0], v2.pos[1], 0.0f, 1), Vector4D(v3.pos[0], v3.pos[1], 0.0f,1), u, v, w);
+		//float wCorrection = (u,)
+
+		float zIndex = (v1.pos[2] * u) + (v2.pos[2] * v) + (v3.pos[2] * w);
+		//Vector4D b = getBary(x, y, v1, v2, v3);
 		//interpolated positions
 		Vertex temp2;
 		Vertex coordinates;
-		temp2.pos[0] = (b[0] * coordinateSpace[0] + b[1] * coordinateSpace[2] + b[2] * coordinateSpace[4]);
+		temp2.pos[0] = (u * coordinateSpace[0] + v * coordinateSpace[2] + w * coordinateSpace[4]);
+		temp2.pos[1] = (u * coordinateSpace[1] + v * coordinateSpace[3] + w * coordinateSpace[5]);
+		//temp2.pos[2] = (u * v1.pos[2] + v * v2.pos[2] + w * v3.pos[2]);
+		// Interpolated texture coordinates
+		temp2.uv[0] = ((u * v1.uv[0]) + (v * v2.uv[0]) + (w * v3.uv[0]));
+		temp2.uv[1] = ((u * v1.uv[1]) + (v * v2.uv[1]) + (w * v3.uv[1]));
+		// Interpolated normals
+		temp2.normal[0] = ((u * v1.normal[0]) + (v * v2.normal[0]) + (w * v3.normal[0]));
+		temp2.normal[1] = ((u * v1.normal[1]) + (v * v2.normal[1]) + (w * v3.normal[1]));
+		temp2.normal[2] = ((u * v1.normal[2]) + (v * v2.normal[2]) + (w * v3.normal[2]));
+
+
+		/*temp2.pos[0] = (b[0] * coordinateSpace[0] + b[1] * coordinateSpace[2] + b[2] * coordinateSpace[4]);
 		temp2.pos[1] = (b[0] * coordinateSpace[1] + b[1] * coordinateSpace[3] + b[2] * coordinateSpace[5]);
-		temp2.pos[2] = (b[0] * v1.pos[2] + b[1] * v2.pos[2] + b[2] * v3.pos[2]);
+		//temp2.pos[2] = (b[0] * v1.pos[2] + b[1] * v2.pos[2] + b[2] * v3.pos[2]);
 		// Interpolated texture coordinates
 		temp2.uv[0] = (b[0] * v1.uv[0] + b[1] * v2.uv[0] + b[2] * v3.uv[0]);
 		temp2.uv[1] = (b[0] * v1.uv[1] + b[1] * v2.uv[1] + b[2] * v3.uv[1]);
 		// Interpolated normals
 		temp2.normal[0] = (b[0] * v1.normal[0] + b[1] * v2.normal[0] + b[2] * v3.normal[0]);
 		temp2.normal[1] = (b[0] * v1.normal[1] + b[1] * v2.normal[1] + b[2] * v3.normal[1]);
-		temp2.normal[2] = (b[0] * v1.normal[2] + b[1] * v2.normal[2] + b[2] * v3.normal[2]);
+		temp2.normal[2] = (b[0] * v1.normal[2] + b[1] * v2.normal[2] + b[2] * v3.normal[2]);*/
 		
 
-		if (zBuffer[temp] < temp2.pos[2])
+		if (zBuffer[temp] < zIndex)
 		{
 			
 		}
 		else
 		{
-			Vector4D color = fragmentShader(temp2, cameraPosition, drawTexture, drawTextureWidth, drawTextureHeigth );
-			zBuffer[temp] = temp2.pos[2];
+			Vector4D color = fragmentShader(temp2, cameraPosition, texture);
+			zBuffer[temp] = zIndex;
 			//std::cout << temp2.pos[2] << std::endl;
 			putPixel(temp, color);
 		}
@@ -515,6 +352,20 @@ Vector4D Renderer::getBary(int x, int y, Vertex v1, Vertex v2, Vertex v3)
 	triangles[1] = areaOfTriangle(temp, v1, v3)/area;
 	triangles[2] = areaOfTriangle(temp, v2, v1)/area;
 	return triangles;
+}
+
+void Renderer::barycentric(Vector4D point, Vector4D vec1, Vector4D vec2, Vector4D vec3, float& p1, float& p2, float& p3)
+{
+	Vector4D temp1 = vec2 - vec1, temp2 = vec3 - vec1, temp3 = point - vec1;
+	float daa = temp1.dotProduct(temp1);
+	float dab = temp1.dotProduct(temp2);
+	float dbb = temp2.dotProduct(temp2);
+	float dca = temp3.dotProduct(temp1);
+	float dcb = temp3.dotProduct(temp2);
+	float denominator = (daa * dbb) - (dab * dab);
+	p2 = (dbb * dca - dab * dcb) / denominator;
+	p3 = (daa * dcb - dab * dca) / denominator;
+	p1 = 1.0f - p2 - p3;
 }
 
 float Renderer::areaOfTriangle(Vertex v1, Vertex v2, Vertex v3)
