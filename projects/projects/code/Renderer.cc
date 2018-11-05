@@ -10,7 +10,7 @@ Renderer::Renderer(const int& xSize, const int& ySize)
 
 
 
-	std::fill_n(zBuffer, frameBufferSize, 20000);
+	std::fill_n(zBuffer, frameBufferSize, -20000);
 }
 
 Renderer::Renderer()
@@ -83,7 +83,7 @@ void Renderer::setBuffers()
 
 void Renderer::clearZbuffer()
 {
-	std::fill_n(zBuffer, frameBufferSize, 20000);
+	std::fill_n(zBuffer, frameBufferSize, -20000);
 	pixel p;
 	std::fill_n(frameBuffer, frameBufferSize, p);
 }
@@ -126,14 +126,14 @@ void Renderer::rastTriangle(Vertex v1, Vertex v2, Vertex v3)
 	coordianteSpace[4] = v3.pos[0];
 	coordianteSpace[5] = v3.pos[1];
 	/// Convert the x and y coordiantes to pixel space
-	v1.pos[0] = std::floor(v1.pos[0] * width +1 / 2 + width / 2);
-	v1.pos[1] = std::floor(-v1.pos[1] * height +1 / 2 + height / 2);
+	v1.pos[0] = std::roundf(v1.pos[0] * width +1 / 2 + width / 2);
+	v1.pos[1] = std::roundf(-v1.pos[1] * height +1 / 2 + height / 2);
 
-	v2.pos[0] = std::floor(v2.pos[0] * width +1 / 2 + width / 2);
-	v2.pos[1] = std::floor(-v2.pos[1] * height +1 / 2 + height / 2);
+	v2.pos[0] = std::roundf(v2.pos[0] * width +1 / 2 + width / 2);
+	v2.pos[1] = std::roundf(-v2.pos[1] * height +1 / 2 + height / 2);
 	
-	v3.pos[0] = std::floor(v3.pos[0] * width+1  / 2 + width / 2);
-	v3.pos[1] = std::floor(-v3.pos[1] * height+1  / 2 + height / 2);
+	v3.pos[0] = std::roundf(v3.pos[0] * width+1  / 2 + width / 2);
+	v3.pos[1] = std::roundf(-v3.pos[1] * height+1  / 2 + height / 2);
 	/// Draw all the lines between the verticeis
 	Line edge1 = createLine2(v1, v3);
 	Line edge2 = createLine2(v1, v2);
@@ -293,8 +293,12 @@ void Renderer::linescan(int x1, int x2, int y, const Vertex &v1, const Vertex &v
 	int temp = y * width + x1 + 1;
 	for (int x = x1; x <= x2; x++)
 	{	
+		if (temp == 58053)
+		{
+			printf("");
+		}
 		float u, v, w;
-		barycentric(Vector4D(x, y, 0, 1), Vector4D(v1.pos[0], v1.pos[1], 0.0f, 1), Vector4D(v2.pos[0], v2.pos[1], 0.0f, 1), Vector4D(v3.pos[0], v3.pos[1], 0.0f,1), u, v, w);
+		barycentric(Vector4D(x, y, 0, 1), Vector4D(v1.pos[0], v1.pos[1], 1.0f, 1), Vector4D(v2.pos[0], v2.pos[1], 1.0f, 1), Vector4D(v3.pos[0], v3.pos[1], 1.0f,1), u, v, w);
 		//float wCorrection = (u,)
 
 		float zIndex = (v1.pos[2] * u) + (v2.pos[2] * v) + (v3.pos[2] * w);
@@ -328,15 +332,12 @@ void Renderer::linescan(int x1, int x2, int y, const Vertex &v1, const Vertex &v
 
 		if (zBuffer[temp] < zIndex)
 		{
-			
-		}
-		else
-		{
 			Vector4D color = fragmentShader(temp2, cameraPosition, texture);
 			zBuffer[temp] = zIndex;
 			//std::cout << temp2.pos[2] << std::endl;
 			putPixel(temp, color);
 		}
+
 		temp += 1;
 	}
 }
@@ -356,6 +357,9 @@ Vector4D Renderer::getBary(int x, int y, Vertex v1, Vertex v2, Vertex v3)
 
 void Renderer::barycentric(Vector4D point, Vector4D vec1, Vector4D vec2, Vector4D vec3, float& p1, float& p2, float& p3)
 {
+	//std::cout << vec1[0] <<" " << vec1[1] << " " <<std::endl;
+	//std::cout << vec2[0] <<" " << vec2[1] << " " <<std::endl;
+	//std::cout << vec3[0] <<" " << vec3[1] << " " <<std::endl;
 	Vector4D temp1 = vec2 - vec1, temp2 = vec3 - vec1, temp3 = point - vec1;
 	float daa = temp1.dotProduct(temp1);
 	float dab = temp1.dotProduct(temp2);

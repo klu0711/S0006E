@@ -22,17 +22,7 @@
 #include <algorithm>
 namespace Example
 {
-	template <typename T>
-	T clamp(const T& n, const T& lower, const T& upper) {
-		return std::max(lower, std::min(n, upper));
-	}
 
-	template <class T> const T& max(const T& a, const T& b) {
-		return (a < b) ? b : a;     // or: return comp(a,b)?b:a; for version (2)
-	}
-	template <class T> const T& min(const T& a, const T& b) {
-		return !(b < a) ? a : b;     // or: return !comp(b,a)?a:b; for version (2)
-	}
 
 class ExampleApp : public Core::App
 {

@@ -71,6 +71,8 @@ void TextureResource::loadFromArray(pixel* buffer, int w, int h)
 
 float* TextureResource::getColor(float x, float y)
 {
+	x = std::abs(x);
+	y = std::abs(y);
 	//std::cout << "Functions recvd " << x << ":" << y << std::endl;
 	if(x > 1)
 	{
@@ -88,8 +90,8 @@ float* TextureResource::getColor(float x, float y)
 	{
 		y = 0;
 	}
-	int xCord = width * x;
-	int yCord = (heigth - 1) * y;
+	int xCord = (width * x);
+	int yCord = ((heigth - 1) * y);
 	/// Calculate the uv coordiante based on the number of components ex (rgb, rgba) and based on thw width and height of the image;
 	int uvCoordinate =(xCord * numComponents) + (yCord * width * numComponents);
 	float rgb[] = 

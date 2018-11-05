@@ -46,8 +46,8 @@ namespace Example
 
 	float radianConversion = 3.14159265 / 180;
 
-	int width = 512;
-	int height = 400;
+	int width = 400;
+	int height = 300;
 	Renderer rend(width, height);
 
 
@@ -190,7 +190,7 @@ namespace Example
 
 			auto vertexShader = [](Vertex vertex, Matrix4 lookat, Matrix4 modelMatrix) -> Vertex 
 			{
-				Vector4D position = lookat * Vector4D(vertex.pos[0], vertex.pos[1], vertex.pos[2], 1.0f);
+				Vector4D position =  lookat * Vector4D(vertex.pos[0], vertex.pos[1], vertex.pos[2], 1.0f);
 				Vector4D normal = (Matrix4::inverse(modelMatrix)) * Vector4D(vertex.normal[0], vertex.normal[1], vertex.normal[2], 1.0f);
 
 				Vertex returnVertex;
@@ -207,20 +207,7 @@ namespace Example
 				returnVertex.normal[2] = normal[2];
 				return returnVertex;
 
-				/*Vertex out;
-				Vector4D position = modelMatrix * Vector4D(vertex.pos[0], vertex.pos[0], vertex.pos[0], 1);
-				Vector4D normal = Matrix4::transpose(Matrix4::inverse(modelMatrix)) * Vector4D(vertex.normal[0], vertex.normal[0], vertex.normal[0], 1);
-				out.pos[0] = position[0];
-				out.pos[1] = position[1];
-				out.pos[1] = position[2];
 
-				out.uv[0] = vertex.uv[0];
-				out.uv[1] = vertex.uv[2];
-
-				out.normal[0] = normal[0];
-				out.normal[1] = normal[1];
-				out.normal[2] = normal[2];
-				return out;*/
 			};
 
 
@@ -240,7 +227,16 @@ namespace Example
 
 
 				Vector4D posToLightDirVec = (lightpos - cameraPosition).normalize();
-				float diffuse = clamp<float>(posToLightDirVec.dotProduct(normal), 0, 1);
+				float diffuse = posToLightDirVec.dotProduct(normal);
+
+				if (diffuse < 0)
+				{
+					diffuse = 0;
+				}
+				else if (diffuse > 1)
+				{
+					diffuse = 1;
+				}
 				Vector4D finalDiffuse = color * diffuse;
 
 				Vector4D lightToPosVec = (lightpos - position).normalize();
@@ -255,14 +251,30 @@ namespace Example
 				else
 				{
 					Vector4D halfWay = (lightToPosVec + posToViewVec).normalize();
-					float specularConstant = clamp<float>(std::pow(std::max<float>(normal.dotProduct(halfWay), 0.0), 16), 0, 1);
-					specFinal = color * specularConstant;
+					float specularConstant = normal.dotProduct(halfWay);
+
+					//"std::max"
+
+					if (specularConstant > 0.0)
+					{
+					    specularConstant = 0;
+					}
+					specularConstant = std::pow(specularConstant, 8);
+					if (specularConstant < 0)
+					{
+						specularConstant = 0;
+					}
+					else if (specularConstant > 1)
+					{
+						specularConstant = 1;
+					}
+					specFinal = color * specularConstant * 0.25f;
 					
 				}
 				//std::cout << "function is called with " << vertex.uv[0] << ":" << vertex.uv[1] << std::endl;
-				//float* texture = tex.getColor(vertex.uv[0], vertex.uv[1]);
-				//Vector4D texColor(texture[0], texture[1], texture[2], 1);
-				//return texColor.glProduct(ambient + finalDiffuse);
+				float* texture = tex.getColor(vertex.uv[0], vertex.uv[1]);
+				Vector4D texColor(texture[0], texture[1], texture[2], 1);
+				return texColor.glProduct(ambient + finalDiffuse + specFinal);
 				return Vector4D(255, 0, 0, 1);
 			};
 			rend.setVertexShader(vertexShader);
