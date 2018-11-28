@@ -220,10 +220,6 @@ namespace Example
 				Vector4D normal(vertex.normal[0], vertex.normal[1], vertex.normal[2], 0);
 				Vector4D position(vertex.pos[0], vertex.pos[1], vertex.pos[2], 1.0f);
 
-				//int x, y;
-				//x = vertex.uv[0] * width;
-				//y = vertex.uv[1] * height;
-				//int pixel = y * width + x;
 
 
 				Vector4D posToLightDirVec = (lightpos - cameraPosition).normalize();
@@ -253,7 +249,6 @@ namespace Example
 					Vector4D halfWay = (lightToPosVec + posToViewVec).normalize();
 					float specularConstant = normal.dotProduct(halfWay);
 
-					//"std::max"
 
 					if (specularConstant > 0.0)
 					{
@@ -302,14 +297,9 @@ namespace Example
 			                       0, 0, 1, 0,
 			                       0, 0, 0, 1);
 			 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-			//Matrix4 roty = Matrix4::rotY(rot);
-			//Matrix4 rotx = Matrix4::rotX(rot);
 
-			//node.setTransform(Matrix4::transpose(perspectiveProjection)* lookAt /*roty*/);
-			//node2.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt * move * roty);
 			rend.clearZbuffer();
 			rend.setTransform(Matrix4::transpose(perspectiveProjection)* lookAt);
-			//rend.setTransform(roty*rotx);
 			rend.setLookat(Matrix4());
 			rend.setCameraPsition(cameraPos);
 			for (int i = 0; i < rend.indices.size(); i += 3)
@@ -321,12 +311,9 @@ namespace Example
 
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);
-			//rot += 0.1;
-			//shader->modifyUniformMatrix("objPosition", Matrix4().getPointer());
-			//shader->modifyUniformVector("cameraPosition", cameraPos);
+
 			node.draw();
-			//shader->modifyUniformMatrix("objPosition", move.getPointer());
-			//node2.draw();
+
 
 			this->window->SwapBuffers();
 		}

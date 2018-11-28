@@ -1,6 +1,6 @@
 #include "Renderer.h"
 #include <iostream>
-
+/// Constructor that sets the size of the framebuffer and z-buffer
 Renderer::Renderer(const int& xSize, const int& ySize)
 {
 	frameBufferSize = xSize * ySize;
@@ -19,58 +19,51 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
-	//delete[] frameBuffer;
-	//delete[] zBuffer;
+
 }
 
-
+/// Getter for the frambuffer
 pixel* Renderer::getFrameBuffer()
 {
 	return frameBuffer;
 }
-
+/// Getter for the zie of the framebuffer
 int Renderer::getFrameBufferSize()
 {
 	return frameBufferSize;
 }
-
+/// Set the vertex shader that is to be used for rendering using a lambda function
 void Renderer::setVertexShader(std::function<Vertex(Vertex vertex, Matrix4 lookat, Matrix4 modelMatrix)> shader)
 {
 	this->vertexShader = shader;
 }
-
+/// Uses a lambda function to set the fragment shader
 void Renderer::setFragmentShader(std::function<Vector4D(Vertex vertex, Vector4D cameraPosition, TextureResource tex)> shader)
 {
 	this->fragmentShader = shader;
 }
-
+/// Set the objects transform
 void Renderer::setTransform( Matrix4 mat)
 {
 	transform = mat;
 }
-
+/// Set the objects lookat matrix
 void Renderer::setLookat(Matrix4 mat)
 {
 	lookAt = mat;
 }
-
+/// Set the position of the camera in the scene
 void Renderer::setCameraPsition(const Vector4D& vec)
 {
 	cameraPosition = vec;
 }
 
-void Renderer::setTexture(pixel* p, int width, int height)
-{
-	drawTexture = p;
-	drawTextureHeigth = height;
-	drawTextureWidth = width;
-}
-
+/// Load the texture that is to be used on the object
 void Renderer::loadTexture(char* filename)
 {
 	texture.loadFromFile(filename);
 }
-
+/// Load the object to be drawn onto the screen
 void Renderer::setBuffers()
 {
 	MeshResource mesh;
@@ -80,14 +73,14 @@ void Renderer::setBuffers()
 	indices = mesh.getIndicies();
 
 }
-
+/// Clear the depth buffer, this function is called between every frame
 void Renderer::clearZbuffer()
 {
 	std::fill_n(zBuffer, frameBufferSize, -20000);
 	pixel p;
 	std::fill_n(frameBuffer, frameBufferSize, p);
 }
-
+/// complete function to draw a triangle from three verticies
 void Renderer::rastTriangle(Vertex v1, Vertex v2, Vertex v3)
 {
 	w1 = 1 / v1.pos[3];
@@ -250,7 +243,7 @@ Line Renderer::createLine2(Vertex v1, Vertex v2)
 
 	return line;
 }
-
+/// Puts a picel into the frambuffer at the specified point with the specified color
 void Renderer::putPixel(int index, Vector4D color)
 {
 	/// Put a pixel into the framebuffer
@@ -267,6 +260,7 @@ void Renderer::putPixel(int index, Vector4D color)
 /// @param v2
 /// @param v3
 /// @param coordinatespace the values of all three verticeis before they were converted to pixel space 
+/// The function takes two pixels and draws a line horizontally between them
 void Renderer::linescan(int x1, int x2, int y, const Vertex &v1, const Vertex &v2, const Vertex &v3, float* coordinateSpace)
 {
 	if (x1 > x2)
@@ -318,18 +312,9 @@ void Renderer::linescan(int x1, int x2, int y, const Vertex &v1, const Vertex &v
 		temp2.normal[2] = ((u * v1.normal[2]) + (v * v2.normal[2]) + (w * v3.normal[2]));
 
 
-		/*temp2.pos[0] = (b[0] * coordinateSpace[0] + b[1] * coordinateSpace[2] + b[2] * coordinateSpace[4]);
-		temp2.pos[1] = (b[0] * coordinateSpace[1] + b[1] * coordinateSpace[3] + b[2] * coordinateSpace[5]);
-		//temp2.pos[2] = (b[0] * v1.pos[2] + b[1] * v2.pos[2] + b[2] * v3.pos[2]);
-		// Interpolated texture coordinates
-		temp2.uv[0] = (b[0] * v1.uv[0] + b[1] * v2.uv[0] + b[2] * v3.uv[0]);
-		temp2.uv[1] = (b[0] * v1.uv[1] + b[1] * v2.uv[1] + b[2] * v3.uv[1]);
-		// Interpolated normals
-		temp2.normal[0] = (b[0] * v1.normal[0] + b[1] * v2.normal[0] + b[2] * v3.normal[0]);
-		temp2.normal[1] = (b[0] * v1.normal[1] + b[1] * v2.normal[1] + b[2] * v3.normal[1]);
-		temp2.normal[2] = (b[0] * v1.normal[2] + b[1] * v2.normal[2] + b[2] * v3.normal[2]);*/
 		
-
+		
+		/// Check if a pixel is infront of the previous pixel that was placed on the same position
 		if (zBuffer[temp] < zIndex)
 		{
 			Vector4D color = fragmentShader(temp2, cameraPosition, texture);
@@ -341,7 +326,7 @@ void Renderer::linescan(int x1, int x2, int y, const Vertex &v1, const Vertex &v
 		temp += 1;
 	}
 }
-
+/// Another way to do barycentric coordiantes the one below this one is the better version
 Vector4D Renderer::getBary(int x, int y, Vertex v1, Vertex v2, Vertex v3)
 {
 	float area = areaOfTriangle(v1, v2, v3);
@@ -354,7 +339,7 @@ Vector4D Renderer::getBary(int x, int y, Vertex v1, Vertex v2, Vertex v3)
 	triangles[2] = areaOfTriangle(temp, v2, v1)/area;
 	return triangles;
 }
-
+/// Returns the barycentric coordiante of a triangle with the provided points
 void Renderer::barycentric(Vector4D point, Vector4D vec1, Vector4D vec2, Vector4D vec3, float& p1, float& p2, float& p3)
 {
 	//std::cout << vec1[0] <<" " << vec1[1] << " " <<std::endl;
@@ -371,7 +356,7 @@ void Renderer::barycentric(Vector4D point, Vector4D vec1, Vector4D vec2, Vector4
 	p3 = (daa * dcb - dab * dca) / denominator;
 	p1 = 1.0f - p2 - p3;
 }
-
+/// Calculates the total area of a triangle with three points provided
 float Renderer::areaOfTriangle(Vertex v1, Vertex v2, Vertex v3)
 {
 	float area = std::abs(((v1.pos[0] * (v2.pos[1] - v3.pos[1])) + v2.pos[0] * (v3.pos[1] - v1.pos[1]) + v3.pos[0] * (v1.pos[1] - v2.pos[1])) / 2);
