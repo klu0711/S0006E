@@ -15,7 +15,8 @@
 #include "Shader.h"
 #include "TextureResource.h"
 #include "GraphicsNode.h"
-#include <conio.h>
+#include <curses.h>
+#include <ncurses.h>
 #include <thread>
 namespace Example
 {

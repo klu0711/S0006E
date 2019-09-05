@@ -25,7 +25,7 @@ namespace {
 		static Matrix4 transpose(const Matrix4& mat);
 		static Matrix4 inverse(const Matrix4& mat);
 		float* getPointer();
-		static Matrix4 getPositionMatrix(Vector4D& inVector);
+		static Matrix4 getPositionMatrix(Vector4D inVector);
 		static Matrix4 lookAt(Vector4D &R, Vector4D &U, Vector4D &D, Vector4D &pos);
 		static Matrix4 perspectiveProjection(float n, float f, float r, float l,float t, float b);
 	};
@@ -489,7 +489,7 @@ namespace {
 	}
 	/// Print function used for testing the output from a matrix
 
-	Matrix4 Matrix4::getPositionMatrix(Vector4D& inVector) {
+	Matrix4 Matrix4::getPositionMatrix(Vector4D inVector) {
 		float tempArr[16];
 		tempArr[0] = 1;
 		tempArr[1] = 0;

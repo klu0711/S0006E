@@ -14,17 +14,17 @@ namespace {
 		float operator[](const int index) const;
 		float & operator[](const int index);
 		Matrix4 operator*(const Matrix4& rhs) const;
-		Vector4D operator*(const Vector4D& rhs) const;
+        vec4::Vector4D operator*(const vec4::Vector4D& rhs) const;
 		Matrix4 operator+(const Matrix4& rhs) const;
 		Matrix4 operator*(const float scalar) const;
 		static Matrix4 rotX(float angle);
 		static Matrix4 rotY(float angle);
 		static Matrix4 rotZ(float angle);
-		static Matrix4 rotVec(Vector4D& vec, const float angle);
+		static Matrix4 rotVec(vec4::Vector4D& vec, const float angle);
 		static Matrix4 transpose(const Matrix4& mat);
 		static Matrix4 inverse(const Matrix4& mat);
 		float* getPointer();
-		static Matrix4 getPositionMatrix(Vector4D& inVector);
+		static Matrix4 getPositionMatrix( vec4::Vector4D inVector);
 	};
 
 	/// Getter
@@ -176,9 +176,9 @@ namespace {
 		return Matrix4(returnMatrix);
 	}
 	/// Rotate around a vector a certain, given angle
-	Matrix4 Matrix4::rotVec(Vector4D& vec, float angle)
+	Matrix4 Matrix4::rotVec(vec4::Vector4D& vec, float angle)
 	{
-		Vector4D normVec = vec.normalize();
+        vec4::Vector4D normVec = vec.normalize();
 
 		float C[16] = { 0,-normVec[2],normVec[1],0,
 						normVec[2],0,-normVec[0],0,
@@ -222,9 +222,9 @@ namespace {
 
 	}
 	/// Product of a matrix and a vector	
-	Vector4D Matrix4::operator*(const Vector4D& rhs) const
+    vec4::Vector4D Matrix4::operator*(const vec4::Vector4D& rhs) const
 	{
-		return(Vector4D(
+		return(vec4::Vector4D(
 			rhs[0] * matrix[0] + rhs[1] * matrix[1] + rhs[2] * matrix[2] + rhs[3] * matrix[3],
 			rhs[0] * matrix[4] + rhs[1] * matrix[5] + rhs[2] * matrix[6] + rhs[3] * matrix[7],
 			rhs[0] * matrix[8] + rhs[1] * matrix[9] + rhs[2] * matrix[10] + rhs[3] * matrix[11],
@@ -458,7 +458,7 @@ namespace {
 	}
 	/// Print function used for testing the output from a matrix
 
-	Matrix4 Matrix4::getPositionMatrix(Vector4D& inVector) {
+	Matrix4 Matrix4::getPositionMatrix(vec4::Vector4D inVector) {
 		float tempArr[16];
 		tempArr[0] = 1;
 		tempArr[1] = 0;

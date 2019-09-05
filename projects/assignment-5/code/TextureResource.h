@@ -13,6 +13,4 @@ public:
 	void loadFromFile(const char* filename);
 	void bind(unsigned int unit);
 
-
-
 };

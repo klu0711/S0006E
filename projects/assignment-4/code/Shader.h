@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <string.h>
 #include "core/app.h"
 #include <string>
 #include <fstream>

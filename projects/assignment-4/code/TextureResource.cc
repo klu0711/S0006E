@@ -20,7 +20,7 @@ void TextureResource::loadFromFile(const char * filename)
 
 	if (imageData == NULL)
 	{
-		std::cerr << "Texture loading failed at: " << filename << std::endl;
+		std::cerr << "Texture loading failed at: " << filename << " Width: " << width << " Heigth: " << heigth <<  std::endl;
 	}
 	 
 	glGenTextures(1, &texture);

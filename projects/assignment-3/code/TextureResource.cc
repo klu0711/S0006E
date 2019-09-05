@@ -17,10 +17,10 @@ void TextureResource::loadFromFile(const char * filename)
 {
 	int width, heigth, numComponents;
 	unsigned char*  imageData = stbi_load(filename, &width, &heigth, &numComponents, 4);
-
+    std::cout << filename << std::endl;
 	if (imageData == NULL)
 	{
-		std::cerr << "Texture loading failed at: " << filename << std::endl;
+       // std::cerr << "Texture loading failed at: " << filename << " Width: " << width << " Heigth: " << heigth <<  std::endl;
 	}
 	 
 	glGenTextures(1, &texture);
