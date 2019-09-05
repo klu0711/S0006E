@@ -2,6 +2,7 @@
 #include <iostream>
 #include "core/app.h"
 #include <string>
+#include <string.h>
 #include <fstream>
 #include <sstream>
 #include "Matrix4.h"

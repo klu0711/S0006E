@@ -16,7 +16,6 @@
 #include "TextureResource.h"
 #include "GraphicsNode.h"
 #include "LightingNode.h"
-#include <conio.h>
 #include <thread>
 namespace Example
 {

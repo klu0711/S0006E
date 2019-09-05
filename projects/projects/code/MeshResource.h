@@ -3,6 +3,7 @@
 #include "config.h"
 #include <vector>
 #include "Vector4D.h"
+#include <string.h>
 struct Vertex
 {
 	GLfloat pos[3];

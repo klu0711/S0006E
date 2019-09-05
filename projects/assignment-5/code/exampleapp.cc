@@ -6,7 +6,6 @@
 #include "exampleapp.h"
 #include <cstring>
 #include "MeshResource.h"
-#include <Windows.h>
 #include <chrono>
 #define KEY_UP 72
 #define KEY_DOWN 80

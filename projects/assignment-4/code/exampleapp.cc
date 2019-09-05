@@ -100,7 +100,7 @@ ExampleApp::~ExampleApp()
 */
 
 void ExampleApp::keyListener() {
-	char key = getch();
+	/*char key = getch();
 	int value = key;
 
 	while (key != KEY_X) {
@@ -122,7 +122,7 @@ void ExampleApp::keyListener() {
 		}
 		key = getch();
 		value = key;
-	}
+	}*/
 }
 bool ExampleApp::Open()
 {

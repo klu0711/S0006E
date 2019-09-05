@@ -32,7 +32,9 @@ bool MeshResource::loadOBJ(char* filename)
 	char* path = filename;
 	FILE * file = fopen(path, "r");
 	if (file == NULL) {
-		printf("File failed to load\n");
+        printf("path");
+        printf(path);
+		printf("File failed to load,\n");
 		return false;
 	}
 	while (1) {
@@ -96,14 +98,6 @@ bool MeshResource::loadOBJ(char* filename)
 				normalIndices.push_back(nIndex[1]);
 				normalIndices.push_back(nIndex[2]);
 			}
-
-			/*int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vIndex[0], &uIndex[0], &nIndex[0], &vIndex[1], &uIndex[1], &nIndex[1], &vIndex[2], &uIndex[2], &nIndex[2]);
-			if (matches != 9) {
-				printf("This can only read files with nine face indices");
-				return false;
-			}*/
-
-			
 
 		}
 

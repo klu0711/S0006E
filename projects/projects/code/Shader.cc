@@ -62,7 +62,7 @@ void Shader::loadFragmentShader(const char * filename)
 void Shader::setupVertexShader()
 {
 	vertexShaderHandle = glCreateShader(GL_VERTEX_SHADER);
-	int length = std::strlen(this->vertexShader);
+	int length = strlen(this->vertexShader);
 	glShaderSource(vertexShaderHandle, 1, &this->vertexShader, &length);
 	glCompileShader(vertexShaderHandle);
 
@@ -81,7 +81,7 @@ void Shader::setupVertexShader()
 void Shader::setupFragmentShader()
 {
 	fragmentShaderHandle = glCreateShader(GL_FRAGMENT_SHADER);
-	int length = std::strlen(this->fragmentShader);
+	int length = strlen(this->fragmentShader);
 	glShaderSource(fragmentShaderHandle, 1, &this->fragmentShader, &length);
 	glCompileShader(fragmentShaderHandle);
 

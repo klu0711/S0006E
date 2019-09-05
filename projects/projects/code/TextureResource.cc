@@ -94,12 +94,12 @@ float* TextureResource::getColor(float x, float y)
 	int yCord = ((heigth - 1) * y);
 	/// Calculate the uv coordiante based on the number of components ex (rgb, rgba) and based on thw width and height of the image;
 	int uvCoordinate =(xCord * numComponents) + (yCord * width * numComponents);
-	float rgb[] = 
-	{
-		imageData[uvCoordinate++],
-		imageData[uvCoordinate++],
-		imageData[uvCoordinate++]
-	};
+	float* rgb = new float[3];
+
+     rgb[0] = imageData[uvCoordinate++];
+     rgb[1] = imageData[uvCoordinate++];
+     rgb[2] = imageData[uvCoordinate++];
+
 	return rgb;
 }
 

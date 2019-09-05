@@ -26,7 +26,7 @@
 		static Matrix4 inverse(const Matrix4& mat);
 		float* getPointer();
 		static Matrix4 getPositionMatrix(Vector4D& inVector);
-		static Matrix4 lookAt(Vector4D &position, Vector4D &target, Vector4D &up);
+		static Matrix4 lookAt(Vector4D position, Vector4D target, Vector4D up);
 		static Matrix4 perspectiveProjection(float n, float f, float r, float l,float t, float b);
 		void print();
 	};
@@ -538,7 +538,7 @@
 		return Matrix4(tempArr);
 	}
 	/// Function for creating a "look at" matrix the glm librari already has one but by writing my own the project has less dependencies
-	inline Matrix4 Matrix4::lookAt(Vector4D &position, Vector4D &target, Vector4D &up)
+	inline Matrix4 Matrix4::lookAt(Vector4D position, Vector4D target, Vector4D up)
 	{
 		Vector4D f = (target - position);
 		Vector4D u = up.normalize();
