@@ -269,7 +269,7 @@ namespace Example
 				float* texture = tex.getColor(vertex.uv[0], vertex.uv[1]);
 				Vector4D texColor(texture[0], texture[1], texture[2], 1);
                 delete texture;
-				return texColor.glProduct(ambient + finalDiffuse + specFinal);
+				return texColor.cwProduct(ambient + finalDiffuse + specFinal);
 				return Vector4D(255, 0, 0, 1);
 			};
 			rend.setVertexShader(vertexShader);

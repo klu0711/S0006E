@@ -4,6 +4,20 @@
 #include "stb_image.h"
 #include "Vector4D.h"
 
+struct pixel {
+    unsigned char red = 0;
+    unsigned char green = 0;
+    unsigned char blue = 0;
+
+    pixel(unsigned char r, unsigned char g, unsigned char b) {
+        red = r;
+        green = g;
+        blue = b;
+    }
+    pixel() {
+
+    }
+};
 class TextureResource {
 private:
 	uint32 texture;

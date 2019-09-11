@@ -1,14 +1,8 @@
 #pragma once
 #include <cmath>
-	struct pixel
-	{
-		unsigned char red = 0;
-		unsigned char green = 0;
-		unsigned char blue = 0;
-	};
+
 	class Vector4D
 	{
-		
 	private:
 		float vector[4];
 
@@ -19,20 +13,19 @@
 		Vector4D operator+(const Vector4D& rhs) const;
 		Vector4D operator-(const Vector4D& rhs) const;
 		Vector4D operator*(const float& rhs) const;
-		Vector4D glProduct(const Vector4D& rhs) const;
 		float operator[](const int index) const;
 		float & operator[](const int index);
 		float length() const;
 		Vector4D normalize() const;
 		float dotProduct(const Vector4D& vec) const;
 		Vector4D crossProduct(const Vector4D& vec) const;
+		Vector4D cwProduct(const Vector4D& vec) const;
 		float getVectorValue(int index);
 		float* getPointer();
 	};
 
 
-
-	/// Constructor when no arguments are provided (Defaut constructor
+	/// Constructor when no arguments are provided (Default constructor
 	inline Vector4D::Vector4D()
 	{
 		vector[0] = 0;
@@ -60,13 +53,7 @@
 	{
 		return Vector4D(vector[0] * rhs, vector[1] * rhs, vector[2] * rhs,1);
 	}
-
-	inline Vector4D Vector4D::glProduct(const Vector4D& rhs) const
-	{
-		return Vector4D(vector[0] * rhs[0], vector[1] * rhs[1], vector[2] * rhs[2], 1);
-	}
-
-/// Getter
+	/// Getter
 	inline float Vector4D::operator[](const int index) const
 	{
 		return vector[index];
@@ -97,6 +84,10 @@
 	{
 		return(Vector4D((vector[1]*vec[2])-(vector[2]*vec[1]), (vector[2]*vec[0])-(vector[0]*vec[2]),
 						(vector[0]*vec[1])-(vector[1]*vec[0]),1));
+	}
+	inline Vector4D Vector4D::cwProduct(const Vector4D &vec) const
+	{
+	    return Vector4D(vector[0] * vec[0], vector[1] * vec[1], vector[2] * vec[2], 1);
 	}
 	inline float Vector4D::getVectorValue(int index)
 	{
