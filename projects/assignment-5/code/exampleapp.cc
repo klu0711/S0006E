@@ -158,7 +158,7 @@ namespace Example
 
 
 			glEnable(GL_DEPTH_TEST);
-			mesh->setupMesh("tractor.obj");
+			mesh->setupMesh("frog.obj");
 			node.setShaderClass(shader);
 			node.setMeshCLass(mesh);
 			node.setTextureclass(tex);
@@ -181,12 +181,12 @@ namespace Example
 	{
 		float rotation = 0;
 		float movementn = 0;
-		auto clock = std::chrono::high_resolution_clock();
-		auto start = clock.now();
-		int frames = 0;
+		//auto clock = std::chrono::high_resolution_clock();
+		//auto start = clock.now();
+		//int frames = 0;
 		while (this->window->IsOpen())
 		{
-			frames++;
+			/*frames++;
 			if (std::chrono::duration_cast<std::chrono::seconds>(clock.now() - start).count() > 1)
 			{
 				auto end = clock.now();
@@ -196,7 +196,7 @@ namespace Example
 
 				start = clock.now();
 				frames = 0;
-			}
+			}*/
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
 			Matrix4 move = Matrix4(1, 0, 0, 1000,
