@@ -22,6 +22,11 @@ TARGET_LINK_LIBRARIES(nanovg PUBLIC exts)
 TARGET_INCLUDE_DIRECTORIES(nanovg PUBLIC nanovg/src)
 SET_TARGET_PROPERTIES(nanovg PROPERTIES FOLDER "exts/nanovg")
 
+ADD_LIBRARY(tinyxml STATIC tinyxml/tinyxml.cc tinyxml/tinyxml.h tinyxml/tinystr.h tinyxml/tinystr.cc tinyxml/tinyxmlparser.cc tinyxml/tinyxmlerror.cc)
+TARGET_LINK_LIBRARIES(tinyxml PUBLIC exts)
+TARGET_INCLUDE_DIRECTORIES(tinyxml PUBLIC tinyxml)
+SET_TARGET_PROPERTIES(tinyxml PROPERTIES FOLDER "exts/tinyxml")
+
 ADD_LIBRARY(imgui STATIC imgui/imgui.cpp imgui/imgui_demo.cpp imgui/imgui_draw.cpp 
 			imgui/imgui.h imgui/imgui_internal.h 
 			imgui/stb_rect_pack.h imgui/stb_textedit.h imgui/stb_truetype.h 
@@ -32,4 +37,4 @@ TARGET_LINK_LIBRARIES(imgui PUBLIC exts)
 TARGET_INCLUDE_DIRECTORIES(imgui PUBLIC imgui imgui/examples/opengl3_example)
 SET_TARGET_PROPERTIES(imgui PROPERTIES FOLDER "exts/imgui")
 
-TARGET_LINK_LIBRARIES(exts INTERFACE imgui nanovg)
+TARGET_LINK_LIBRARIES(exts INTERFACE imgui nanovg tinyxml)
