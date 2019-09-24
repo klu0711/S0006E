@@ -8,6 +8,7 @@
 
 	public:
 		Vector4D(float x, float y, float z, float w);
+		Vector4D(float* xyzw);
 		Vector4D();
 		~Vector4D();
 		Vector4D operator+(const Vector4D& rhs) const;
@@ -31,6 +32,13 @@
 		vector[1] = 0;
 		vector[2] = 0;
 		vector[3] = 1;
+	}
+	inline Vector4D::Vector4D(float *xyzw)
+	{
+        vector[0] = xyzw[0];
+        vector[1] = xyzw[1];
+        vector[2] = xyzw[2];
+        vector[3] = xyzw[3];
 	}
 	/// Deconstructor
 	inline Vector4D::~Vector4D()

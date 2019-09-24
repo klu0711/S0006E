@@ -1,9 +1,16 @@
 #ifndef GSCEPT_LAB_ENV_SKELETON_H
 #define GSCEPT_LAB_ENV_SKELETON_H
-#include "joint.h"
 #include <vector>
 #include "tinyxml.h"
 #include <iostream>
+#include "Matrix4.h"
+struct joint
+{
+    int parent;
+    int index;
+    std::vector<int> children;
+    Matrix4 transform;
+};
 
 class skeleton {
 

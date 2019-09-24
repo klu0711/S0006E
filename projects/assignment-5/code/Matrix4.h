@@ -22,6 +22,8 @@
 		static Matrix4 rotY(float angle);
 		static Matrix4 rotZ(float angle);
 		static Matrix4 rotVec(Vector4D& vec, const float angle);
+		static Matrix4 getQmat(Vector4D& vec);
+		static Matrix4 scaleMat(Vector4D& vec);
 		static Matrix4 transpose(const Matrix4& mat);
 		static Matrix4 inverse(const Matrix4& mat);
 		float* getPointer();
@@ -223,6 +225,34 @@
 
 		return rotMat;
 
+	}
+	inline Matrix4 Matrix4::getQmat(Vector4D &vec)
+	{
+	    float xx = vec[0] * vec[0];
+	    float xy = vec[0] * vec[1];
+	    float xz = vec[0] * vec[2];
+	    float xw = vec[0] * vec[3];
+
+        float yy = vec[1] * vec[1];
+        float yz = vec[1] * vec[2];
+        float yw = vec[1] * vec[3];
+
+        float zz = vec[2] * vec[2];
+        float zw = vec[0] * vec[0];
+
+        return Matrix4(1-2*(yy+zz), 2*(xy-zw), 2*(xz+yw), 0,
+                        2*(xy+zw), 1-2*(xx+zz), 2*(yz-xw), 0,
+                        2*(xz-yw), 2*(yz+xw), 1-2*(xx+yy), 0,
+                        0,0,0,1);
+
+    }
+	inline Matrix4 Matrix4::scaleMat(Vector4D &vec)
+	{
+        float C[16] = { vec[0], 0, 0, 0,
+                        0, vec[1] , 0, 0,
+                        0, 0, vec[2], 0,
+                        0, 0, 0, vec[3] };
+        return C;
 	}
 	/// Product of two matrices
 	inline Matrix4 Matrix4::operator*(const Matrix4& rhs) const

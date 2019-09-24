@@ -17,6 +17,7 @@
 #include "GraphicsNode.h"
 #include "LightingNode.h"
 #include <thread>
+#include "skeleton.h"
 namespace Example
 {
 class ExampleApp : public Core::App
