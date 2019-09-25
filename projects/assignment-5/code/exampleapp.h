@@ -76,6 +76,7 @@ private:
 	GraphicsNode node8;
 	GraphicsNode node9;
 	GraphicsNode node10;
+	skeleton s;
 
 	std::shared_ptr<Shader> shader = std::make_shared<Shader>();
 	std::shared_ptr<Shader> shader1 = std::make_shared<Shader>();

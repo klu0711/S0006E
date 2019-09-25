@@ -4,12 +4,14 @@
 #include "tinyxml.h"
 #include <iostream>
 #include "Matrix4.h"
+#include "GraphicsNode.h"
 struct joint
 {
-    int parent;
+    int parent = -1;
     int index;
     std::vector<int> children;
     Matrix4 transform;
+    GraphicsNode node;
 };
 
 class skeleton {

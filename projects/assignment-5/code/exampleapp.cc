@@ -26,7 +26,7 @@ namespace Example
 
 	Matrix4 perspectiveProjection;
 
-	Vector4D cameraPos = Vector4D(0.0f, 3.0f, 3.0f, 1);
+	Vector4D cameraPos = Vector4D(0.0f, 3.0f, 10.0f, 1);
 	Vector4D cameraFront = Vector4D(0.0f, 0.0f, -1.0f, 1);
 	Vector4D cameraUp = Vector4D(0.0f, 1.0f, 0.0f, 1);
 
@@ -134,7 +134,6 @@ namespace Example
 				cameraFront = front.normalize();
 			}
 		});
-        skeleton s;
         s.loadSkeleton("Unit_Footman.constants");
 
 		if (this->window->Open())
@@ -159,8 +158,8 @@ namespace Example
 
 
 			glEnable(GL_DEPTH_TEST);
-			mesh->setupMesh("tractor.obj");
-			node.setShaderClass(shader);
+			mesh->setupMesh("sphere.obj");
+			/*node.setShaderClass(shader);
 			node.setMeshCLass(mesh);
 			node.setTextureclass(tex);
 			node.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
@@ -168,7 +167,16 @@ namespace Example
 			node2.setShaderClass(shader);
 			node2.setMeshCLass(mesh);
 			node2.setTextureclass(tex);
-			node2.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
+			node2.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);*/
+
+            for (int i = 0; i < s.joints->size(); ++i) {
+                GraphicsNode* n = &s.joints->at(i).node;
+                n->setShaderClass(shader);
+                n->setMeshCLass(mesh);
+                n->setTextureclass(tex);
+                n->load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
+
+            }
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
 
@@ -192,16 +200,56 @@ namespace Example
 			                       0, 1, 0, 0,
 			                       0, 0, 1, 0,
 			                       0, 0, 0, 1);
-			Matrix4 lookAt = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+			Matrix4 view = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
-			node.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt);
-			node2.setTransform(Matrix4::transpose(perspectiveProjection) * lookAt * move);
+			//node.setTransform(Matrix4::transpose(perspectiveProjection) * view);
+			//node2.setTransform(Matrix4::transpose(perspectiveProjection) * view * move);
 
-			shader->modifyUniformMatrix("objPosition", Matrix4().getPointer());
-			shader->modifyUniformVector("cameraPosition", cameraPos);
-			node.draw();
-			shader->modifyUniformMatrix("objPosition", move.getPointer());
-			node2.draw();
+			//shader->modifyUniformMatrix("objPosition", Matrix4().getPointer());
+			//shader->modifyUniformVector("cameraPosition", cameraPos);
+			//node.draw();
+			//shader->modifyUniformMatrix("objPosition", move.getPointer());
+			//node2.draw();
+
+			//Vector4D line1(0,0,0,1);
+			//Vector4D line2(1,1,1,1);
+            for (int i = 0; i < s.joints->size(); ++i)
+            {
+                GraphicsNode* n = &s.joints->at(i).node;
+                //n->setTransform(s.joints->at(i).transform * view * Matrix4::transpose(perspectiveProjection) );
+                n->setTransform(Matrix4());
+                shader->modifyUniformVector("cameraPosition", cameraPos);
+                n->draw();
+            }
+
+			/*Matrix4 worldToScreenSpaceMat = view * Matrix4::transpose(perspectiveProjection);
+
+
+			glUseProgram(0);
+			glMatrixMode(GL_MODELVIEW);
+			auto viewMat = Matrix4::transpose(view);
+			glLoadMatrixf((GLfloat*)&viewMat);
+            glMatrixMode(GL_PROJECTION);
+            auto dood = (perspectiveProjection);
+            glLoadMatrixf((GLfloat*)&dood);
+			glBegin(GL_LINE_STRIP);
+			glColor3f(255, 0, 0);
+            for (int i = 0; i < s.joints->size(); ++i) {
+                joint Joint = s.joints->at(i);
+                if(Joint.parent != -1)
+                {
+                    Vector4D a = Joint.transform.getPositionVec();
+                    Vector4D b = s.joints->at(Joint.parent).transform.getPositionVec();
+                    glVertex3f(a[0], a[1], a[2]);
+                    glVertex3f(b[0], b[1], b[2]);
+                }
+
+            }
+
+			//glVertex3f(0,0,0);
+			//glVertex3f(1,1,1);
+			glEnd();*/
+
 
 			this->window->SwapBuffers();
 		}

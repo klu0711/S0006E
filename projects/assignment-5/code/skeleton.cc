@@ -11,7 +11,7 @@ void skeleton::loadSkeleton(char *fileName)
         std::cout << "XML load failed" << std::endl;
     }else
     {
-        TiXmlElement *root, *model, *characterNode, *characterNodes, *skinList, *Pjoint;
+        TiXmlElement *Pjoint;
 
         Pjoint = doc.FirstChildElement("Nebula3")->FirstChildElement("Model")->FirstChildElement("CharacterNodes")->FirstChildElement("CharacterNode")->FirstChildElement("Joint");
         while(Pjoint)
@@ -34,9 +34,19 @@ void skeleton::loadSkeleton(char *fileName)
             Matrix4 r = Matrix4::getQmat(position);
             sscanf(Pjoint->Attribute("scale"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
             Vector4D scale(values);
-            Matrix4 s = Matrix4::scaleMat(position);
+            //Matrix4 s = Matrix4::scaleMat(position);
+            Matrix4 s = Matrix4(1,0,0,0,
+                                0,1,0,0,
+                                0,0,1,0,
+                                0,0,0,1);
 
             j.transform = p*r*s;
+            //std::cout << "test" << std::endl;
+            if(j.parent != -1)
+            {
+                Matrix4 t = joints->at(j.parent).transform;
+                j.transform = t * j.transform;
+            }
 
             joints->push_back(j);
             Pjoint = Pjoint->NextSiblingElement("Joint");

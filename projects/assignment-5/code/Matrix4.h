@@ -17,6 +17,7 @@
 		Vector4D operator*(const Vector4D& rhs) const;
 		Matrix4 operator+(const Matrix4& rhs) const;
 		Matrix4 operator*(const float scalar) const;
+		Vector4D getPositionVec();
 		void operator=(const Matrix4& rhs);
 		static Matrix4 rotX(float angle);
 		static Matrix4 rotY(float angle);
@@ -251,7 +252,7 @@
         float C[16] = { vec[0], 0, 0, 0,
                         0, vec[1] , 0, 0,
                         0, 0, vec[2], 0,
-                        0, 0, 0, vec[3] };
+                        0, 0, 0, 1 };
         return C;
 	}
 	/// Product of two matrices
@@ -340,6 +341,10 @@
 
 		return Matrix4(returnVector);
 
+	}
+	inline Vector4D Matrix4::getPositionVec()
+	{
+	    return Vector4D(matrix[3], matrix[7], matrix[11], matrix[15]);
 	}
 
 	inline void Matrix4::operator=(const Matrix4 & rhs)
@@ -567,7 +572,7 @@
 		tempArr[15] = inVector.getVectorValue(3);
 		return Matrix4(tempArr);
 	}
-	/// Function for creating a "look at" matrix the glm librari already has one but by writing my own the project has less dependencies
+	/// Function for creating a "look at" matrix. The glm library already has one but by writing my own the project has less dependencies
 	inline Matrix4 Matrix4::lookAt(Vector4D position, Vector4D target, Vector4D up)
 	{
 		Vector4D f = (target - position);
