@@ -26,7 +26,7 @@ namespace Example
 
 	Matrix4 perspectiveProjection;
 
-	Vector4D cameraPos = Vector4D(0.0f, 3.0f, 10.0f, 1);
+	Vector4D cameraPos = Vector4D(0.0f, 3.0f, 3.0f, 1);
 	Vector4D cameraFront = Vector4D(0.0f, 0.0f, -1.0f, 1);
 	Vector4D cameraUp = Vector4D(0.0f, 1.0f, 0.0f, 1);
 
@@ -177,6 +177,7 @@ namespace Example
                 n->load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
 
             }
+
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
 
@@ -196,10 +197,10 @@ namespace Example
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
-			Matrix4 move = Matrix4(1, 0, 0, 10,
+			/*Matrix4 move = Matrix4(1, 0, 0, 10,
 			                       0, 1, 0, 0,
 			                       0, 0, 1, 0,
-			                       0, 0, 0, 1);
+			                       0, 0, 0, 1);*/
 			Matrix4 view = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
 			//node.setTransform(Matrix4::transpose(perspectiveProjection) * view);
@@ -213,16 +214,17 @@ namespace Example
 
 			//Vector4D line1(0,0,0,1);
 			//Vector4D line2(1,1,1,1);
-            for (int i = 0; i < s.joints->size(); ++i)
+
+            for (int i = 0; i <  s.joints->size(); ++i)
             {
                 GraphicsNode* n = &s.joints->at(i).node;
-                //n->setTransform(s.joints->at(i).transform * view * Matrix4::transpose(perspectiveProjection) );
-                n->setTransform(Matrix4());
-                shader->modifyUniformVector("cameraPosition", cameraPos);
+                n->setTransform(Matrix4::transpose(perspectiveProjection) * view * s.joints->at(i).transform * Matrix4::scaleMat(scale));
+
                 n->draw();
             }
+            Vector4D x(0,cos(rotation)*0.1f,0,1);
 
-			/*Matrix4 worldToScreenSpaceMat = view * Matrix4::transpose(perspectiveProjection);
+			Matrix4 worldToScreenSpaceMat = view * Matrix4::transpose(perspectiveProjection);
 
 
 			glUseProgram(0);
@@ -232,7 +234,7 @@ namespace Example
             glMatrixMode(GL_PROJECTION);
             auto dood = (perspectiveProjection);
             glLoadMatrixf((GLfloat*)&dood);
-			glBegin(GL_LINE_STRIP);
+			glBegin(GL_LINES);
 			glColor3f(255, 0, 0);
             for (int i = 0; i < s.joints->size(); ++i) {
                 joint Joint = s.joints->at(i);
@@ -246,10 +248,9 @@ namespace Example
 
             }
 
-			//glVertex3f(0,0,0);
-			//glVertex3f(1,1,1);
-			glEnd();*/
-
+			glEnd();
+            rotation += 0.1;
+            s.moveJoint(Matrix4::getPositionMatrix(x), 2);
 
 			this->window->SwapBuffers();
 		}

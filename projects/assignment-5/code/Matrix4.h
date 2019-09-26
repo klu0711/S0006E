@@ -239,7 +239,7 @@
         float yw = vec[1] * vec[3];
 
         float zz = vec[2] * vec[2];
-        float zw = vec[0] * vec[0];
+        float zw = vec[2] * vec[3];
 
         return Matrix4(1-2*(yy+zz), 2*(xy-zw), 2*(xz+yw), 0,
                         2*(xy+zw), 1-2*(xx+zz), 2*(yz-xw), 0,
@@ -517,7 +517,7 @@
 		/// If the determinant is zero the matrix is not inversible therefor the function returns the same matrix again
 
 
-		/// Calculate once to save 15 calculations below
+		/// Calculate once to save 16 calculations below
 		determinant = 1.0 / determinant;
 
 		/// Divide each element with the determinant
@@ -569,7 +569,7 @@
 		tempArr[12] = 0;
 		tempArr[13] = 0;
 		tempArr[14] = 0;
-		tempArr[15] = inVector.getVectorValue(3);
+		tempArr[15] = 1;
 		return Matrix4(tempArr);
 	}
 	/// Function for creating a "look at" matrix. The glm library already has one but by writing my own the project has less dependencies

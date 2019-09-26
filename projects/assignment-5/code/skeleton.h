@@ -11,6 +11,7 @@ struct joint
     int index;
     std::vector<int> children;
     Matrix4 transform;
+    Matrix4 localTransform;
     GraphicsNode node;
 };
 
@@ -18,7 +19,13 @@ class skeleton {
 
 public:
     std::vector<joint>* joints = new std::vector<joint>();
+    skeleton();
+    ~skeleton();
+    void moveJoint(Matrix4 transform, int joint);
     void loadSkeleton(char* fileName);
+private:
+    void updateJoints(int joint);
+    void worldSpaceConversion();
 };
 
 
