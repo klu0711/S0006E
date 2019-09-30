@@ -169,6 +169,9 @@ namespace Example
 			node2.setTextureclass(tex);
 			node2.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);*/
 
+            animation a;
+            a.loadAnimations("Unit_Footman.nax3");
+
             for (int i = 0; i < s.joints->size(); ++i) {
                 GraphicsNode* n = &s.joints->at(i).node;
                 n->setShaderClass(shader);
