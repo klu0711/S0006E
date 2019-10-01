@@ -60,6 +60,7 @@ public:
     animation() {};
     ~animation(){};
     void loadAnimations(char* filename);
+    CoreAnimation::Nax3Clip* clips;
 
     //use ifstream to load file.
 };
