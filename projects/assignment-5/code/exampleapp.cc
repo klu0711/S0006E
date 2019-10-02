@@ -172,6 +172,18 @@ namespace Example
             animation a;
             a.loadAnimations("Unit_Footman.nax3");
 
+            unsigned int clipToPlay = 0;
+            unsigned int firstKey = a.clips[clipToPlay].curves[clipToPlay].firstKeyIndex;
+            for (int k = 0; k < a.clips[clipToPlay].numKeys ; ++k)
+            {
+                Vector4D* temp = (Vector4D*)a.keyBuffer;
+                temp[a.clips[clipToPlay].curves[k].firstKeyIndex];
+            }
+
+            for (int j = 0; j < 10; ++j) {
+                
+            }
+
             for (int i = 0; i < s.joints->size(); ++i) {
                 GraphicsNode* n = &s.joints->at(i).node;
                 n->setShaderClass(shader);

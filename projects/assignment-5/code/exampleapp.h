@@ -19,6 +19,7 @@
 #include <thread>
 #include "skeleton.h"
 #include "animation.h"
+#include "animation.h"
 namespace Example
 {
 class ExampleApp : public Core::App

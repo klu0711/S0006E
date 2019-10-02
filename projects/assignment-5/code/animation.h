@@ -1,6 +1,8 @@
 #ifndef GSCEPT_LAB_ENV_ANIMATION_H
 #define GSCEPT_LAB_ENV_ANIMATION_H
 #include <fstream>
+#include "Vector4D.h"
+#include <cstring>
 namespace CoreAnimation
 {
 #pragma pack(push, 1)
@@ -50,19 +52,52 @@ struct Nax3Curve
     float staticKeyY;
     float staticKeyZ;
     float staticKeyW;
+
 };
 
 #pragma pack(pop)
 } // namespace CoreAnimation
 
+
+class curve
+{
+public:
+    unsigned int firstKeyIndex;
+    bool isActive;                 // 0 or 1
+    bool isStatic;                 // 0 or 1
+    unsigned char curveType;                // CoreAnimation::CurveType::Code
+    Vector4D staticKey;
+};
+
+class clip
+{
+public:
+    unsigned short numCurves;
+    unsigned short startKeyIndex;
+    unsigned short numKeys;
+    unsigned short keyStride;
+    unsigned short keyDuration;
+    unsigned char preInfinityType;          // CoreAnimation::InfinityType::Code
+    unsigned char postInfinityType;         // CoreAnimation::InfinityType::Code
+    unsigned short numEvents;
+    char* name;
+    curve* curves;
+
+};
+typedef void* keys;
+
 class animation {
 public:
     animation() {};
     ~animation(){};
+
     void loadAnimations(char* filename);
-    CoreAnimation::Nax3Clip* clips;
+    CoreAnimation::Nax3Header* header;
+    clip* clips;
+    keys keyBuffer;
 
     //use ifstream to load file.
 };
+
 
 #endif //GSCEPT_LAB_ENV_ANIMATION_H
