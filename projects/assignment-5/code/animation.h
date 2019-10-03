@@ -71,7 +71,9 @@ public:
 
 class clip
 {
+
 public:
+
     unsigned short numCurves;
     unsigned short startKeyIndex;
     unsigned short numKeys;
@@ -84,13 +86,16 @@ public:
     curve* curves;
 
 };
-typedef void* keys;
+typedef Vector4D* keys;
 
 class animation {
 public:
     animation() {};
-    ~animation(){};
-
+    ~animation(){free(keyBuffer); delete[](clips); };
+    Vector4D getKey(unsigned int clipIndex, int i, unsigned int curveIndex)
+    {
+        return keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + i%clips[clipIndex].numKeys * clips[clipIndex].keyStride];
+    }
     void loadAnimations(char* filename);
     CoreAnimation::Nax3Header* header;
     clip* clips;

@@ -20,6 +20,7 @@
 #include "skeleton.h"
 #include "animation.h"
 #include "animation.h"
+#include <chrono>
 namespace Example
 {
 class ExampleApp : public Core::App
@@ -80,6 +81,8 @@ private:
 	GraphicsNode node10;
 	skeleton s;
     Vector4D scale = Vector4D(0.4,0.4,0.4,1);
+    animation a;
+    unsigned int clipToPlay = 0;
 
 	std::shared_ptr<Shader> shader = std::make_shared<Shader>();
 	std::shared_ptr<Shader> shader1 = std::make_shared<Shader>();

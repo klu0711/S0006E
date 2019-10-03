@@ -16,7 +16,7 @@ void animation::loadAnimations(char *filename)
     Nax3Header* h = (Nax3Header*) ptr;
     header = h;
     ptr += sizeof(Nax3Header);
-    keyBuffer = malloc(h->numKeys* sizeof(Vector4D));
+    keyBuffer = (Vector4D*)malloc(h->numKeys* sizeof(Vector4D));
 
     clips = new clip[h->numClips];
     for (int i = 0; i < h->numClips; ++i) {

@@ -23,7 +23,6 @@ public:
     ~skeleton();
     void moveJoint(Matrix4 transform, int joint);
     void loadSkeleton(char* fileName);
-private:
     void updateJoints(int joint);
     void worldSpaceConversion();
 };

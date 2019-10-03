@@ -169,19 +169,14 @@ namespace Example
 			node2.setTextureclass(tex);
 			node2.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);*/
 
-            animation a;
+
             a.loadAnimations("Unit_Footman.nax3");
 
-            unsigned int clipToPlay = 0;
-            unsigned int firstKey = a.clips[clipToPlay].curves[clipToPlay].firstKeyIndex;
-            for (int k = 0; k < a.clips[clipToPlay].numKeys ; ++k)
-            {
-                Vector4D* temp = (Vector4D*)a.keyBuffer;
-                temp[a.clips[clipToPlay].curves[k].firstKeyIndex];
-            }
+
+
 
             for (int j = 0; j < 10; ++j) {
-                
+
             }
 
             for (int i = 0; i < s.joints->size(); ++i) {
@@ -217,6 +212,21 @@ namespace Example
 			                       0, 0, 1, 0,
 			                       0, 0, 0, 1);*/
 			Matrix4 view = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+            // currentTime - StartTime * speedFactor
+            for (int k = 0; k < s.joints->size() ; ++k)
+            {
+                Vector4D pos = a.getKey(clipToPlay, 0, k*4);
+                Matrix4 po = Matrix4::getPositionMatrix(pos);
+                Vector4D rot = a.getKey(clipToPlay, 0, k*4 + 1);
+                Matrix4 ro = Matrix4::getQmat(rot);
+                Vector4D scale = a.getKey(clipToPlay, 0, k*4 + 2);
+                Matrix4 sc = Matrix4::scaleMat(scale);
+                Vector4D vel = a.getKey(clipToPlay, 0, k*4 + 3);
+                Matrix4 res = po*ro*sc;
+                s.joints->at(k).localTransform = res;
+
+            }
+            s.updateJoints(0);
 
 			//node.setTransform(Matrix4::transpose(perspectiveProjection) * view);
 			//node2.setTransform(Matrix4::transpose(perspectiveProjection) * view * move);
@@ -265,7 +275,7 @@ namespace Example
 
 			glEnd();
             rotation += 0.1;
-            s.moveJoint(Matrix4::getPositionMatrix(x), 2);
+            //s.moveJoint(Matrix4::getPositionMatrix(x), 2);
 
 			this->window->SwapBuffers();
 		}
