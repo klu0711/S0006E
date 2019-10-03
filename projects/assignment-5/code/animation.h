@@ -92,9 +92,9 @@ class animation {
 public:
     animation() {};
     ~animation(){free(keyBuffer); delete[](clips); };
-    Vector4D getKey(unsigned int clipIndex, int i, unsigned int curveIndex)
+    Vector4D getKey(unsigned int clipIndex, float i, unsigned int curveIndex)
     {
-        return keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + i%clips[clipIndex].numKeys * clips[clipIndex].keyStride];
+        return keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + ((int)floor(i))%clips[clipIndex].numKeys * clips[clipIndex].keyStride];
     }
     void loadAnimations(char* filename);
     CoreAnimation::Nax3Header* header;

@@ -202,6 +202,8 @@ namespace Example
 	{
 		float rotation = 0;
 		float movementn = 0;
+        std::chrono::high_resolution_clock clock = std::chrono::high_resolution_clock();
+		auto start = clock.now();
 		while (this->window->IsOpen())
 		{
 
@@ -213,15 +215,18 @@ namespace Example
 			                       0, 0, 0, 1);*/
 			Matrix4 view = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
             // currentTime - StartTime * speedFactor
+            using ms = std::chrono::duration<float, std::milli>;
+            float animationSpeed = std::chrono::duration_cast<ms>(clock.now() - start).count() * 0.01f;
             for (int k = 0; k < s.joints->size() ; ++k)
             {
-                Vector4D pos = a.getKey(clipToPlay, 0, k*4);
+
+                Vector4D pos = a.getKey(clipToPlay, animationSpeed, k*4);
                 Matrix4 po = Matrix4::getPositionMatrix(pos);
-                Vector4D rot = a.getKey(clipToPlay, 0, k*4 + 1);
+                Vector4D rot = a.getKey(clipToPlay, animationSpeed, k*4 + 1);
                 Matrix4 ro = Matrix4::getQmat(rot);
-                Vector4D scale = a.getKey(clipToPlay, 0, k*4 + 2);
+                Vector4D scale = a.getKey(clipToPlay, animationSpeed, k*4 + 2);
                 Matrix4 sc = Matrix4::scaleMat(scale);
-                Vector4D vel = a.getKey(clipToPlay, 0, k*4 + 3);
+                Vector4D vel = a.getKey(clipToPlay, animationSpeed, k*4 + 3);
                 Matrix4 res = po*ro*sc;
                 s.joints->at(k).localTransform = res;
 
