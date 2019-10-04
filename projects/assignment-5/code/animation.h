@@ -92,8 +92,20 @@ class animation {
 public:
     animation() {};
     ~animation(){free(keyBuffer); delete[](clips); };
-    Vector4D getKey(unsigned int clipIndex, float i, unsigned int curveIndex)
+    Vector4D getKey(unsigned int clipIndex, float i, unsigned int curveIndex, unsigned int type)
     {
+        int flooredI = (int)floor(i);
+        float diff = i-flooredI;
+        // i / floor i
+        if(type == 0) // lerp
+        {
+            return Vector4D::vLerp(keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI + 1)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], diff);
+
+        }else if(type == 1) // slerp
+        {
+            return Vector4D::Slerp(keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI + 1)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], diff);
+
+        }
         return keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + ((int)floor(i))%clips[clipIndex].numKeys * clips[clipIndex].keyStride];
     }
     void loadAnimations(char* filename);

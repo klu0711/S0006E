@@ -80,6 +80,36 @@ namespace Example
 			{
 				this->window->Close();
 			}
+			if (key == GLFW_KEY_1)
+			{
+				clipToPlay = 1;
+			}
+			if (key == GLFW_KEY_2)
+			{
+                clipToPlay = 2;
+			}if (key == GLFW_KEY_3)
+			{
+                clipToPlay = 3;
+			}
+			if (key == GLFW_KEY_4)
+			{
+                clipToPlay = 4;
+			}
+			if (key == GLFW_KEY_5)
+			{
+                clipToPlay = 5;
+			}if (key == GLFW_KEY_6)
+			{
+                clipToPlay = 6;
+			}
+			if (key == GLFW_KEY_7)
+			{
+                clipToPlay = 7;
+			}
+			if (key == GLFW_KEY_8)
+			{
+                clipToPlay = 0;
+			}
 		});
 
 		window->SetMousePressFunction([this](int32 key, int32 action, int32)
@@ -220,13 +250,13 @@ namespace Example
             for (int k = 0; k < s.joints->size() ; ++k)
             {
 
-                Vector4D pos = a.getKey(clipToPlay, animationSpeed, k*4);
+                Vector4D pos = a.getKey(clipToPlay, animationSpeed, k*4, 0);
                 Matrix4 po = Matrix4::getPositionMatrix(pos);
-                Vector4D rot = a.getKey(clipToPlay, animationSpeed, k*4 + 1);
+                Vector4D rot = a.getKey(clipToPlay, animationSpeed, k*4 + 1, 1);
                 Matrix4 ro = Matrix4::getQmat(rot);
-                Vector4D scale = a.getKey(clipToPlay, animationSpeed, k*4 + 2);
+                Vector4D scale = a.getKey(clipToPlay, animationSpeed, k*4 + 2, 0);
                 Matrix4 sc = Matrix4::scaleMat(scale);
-                Vector4D vel = a.getKey(clipToPlay, animationSpeed, k*4 + 3);
+                Vector4D vel = a.getKey(clipToPlay, animationSpeed, k*4 + 3, 0);
                 Matrix4 res = po*ro*sc;
                 s.joints->at(k).localTransform = res;
 
