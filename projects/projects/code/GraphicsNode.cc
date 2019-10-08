@@ -19,7 +19,7 @@ void GraphicsNode::setShaderClass(std::shared_ptr<Shader> shader)
 {
 	this->shader = shader;
 }
-/// Set the tecture pointer to an instance
+/// Set the texture pointer to an instance
 void GraphicsNode::setTextureclass(std::shared_ptr<TextureResource> textureResource)
 {
 	this->textureResource = textureResource;
@@ -27,7 +27,7 @@ void GraphicsNode::setTextureclass(std::shared_ptr<TextureResource> textureResou
 /// Set the mesh pointer to an instance
 void GraphicsNode::setMeshCLass(std::shared_ptr<MeshResource> meshResource)
 {
-	this->meshResource =meshResource;
+	this->meshResource = meshResource;
 }
 /// Return the shader pointer
 Shader* GraphicsNode::getShader()

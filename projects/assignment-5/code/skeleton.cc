@@ -1,6 +1,6 @@
 
 #include "skeleton.h"
-
+using namespace CoreGraphics;
 skeleton::skeleton()
 {
 
@@ -8,6 +8,94 @@ skeleton::skeleton()
 skeleton::~skeleton()
 {
     delete joints;
+}
+
+void skeleton::loadMesh(char *fileName)
+{
+    std::ifstream file;
+    file.open(fileName, std::ifstream::in | std::ifstream::binary);
+    file.seekg(0, file.end);
+    unsigned int length = file.tellg();
+    file.seekg(0, file.beg);
+    char* ptr = new char[length];
+    file.read(ptr, length);
+
+    Nvx2Header* h = (Nvx2Header*) ptr;
+    header = h;
+    header->numIndices *= 3;
+    ptr += sizeof(Nvx2Header) + 1;
+
+    this->numGroups = h->numGroups;
+    this->numVertices = h->numVertices;
+    this->vertexWidth = h->vertexWidth;
+    this->numIndices = h->numIndices;
+    this->numEdges = h->numEdges;
+    this->vertexComponentMask = h->vertexComponentMask;
+    this->groupDataSize = 6 * sizeof(uint) * this->numGroups;
+    this->vertexDataSize = this->numVertices * this->vertexWidth * sizeof(float);
+    this->indexDataSize = this->numIndices * sizeof(int);
+
+    this->vertexDataPtr = ((uchar*)ptr) + this->groupDataSize;
+    this->indexDatPtr = ((uchar*)this->vertexDataPtr) + this->vertexDataSize;
+
+
+    Nvx2Group * g = (Nvx2Group*) ptr;
+    for (int i = 0; i < (size_t)this->numGroups; ++i)
+    {
+        PrimitiveGroup p;
+        p.numVerticies = g->numVertices;
+        p.baseIndex = g->firstTriangle * 3;
+        p.numIndicies = g->numTriangles * 3;
+        p.primitiveTopology = 4;
+        primGroups.push_back(p);
+
+        g++;
+    }
+
+    size_t i;
+    for (int i = 0; i < N2NumVertexComponents; ++i)
+    {
+        CoreGraphics::SemanticName sem;
+        CoreGraphics::Format fmt;
+        size_t index = 0;
+
+        if(this->vertexComponentMask & (1<<i))
+        {
+            switch(1<<i)
+            {
+                case N2Coord: sem = CoreGraphics::SemanticName::Position; fmt = CoreGraphics::Format::Float3; break;
+                case N2Normal: sem = CoreGraphics::SemanticName::Normal; fmt = CoreGraphics::Format::Float3; break;
+                case N2NormalB4N: sem = CoreGraphics::SemanticName::Normal; fmt = CoreGraphics::Format::Byte4N; break;
+                case N2Uv0: sem = CoreGraphics::SemanticName::TexCoord1; fmt = CoreGraphics::Format::Float2; index = 0; break;
+                case N2Uv0S2: sem = CoreGraphics::SemanticName::TexCoord1; fmt = CoreGraphics::Format::Short2; index = 0; break;
+                case N2Uv1: sem = CoreGraphics::SemanticName::TexCoord2; fmt = CoreGraphics::Format::Float2; index = 1; break;
+                case N2Uv1S2: sem = CoreGraphics::SemanticName::TexCoord2; fmt = CoreGraphics::Format::Short2; index = 1; break;
+
+                case N2Color: sem = CoreGraphics::SemanticName::Color; fmt = CoreGraphics::Format::Float4; break;
+                case N2ColorUB4N: sem = CoreGraphics::SemanticName::Color; fmt = CoreGraphics::Format::UByte4N; break;
+                case N2Tangent: sem = CoreGraphics::SemanticName::Tangent; fmt = CoreGraphics::Format::Float3; break;
+                case N2TangentB4N: sem = CoreGraphics::SemanticName::Tangent; fmt = CoreGraphics::Format::Byte4N; break;
+                case N2Binormal: sem = CoreGraphics::SemanticName::Binormal; fmt = CoreGraphics::Format::Float3; break;
+                case N2BinormalB4N: sem = CoreGraphics::SemanticName::Binormal; fmt = CoreGraphics::Format::Byte4N; break;
+                case N2Weights: sem = CoreGraphics::SemanticName::SkinWeights; fmt = CoreGraphics::Format::Float4; break;
+                case N2WeightsUB4N: sem = CoreGraphics::SemanticName::SkinWeights; fmt = CoreGraphics::Format::UByte4N; break;
+                case N2JIndices: sem = CoreGraphics::SemanticName::SkinJIndices; fmt = CoreGraphics::Format::Float4; break;
+                case N2JIndicesUB4: sem = CoreGraphics::SemanticName::SkinJIndices; fmt = CoreGraphics::Format::UByte4; break;
+                default:
+                    sem = CoreGraphics::SemanticName::Position;
+                    fmt = CoreGraphics::Format::Float3;
+                    break;
+            }
+            vertexComponent vertexC;
+            vertexC.name = sem;
+            vertexC.index = index;
+            vertexC.format = fmt;
+
+            this->vertexComponents.push_back(vertexC);
+        }
+
+    }
+
 }
 
 void skeleton::moveJoint(Matrix4 transform, int joint)

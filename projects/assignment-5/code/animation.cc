@@ -2,9 +2,8 @@
 using namespace CoreAnimation;
 void animation::loadAnimations(char *filename)
 {
-    std::ifstream file;
-    file.open(filename, std::ifstream::in | std::ifstream::binary);
-     FILE* f = fopen(filename, "r");
+     std::ifstream file;
+     file.open(filename, std::ifstream::in | std::ifstream::binary);
      file.seekg(0, file.end);
      unsigned int length = file.tellg();
      file.seekg(0, file.beg);
@@ -56,8 +55,8 @@ void animation::loadAnimations(char *filename)
 
         }
         clips[i] = cl;
-        memcpy(keyBuffer, ptr, h->numKeys*sizeof(Vector4D));
         // load the blob of data that contains the keyframes
+        memcpy(keyBuffer, ptr, h->numKeys*sizeof(Vector4D));
 
 
 

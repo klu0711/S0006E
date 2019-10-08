@@ -64,52 +64,27 @@ namespace Example
 			{
 				cameraPos = cameraPos + (cameraFront * cameraSpeed);
 			}
-			if (key == GLFW_KEY_A)
+            else if (key == GLFW_KEY_A)
 			{
 				cameraPos = cameraPos - ((cameraFront.crossProduct(cameraUp)).normalize()) * cameraSpeed;
 			}
-			if (key == GLFW_KEY_S)
+            else if (key == GLFW_KEY_S)
 			{
 				cameraPos = cameraPos - (cameraFront * cameraSpeed);
 			}
-			if (key == GLFW_KEY_D)
+            else if (key == GLFW_KEY_D)
 			{
 				cameraPos = cameraPos + ((cameraFront.crossProduct(cameraUp)).normalize()) * cameraSpeed;
 			}
-			if (key == GLFW_KEY_ESCAPE)
+            else if (key == GLFW_KEY_ESCAPE)
 			{
 				this->window->Close();
 			}
-			if (key == GLFW_KEY_1)
+            else if (key >= GLFW_KEY_1 && key <= GLFW_KEY_8)
 			{
-				clipToPlay = 1;
+				clipToPlay = key - GLFW_KEY_1;
 			}
-			if (key == GLFW_KEY_2)
-			{
-                clipToPlay = 2;
-			}if (key == GLFW_KEY_3)
-			{
-                clipToPlay = 3;
-			}
-			if (key == GLFW_KEY_4)
-			{
-                clipToPlay = 4;
-			}
-			if (key == GLFW_KEY_5)
-			{
-                clipToPlay = 5;
-			}if (key == GLFW_KEY_6)
-			{
-                clipToPlay = 6;
-			}
-			if (key == GLFW_KEY_7)
-			{
-                clipToPlay = 7;
-			}
-			if (key == GLFW_KEY_8)
-			{
-                clipToPlay = 0;
-			}
+
 		});
 
 		window->SetMousePressFunction([this](int32 key, int32 action, int32)
@@ -205,11 +180,13 @@ namespace Example
 
 
 
-            for (int j = 0; j < 10; ++j) {
+            for (int j = 0; j < 10; ++j)
+            {
 
             }
 
-            for (int i = 0; i < s.joints->size(); ++i) {
+            for (int i = 0; i < s.joints->size(); ++i)
+            {
                 GraphicsNode* n = &s.joints->at(i).node;
                 n->setShaderClass(shader);
                 n->setMeshCLass(mesh);

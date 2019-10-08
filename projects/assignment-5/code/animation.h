@@ -97,11 +97,11 @@ public:
         int flooredI = (int)floor(i);
         float diff = i-flooredI;
         // i / floor i
-        if(type == 0) // lerp
+        if(type == 0) // lerp for vectors
         {
             return Vector4D::vLerp(keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI + 1)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], diff);
 
-        }else if(type == 1) // slerp
+        }else if(type == 1) // slerp for quaternions
         {
             return Vector4D::Slerp(keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI + 1)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], diff);
 
