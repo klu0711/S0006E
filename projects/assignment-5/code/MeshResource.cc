@@ -179,6 +179,11 @@ void MeshResource::bindIndexBuffer(const std::vector<int>& buffer)
 
 	
 }
+
+void MeshResource::loadSkeletonMeshBuffers(void *vertexDataPtr, void *indexDataPtr, void *groupDataPtr)
+{
+
+}
 /// Unbind the vertex array object
 void MeshResource::unBindBuffers()
 {

@@ -140,6 +140,7 @@ namespace Example
 			}
 		});
         s.loadSkeleton("Unit_Footman.constants");
+        s.loadMesh("Unit_Footman.nvx2");
 
 		if (this->window->Open())
 		{
@@ -221,9 +222,9 @@ namespace Example
 			                       0, 0, 1, 0,
 			                       0, 0, 0, 1);*/
 			Matrix4 view = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-            // currentTime - StartTime * speedFactor
+
             using ms = std::chrono::duration<float, std::milli>;
-            float animationSpeed = std::chrono::duration_cast<ms>(clock.now() - start).count() * 0.01f;
+            float animationSpeed = std::chrono::duration_cast<ms>(clock.now() - start).count() / a.clips[clipToPlay].keyDuration;
             for (int k = 0; k < s.joints->size() ; ++k)
             {
 
@@ -239,18 +240,6 @@ namespace Example
 
             }
             s.updateJoints(0);
-
-			//node.setTransform(Matrix4::transpose(perspectiveProjection) * view);
-			//node2.setTransform(Matrix4::transpose(perspectiveProjection) * view * move);
-
-			//shader->modifyUniformMatrix("objPosition", Matrix4().getPointer());
-			//shader->modifyUniformVector("cameraPosition", cameraPos);
-			//node.draw();
-			//shader->modifyUniformMatrix("objPosition", move.getPointer());
-			//node2.draw();
-
-			//Vector4D line1(0,0,0,1);
-			//Vector4D line2(1,1,1,1);
 
             for (int i = 0; i <  s.joints->size(); ++i)
             {
@@ -287,8 +276,8 @@ namespace Example
 
 			glEnd();
             rotation += 0.1;
-            //s.moveJoint(Matrix4::getPositionMatrix(x), 2);
-
+            s.moveJoint(Matrix4::getPositionMatrix(x), 2);
+            //std::this_thread::sleep_for(std::chrono::milliseconds(150));
 			this->window->SwapBuffers();
 		}
 	}

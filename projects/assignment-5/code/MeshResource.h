@@ -31,6 +31,7 @@ public:
 	void setupBuffers();
 	void bindVertexBuffer(const std::vector<Vertex>& vector);
 	void bindIndexBuffer(const std::vector<int>& buffer);
+	void loadSkeletonMeshBuffers(void* vertexDataPtr, void* indexDataPtr, void* groupDataPtr);
 	void unBindBuffers();
 	void bindAttrPointer();
 	void bind();

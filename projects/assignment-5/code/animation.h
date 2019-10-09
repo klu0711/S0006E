@@ -104,7 +104,6 @@ public:
         }else if(type == 1) // slerp for quaternions
         {
             return Vector4D::Slerp(keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI + 1)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], diff);
-
         }
         return keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + ((int)floor(i))%clips[clipIndex].numKeys * clips[clipIndex].keyStride];
     }

@@ -18,9 +18,10 @@ void skeleton::loadMesh(char *fileName)
     unsigned int length = file.tellg();
     file.seekg(0, file.beg);
     char* ptr = new char[length];
+    char* ptrBeg = ptr;
     file.read(ptr, length);
 
-    Nvx2Header* h = (Nvx2Header*) ptr;
+    struct Nvx2Header* h = (struct Nvx2Header*) ptr;
     header = h;
     header->numIndices *= 3;
     ptr += sizeof(Nvx2Header) + 1;
@@ -36,7 +37,7 @@ void skeleton::loadMesh(char *fileName)
     this->indexDataSize = this->numIndices * sizeof(int);
 
     this->vertexDataPtr = ((uchar*)ptr) + this->groupDataSize;
-    this->indexDatPtr = ((uchar*)this->vertexDataPtr) + this->vertexDataSize;
+    this->indexDataPtr = ((uchar*)this->vertexDataPtr) + this->vertexDataSize;
 
 
     Nvx2Group * g = (Nvx2Group*) ptr;
@@ -93,9 +94,10 @@ void skeleton::loadMesh(char *fileName)
 
             this->vertexComponents.push_back(vertexC);
         }
-
     }
-
+    std::cout << this->vertexComponents.size() << std::endl;
+    printf("Mesh load complete");
+    delete[] ptrBeg;
 }
 
 void skeleton::moveJoint(Matrix4 transform, int joint)

@@ -122,9 +122,9 @@ struct joint
 
 struct vertexComponent
 {
-    uint name;
+    CoreGraphics::SemanticName name;
     uint index;
-    uint format;
+    CoreGraphics::Format format;
 };
 class skeleton {
 
@@ -144,7 +144,7 @@ public:
 
     void* groupDataPtr;
     void* vertexDataPtr;
-    void* indexDatPtr;
+    void* indexDataPtr;
 
     size_t groupDataSize;
     size_t vertexDataSize;

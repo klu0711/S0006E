@@ -27,7 +27,7 @@ void GraphicsNode::setTextureclass(std::shared_ptr<TextureResource> textureResou
 /// Set the mesh pointer to an instance
 void GraphicsNode::setMeshCLass(std::shared_ptr<MeshResource> meshResource)
 {
-	this->meshResource =meshResource;
+	this->meshResource = meshResource;
 }
 /// Return the shader pointer
 Shader* GraphicsNode::getShader()
@@ -72,7 +72,7 @@ void GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 	
 
 }
-/// This functions runs every fram to draw somthing to the screen
+/// This functions runs every frame to draw something to the screen
 void GraphicsNode::draw()
 {
 
