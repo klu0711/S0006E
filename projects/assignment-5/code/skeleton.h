@@ -1,5 +1,4 @@
-#ifndef GSCEPT_LAB_ENV_SKELETON_H
-#define GSCEPT_LAB_ENV_SKELETON_H
+#pragma once
 #include <vector>
 #include "tinyxml.h"
 #include <iostream>
@@ -8,15 +7,6 @@
 
 namespace CoreGraphics
 {
-#pragma pack(push, 1)
-
-#define NEBULA3_NVX2_MAGICNUMBER 'NVX2'
-
-//------------------------------------------------------------------------------
-/**
-    NVX2 file format structs.
-    NOTE: keep all header-structs 4-byte aligned!
-*/
     struct Nvx2Header
     {
         uint magic;
@@ -45,10 +35,6 @@ namespace CoreGraphics
         uint numIndicies;
         uint primitiveTopology;
     };
-
-
-
-#pragma pack(pop)
 
     enum SemanticName
     {
@@ -130,6 +116,7 @@ class skeleton {
 
 public:
     std::vector<joint>* joints = new std::vector<joint>();
+    std::vector<int> skinJoints;
     skeleton();
     ~skeleton();
     void moveJoint(Matrix4 transform, int joint);
@@ -157,6 +144,3 @@ public:
     uint numEdges;
     uint vertexComponentMask;
 };
-
-
-#endif //GSCEPT_LAB_ENV_SKELETON_H

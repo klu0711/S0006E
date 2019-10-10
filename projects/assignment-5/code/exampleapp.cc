@@ -165,26 +165,16 @@ namespace Example
 
 			glEnable(GL_DEPTH_TEST);
 			mesh->setupMesh("sphere.obj");
-			/*node.setShaderClass(shader);
-			node.setMeshCLass(mesh);
-			node.setTextureclass(tex);
-			node.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
-
-			node2.setShaderClass(shader);
-			node2.setMeshCLass(mesh);
-			node2.setTextureclass(tex);
-			node2.load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);*/
+			mesh1->setupMeshSkin(s.indexDataPtr,s.vertexDataPtr, s.indexDataSize, s.vertexDataSize, s.numVertices, s.header->numIndices / 3);
+            node2.setShaderClass(shader1);
+            node2.setMeshCLass(mesh1);
+            node2.setTextureclass(tex);
+            node2.load("tractor.png", "customVertexShader.ver", "fragmentShader.frag", 0);
 
 
             a.loadAnimations("Unit_Footman.nax3");
 
 
-
-
-            for (int j = 0; j < 10; ++j)
-            {
-
-            }
 
             for (int i = 0; i < s.joints->size(); ++i)
             {
@@ -248,6 +238,9 @@ namespace Example
 
                 n->draw();
             }
+            Vector4D pos(0,0,0,0);
+            node2.setTransform(Matrix4::transpose(perspectiveProjection) * view * Matrix4::getPositionMatrix(pos) );
+            node2.draw();
             Vector4D x(0,cos(rotation)*0.1f,0,1);
 
 			Matrix4 worldToScreenSpaceMat = view * Matrix4::transpose(perspectiveProjection);

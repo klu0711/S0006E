@@ -2,7 +2,6 @@
 #include <map>
 #include <string>
 
-
 MeshResource::MeshResource()
 {
 	
@@ -168,20 +167,70 @@ void MeshResource::bindVertexBuffer(const std::vector<Vertex> &vector)
 	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeOfVertexBuffer * sizeof(Vertex), &vector[0], GL_STATIC_DRAW);
 }
+
+void MeshResource::bindVertexBufferSkin(const void *vb, uint vbSize)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+    glBufferData(GL_ARRAY_BUFFER, vbSize, vb, GL_STATIC_DRAW);
+}
+
+void MeshResource::bindIndexBufferSkin(const void *ib, uint ibSize)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, this->EBO);
+    glBufferData(GL_ARRAY_BUFFER, ibSize, ib, GL_STATIC_DRAW);
+}
 /// Setup the buffer which contains the indexes which will become the triangles
 void MeshResource::bindIndexBuffer(const std::vector<int>& buffer)
 {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-	int test = sizeOfIndexBuffer * sizeof(int);
-	int test2 = buffer[0];
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfIndexBuffer * sizeof(int), &buffer[0], GL_STATIC_DRAW);
 
 	
 }
 
-void MeshResource::loadSkeletonMeshBuffers(void *vertexDataPtr, void *indexDataPtr, void *groupDataPtr)
+void MeshResource::loadSkeletonMeshBuffers()
 {
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)(4 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(3, 4, GL_BYTE, GL_FALSE, 10 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(4, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(7 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(5, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(8 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(6, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(9 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(6);
+    glBindVertexArray(0);
+
+
+    /*for (int i = 0; i < vc.size(); ++i) {
+        switch (vc.at(i).format)
+            case(SkinningStructs::Format::Float):
+
+            case(SkinningStructs::Format::Float2):
+
+            case(SkinningStructs::Format::Float3):
+
+            case(SkinningStructs::Format::Float4):
+
+            case(SkinningStructs::Format::UByte4):
+
+            case(SkinningStructs::Format::Byte4):
+
+            case(SkinningStructs::Format::Float):
+            case(SkinningStructs::Format::Float):
+            case(SkinningStructs::Format::Float):
+            case(SkinningStructs::Format::Float):
+            case(SkinningStructs::Format::Float):
+            case(SkinningStructs::Format::Float):
+
+    }*/
 
 }
 /// Unbind the vertex array object
@@ -194,13 +243,9 @@ void MeshResource::unBindBuffers()
 /// Tell the shaders how the buffers are layed out and enable both of them
 void MeshResource::bindAttrPointer()
 {
-	//glBindVertexArray(VAO);
 	//verticies
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
-	//Colors
-	//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
-	//glEnableVertexAttribArray(1);	
 	//uv cordinates
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(2);
@@ -242,6 +287,21 @@ void MeshResource::setupMesh(char* filename)
 	bindAttrPointer();
 	unBindBuffers();
 }
+
+void MeshResource::setupMeshSkin(void *ib, void *vb, int ibSize, int vbSize, int numVerticies, int numIndicies)
+{
+    setupHandles();
+    setupBuffers();
+    bind();
+    sizeOfIndexBuffer = numIndicies ;
+    sizeOfVertexBuffer = numVerticies;
+    bindVertexBufferSkin(vb, vbSize);
+    bindIndexBufferSkin(ib, ibSize);
+    loadSkeletonMeshBuffers();
+    unBindBuffers();
+}
+
+
 
 
 

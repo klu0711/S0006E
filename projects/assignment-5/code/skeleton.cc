@@ -1,4 +1,3 @@
-
 #include "skeleton.h"
 using namespace CoreGraphics;
 skeleton::skeleton()
@@ -20,11 +19,13 @@ void skeleton::loadMesh(char *fileName)
     char* ptr = new char[length];
     char* ptrBeg = ptr;
     file.read(ptr, length);
+    file.close();
 
     struct Nvx2Header* h = (struct Nvx2Header*) ptr;
     header = h;
     header->numIndices *= 3;
-    ptr += sizeof(Nvx2Header) + 1;
+    ptr += sizeof(Nvx2Header);
+    void* grp = header + 1;
 
     this->numGroups = h->numGroups;
     this->numVertices = h->numVertices;
@@ -33,11 +34,13 @@ void skeleton::loadMesh(char *fileName)
     this->numEdges = h->numEdges;
     this->vertexComponentMask = h->vertexComponentMask;
     this->groupDataSize = 6 * sizeof(uint) * this->numGroups;
-    this->vertexDataSize = this->numVertices * this->vertexWidth * sizeof(float);
-    this->indexDataSize = this->numIndices * sizeof(int);
+    this->vertexDataSize = this->numVertices * this->vertexWidth * sizeof(GLfloat);
+    this->indexDataSize = header->numIndices * sizeof(int);
 
     this->vertexDataPtr = ((uchar*)ptr) + this->groupDataSize;
-    this->indexDataPtr = ((uchar*)this->vertexDataPtr) + this->vertexDataSize;
+    this->indexDataPtr = (((uchar*)this->vertexDataPtr) + this->vertexDataSize);
+
+
 
 
     Nvx2Group * g = (Nvx2Group*) ptr;
@@ -95,9 +98,7 @@ void skeleton::loadMesh(char *fileName)
             this->vertexComponents.push_back(vertexC);
         }
     }
-    std::cout << this->vertexComponents.size() << std::endl;
-    printf("Mesh load complete");
-    delete[] ptrBeg;
+   // std::cout << this->vertexComponents.size() << std::endl;
 }
 
 void skeleton::moveJoint(Matrix4 transform, int joint)
@@ -147,6 +148,7 @@ void skeleton::loadSkeleton(char *fileName)
     }else
     {
         TiXmlElement *Pjoint;
+        TiXmlElement *Joints;
 
         Pjoint = doc.FirstChildElement("Nebula3")->FirstChildElement("Model")->FirstChildElement("CharacterNodes")->FirstChildElement("CharacterNode")->FirstChildElement("Joint");
         while(Pjoint)
@@ -178,7 +180,14 @@ void skeleton::loadSkeleton(char *fileName)
 
         }
         worldSpaceConversion();
-        std::cout << "fin" << std::endl;
+
+        Joints = doc.FirstChildElement("Nebula3")->FirstChildElement("Model")->FirstChildElement("Skins")->FirstChildElement("Skin")->FirstChildElement("Fragment")->FirstChildElement("Joints");
+
+        char* a = (char*)Joints->GetText();
+        skinJoints.reserve(21);
+        sscanf(a, "%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i", &skinJoints[0], &skinJoints[1], &skinJoints[2], &skinJoints[3], &skinJoints[4], &skinJoints[5], &skinJoints[6], &skinJoints[7], &skinJoints[8], &skinJoints[9], &skinJoints[10], &skinJoints[11], &skinJoints[12],&skinJoints[13], &skinJoints[14], &skinJoints[15], &skinJoints[16],&skinJoints[17], &skinJoints[18], &skinJoints[19], &skinJoints[20]);
+
+
     }
 
 
