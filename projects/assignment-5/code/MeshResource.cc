@@ -176,8 +176,8 @@ void MeshResource::bindVertexBufferSkin(const void *vb, uint vbSize)
 
 void MeshResource::bindIndexBufferSkin(const void *ib, uint ibSize)
 {
-    glBindBuffer(GL_ARRAY_BUFFER, this->EBO);
-    glBufferData(GL_ARRAY_BUFFER, ibSize, ib, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ibSize, ib, GL_STATIC_DRAW);
 }
 /// Setup the buffer which contains the indexes which will become the triangles
 void MeshResource::bindIndexBuffer(const std::vector<int>& buffer)
@@ -191,21 +191,20 @@ void MeshResource::bindIndexBuffer(const std::vector<int>& buffer)
 
 void MeshResource::loadSkeletonMeshBuffers()
 {
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)0);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)(4 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(3, 4, GL_BYTE, GL_FALSE, 10 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)(4 * sizeof(GLfloat)));
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(4, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(7 * sizeof(GLfloat)));
+    glVertexAttribPointer(3, 4, GL_BYTE, GL_FALSE, 10 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
     glEnableVertexAttribArray(4);
-    glVertexAttribPointer(5, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(8 * sizeof(GLfloat)));
+    glVertexAttribPointer(4, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(7 * sizeof(GLfloat)));
     glEnableVertexAttribArray(5);
-    glVertexAttribPointer(6, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(9 * sizeof(GLfloat)));
+    glVertexAttribPointer(5, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(8 * sizeof(GLfloat)));
     glEnableVertexAttribArray(6);
+    glVertexAttribPointer(6, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)(9 * sizeof(GLfloat)));
     glBindVertexArray(0);
 
 

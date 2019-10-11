@@ -17,7 +17,6 @@ void skeleton::loadMesh(char *fileName)
     unsigned int length = file.tellg();
     file.seekg(0, file.beg);
     char* ptr = new char[length];
-    char* ptrBeg = ptr;
     file.read(ptr, length);
     file.close();
 
@@ -25,7 +24,7 @@ void skeleton::loadMesh(char *fileName)
     header = h;
     header->numIndices *= 3;
     ptr += sizeof(Nvx2Header);
-    void* grp = header + 1;
+
 
     this->numGroups = h->numGroups;
     this->numVertices = h->numVertices;
@@ -40,7 +39,12 @@ void skeleton::loadMesh(char *fileName)
     this->vertexDataPtr = ((uchar*)ptr) + this->groupDataSize;
     this->indexDataPtr = (((uchar*)this->vertexDataPtr) + this->vertexDataSize);
 
+    // Test for checking the so that the index buffer contains valid values
+   /* int* a = (int*) indexDataPtr;
 
+    for (int j = 0; j < 100; ++j) {
+        std::cout << a[j] << std::endl;
+    }*/
 
 
     Nvx2Group * g = (Nvx2Group*) ptr;
@@ -185,7 +189,7 @@ void skeleton::loadSkeleton(char *fileName)
 
         char* a = (char*)Joints->GetText();
         skinJoints.reserve(21);
-        sscanf(a, "%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i", &skinJoints[0], &skinJoints[1], &skinJoints[2], &skinJoints[3], &skinJoints[4], &skinJoints[5], &skinJoints[6], &skinJoints[7], &skinJoints[8], &skinJoints[9], &skinJoints[10], &skinJoints[11], &skinJoints[12],&skinJoints[13], &skinJoints[14], &skinJoints[15], &skinJoints[16],&skinJoints[17], &skinJoints[18], &skinJoints[19], &skinJoints[20]);
+         sscanf(a, "%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i", &skinJoints[0], &skinJoints[1], &skinJoints[2], &skinJoints[3], &skinJoints[4], &skinJoints[5], &skinJoints[6], &skinJoints[7], &skinJoints[8], &skinJoints[9], &skinJoints[10], &skinJoints[11], &skinJoints[12],&skinJoints[13], &skinJoints[14], &skinJoints[15], &skinJoints[16],&skinJoints[17], &skinJoints[18], &skinJoints[19], &skinJoints[20]);
 
 
     }

@@ -139,8 +139,7 @@ namespace Example
 				cameraFront = front.normalize();
 			}
 		});
-        s.loadSkeleton("Unit_Footman.constants");
-        s.loadMesh("Unit_Footman.nvx2");
+
 
 		if (this->window->Open())
 		{
@@ -162,14 +161,15 @@ namespace Example
 			std::shared_ptr<TextureResource> tex1 = std::make_shared<TextureResource>();
 			std::shared_ptr<MeshResource> mesh1 = std::make_shared<MeshResource>();
 
-
+            s.loadSkeleton("Unit_Footman.constants");
+            s.loadMesh("Unit_Footman.nvx2");
 			glEnable(GL_DEPTH_TEST);
 			mesh->setupMesh("sphere.obj");
-			mesh1->setupMeshSkin(s.indexDataPtr,s.vertexDataPtr, s.indexDataSize, s.vertexDataSize, s.numVertices, s.header->numIndices / 3);
-            node2.setShaderClass(shader1);
-            node2.setMeshCLass(mesh1);
-            node2.setTextureclass(tex);
-            node2.load("tractor.png", "customVertexShader.ver", "fragmentShader.frag", 0);
+			mesh1->setupMeshSkin(s.indexDataPtr, s.vertexDataPtr, s.indexDataSize, s.vertexDataSize, s.numVertices, s.header->numIndices);
+            this->node2.setShaderClass(shader1);
+            this->node2.setMeshCLass(mesh1);
+            this->node2.setTextureclass(tex);
+            this->node2.load("tractor.png", "customVertexShader.ver", "fragmentShader.frag", 0);
 
 
             a.loadAnimations("Unit_Footman.nax3");
@@ -214,7 +214,7 @@ namespace Example
 			Matrix4 view = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
             using ms = std::chrono::duration<float, std::milli>;
-            float animationSpeed = std::chrono::duration_cast<ms>(clock.now() - start).count() / a.clips[clipToPlay].keyDuration;
+            float animationSpeed = std::chrono::duration_cast<ms>(clock.now() - start).count() *0.001;/// a.clips[clipToPlay].keyDuration;
             for (int k = 0; k < s.joints->size() ; ++k)
             {
 
@@ -239,8 +239,8 @@ namespace Example
                 n->draw();
             }
             Vector4D pos(0,0,0,0);
-            node2.setTransform(Matrix4::transpose(perspectiveProjection) * view * Matrix4::getPositionMatrix(pos) );
-            node2.draw();
+            this->node2.setTransform(Matrix4::transpose(perspectiveProjection) * view);
+            //this->node2.draw();
             Vector4D x(0,cos(rotation)*0.1f,0,1);
 
 			Matrix4 worldToScreenSpaceMat = view * Matrix4::transpose(perspectiveProjection);
@@ -269,8 +269,8 @@ namespace Example
 
 			glEnd();
             rotation += 0.1;
-            s.moveJoint(Matrix4::getPositionMatrix(x), 2);
-            //std::this_thread::sleep_for(std::chrono::milliseconds(150));
+            //s.moveJoint(Matrix4::getPositionMatrix(x), 2);
+            std::this_thread::sleep_for(std::chrono::milliseconds(150));
 			this->window->SwapBuffers();
 		}
 	}
