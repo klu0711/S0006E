@@ -101,6 +101,7 @@ struct joint
     int parent = -1;
     int index;
     std::vector<int> children;
+    Matrix4 inverseBindPose;
     Matrix4 transform;
     Matrix4 localTransform;
     GraphicsNode node;

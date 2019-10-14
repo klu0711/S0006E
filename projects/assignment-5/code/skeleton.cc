@@ -138,6 +138,9 @@ void skeleton::worldSpaceConversion()
         }
 
     }
+    for (int j = 0; j < joints->size(); ++j) {
+        joints->at(j).inverseBindPose = Matrix4::inverse(joints->at(j).transform);
+    }
 }
 
 
@@ -164,8 +167,7 @@ void skeleton::loadSkeleton(char *fileName)
             {
                 joints->at(j.parent).children.push_back(j.index);
             }
-            // TODO: Add the position scale and rotation to the joint struct
-            // position * rotation * scale
+
             float values[4];
             sscanf(Pjoint->Attribute("position"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
             Vector4D position(values);

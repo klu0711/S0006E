@@ -63,7 +63,6 @@ void GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 	shader.get()->linkShaders();
 	//meshResource.get()->setupHandles();
 	//meshResource.get()->loadOBJFile(vertices, uv, normals);
-
 	//combinedbuffer = meshResource.get()->combineBuffers(vertices, uv, normals);
 	//meshResource.get()->convertToFloatPointer(vertices, indicies, normals);
 	textureResource.get()->bind(texture);

@@ -136,7 +136,17 @@ void Shader::modifyUniformFloat(std::string name, float value)
 	unsigned int uniform = glGetUniformLocation(this->program, name.c_str());
 	glUniform1f(uniform, value);
 }
+void Shader::modifyUniformInt(std::string name, int value)
+{
+    unsigned int uniform = glGetUniformLocation(this->program, name.c_str());
+    glUniform1i(uniform, value);
+}
 
+void Shader::modifyUniformMats(int count, Matrix4* jointMats)
+{
+    unsigned int uniform = glGetUniformLocation(this->program, "bones");
+    glUniformMatrix4fv(uniform, count, GL_TRUE, &jointMats[0][0]);
+}
 void Shader::useProgram()
 {
 

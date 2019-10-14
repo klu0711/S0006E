@@ -130,12 +130,14 @@ void Shader::modifyUniformVector(std::string name, Vector4D vec)
 	glUniform4fv(uniform,1,vec.getPointer());
 
 }
+
 /// Modify a uniform float in the shader
 void Shader::modifyUniformFloat(std::string name, float value)
 {
 	unsigned int uniform = glGetUniformLocation(this->program, name.c_str());
 	glUniform1f(uniform, value);
 }
+
 
 void Shader::useProgram()
 {

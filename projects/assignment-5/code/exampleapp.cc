@@ -26,7 +26,7 @@ namespace Example
 
 	Matrix4 perspectiveProjection;
 
-	Vector4D cameraPos = Vector4D(0.0f, 3.0f, 3.0f, 1);
+	Vector4D cameraPos = Vector4D(0.0f, 1.0f, 5.0f, 1);
 	Vector4D cameraFront = Vector4D(0.0f, 0.0f, -1.0f, 1);
 	Vector4D cameraUp = Vector4D(0.0f, 1.0f, 0.0f, 1);
 
@@ -168,8 +168,9 @@ namespace Example
 			mesh1->setupMeshSkin(s.indexDataPtr, s.vertexDataPtr, s.indexDataSize, s.vertexDataSize, s.numVertices, s.header->numIndices);
             this->node2.setShaderClass(shader1);
             this->node2.setMeshCLass(mesh1);
-            this->node2.setTextureclass(tex);
-            this->node2.load("tractor.png", "customVertexShader.ver", "fragmentShader.frag", 0);
+            this->node2.setTextureclass(tex1);
+            this->node2.load("Footman_Diffuse.tga", "customVertexShader.ver", "fragmentShader.frag", 2);
+            shader1.get()->modifyUniformInt("diffuser", 2);
 
 
             a.loadAnimations("Unit_Footman.nax3");
@@ -182,7 +183,8 @@ namespace Example
                 n->setShaderClass(shader);
                 n->setMeshCLass(mesh);
                 n->setTextureclass(tex);
-                n->load("tractor.png", "vertexShader.ver", "fragmentShader.frag", 0);
+                n->load("Footman_Diffuse.tga", "vertexShader.ver", "fragmentShader.frag", 0);
+                n->getShader()->modifyUniformMats()
 
             }
 
@@ -207,14 +209,11 @@ namespace Example
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
-			/*Matrix4 move = Matrix4(1, 0, 0, 10,
-			                       0, 1, 0, 0,
-			                       0, 0, 1, 0,
-			                       0, 0, 0, 1);*/
-			Matrix4 view = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
-            using ms = std::chrono::duration<float, std::milli>;
-            float animationSpeed = std::chrono::duration_cast<ms>(clock.now() - start).count() *0.001;/// a.clips[clipToPlay].keyDuration;
+			Matrix4 view = Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+            // used to play animations
+        /*    using ms = std::chrono::duration<float, std::milli>;
+            float animationSpeed = std::chrono::duration_cast<ms>(clock.now() - start).count() / a.clips[clipToPlay].keyDuration;
             for (int k = 0; k < s.joints->size() ; ++k)
             {
 
@@ -228,9 +227,10 @@ namespace Example
                 Matrix4 res = po*ro*sc;
                 s.joints->at(k).localTransform = res;
 
-            }
-            s.updateJoints(0);
 
+            }
+            s.updateJoints(0);*/
+            // draw skeleton joints
             for (int i = 0; i <  s.joints->size(); ++i)
             {
                 GraphicsNode* n = &s.joints->at(i).node;
@@ -240,12 +240,12 @@ namespace Example
             }
             Vector4D pos(0,0,0,0);
             this->node2.setTransform(Matrix4::transpose(perspectiveProjection) * view);
-            //this->node2.draw();
+            this->node2.draw();
             Vector4D x(0,cos(rotation)*0.1f,0,1);
 
 			Matrix4 worldToScreenSpaceMat = view * Matrix4::transpose(perspectiveProjection);
 
-
+            // draw skeleton lines using the old openGL pipeline
 			glUseProgram(0);
 			glMatrixMode(GL_MODELVIEW);
 			auto viewMat = Matrix4::transpose(view);
@@ -270,7 +270,7 @@ namespace Example
 			glEnd();
             rotation += 0.1;
             //s.moveJoint(Matrix4::getPositionMatrix(x), 2);
-            std::this_thread::sleep_for(std::chrono::milliseconds(150));
+            //std::this_thread::sleep_for(std::chrono::milliseconds(150));
 			this->window->SwapBuffers();
 		}
 	}

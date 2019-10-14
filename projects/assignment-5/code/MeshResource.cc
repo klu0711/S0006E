@@ -208,28 +208,6 @@ void MeshResource::loadSkeletonMeshBuffers()
     glBindVertexArray(0);
 
 
-    /*for (int i = 0; i < vc.size(); ++i) {
-        switch (vc.at(i).format)
-            case(SkinningStructs::Format::Float):
-
-            case(SkinningStructs::Format::Float2):
-
-            case(SkinningStructs::Format::Float3):
-
-            case(SkinningStructs::Format::Float4):
-
-            case(SkinningStructs::Format::UByte4):
-
-            case(SkinningStructs::Format::Byte4):
-
-            case(SkinningStructs::Format::Float):
-            case(SkinningStructs::Format::Float):
-            case(SkinningStructs::Format::Float):
-            case(SkinningStructs::Format::Float):
-            case(SkinningStructs::Format::Float):
-            case(SkinningStructs::Format::Float):
-
-    }*/
 
 }
 /// Unbind the vertex array object
