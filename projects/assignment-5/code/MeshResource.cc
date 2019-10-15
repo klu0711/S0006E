@@ -196,13 +196,13 @@ void MeshResource::loadSkeletonMeshBuffers()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)0);
     offset += sizeof(GLfloat) * 3;
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)offset);
+    glVertexAttribPointer(1, 4, GL_BYTE, GL_FALSE, 10 * sizeof(GLfloat), (void*)offset);
     offset += sizeof(GLbyte) * 4;
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 10 * sizeof(GLfloat), (void*)offset);
     offset += sizeof(GLfloat) * 2;
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)offset);
+    glVertexAttribPointer(3, 4, GL_BYTE, GL_FALSE, 10 * sizeof(GLfloat), (void*)offset);
     offset += sizeof(GLbyte) * 4;
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 4, GL_BYTE, GL_TRUE, 10 * sizeof(GLfloat), (void*)offset);

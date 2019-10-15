@@ -22,6 +22,8 @@ void main()
     
     //Diffuse color
     vec3 color = texture(diffuser, fs_in.Uv).rgb;
+    //fragColor = texture(normalMap, fs_in.Uv);
+    //return;
     //Ambient color
     vec3 ambient = 0.1 * color;
     //diffuse

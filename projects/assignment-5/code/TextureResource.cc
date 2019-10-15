@@ -13,7 +13,7 @@ TextureResource::~TextureResource()
 }
 /// Load textures from a file using the stb_image library
 /// The function also sets the parameters for the textures and clears the cpu side after it's done
-void TextureResource::loadFromFile(const char * filename)
+uint TextureResource::loadFromFile(const char * filename)
 {
 	int width, heigth, numComponents;
 	//stbi_set_flip_vertically_on_load(1);
@@ -23,7 +23,7 @@ void TextureResource::loadFromFile(const char * filename)
 	{
 		std::cerr << "Texture loading failed at: " << filename << std::endl;
 	}
-	 
+
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -39,12 +39,12 @@ void TextureResource::loadFromFile(const char * filename)
 
 	stbi_image_free(imageData);
 
-	
+	return texture;
 }
 /// choose and active texture to use for drawing textures from
 void TextureResource::bind(unsigned int unit)
 {
-	assert(unit >= 0 && unit <= 31);
-	glActiveTexture(GL_TEXTURE0 + unit);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	//assert(unit >= 0 && unit <= 31);
+	//glActiveTexture(GL_TEXTURE0 + unit);
+	//glBindTexture(GL_TEXTURE_2D, texture);
 }

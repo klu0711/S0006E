@@ -10,7 +10,7 @@ public:
 	TextureResource();
 	~TextureResource();
 
-	void loadFromFile(const char* filename);
+	uint loadFromFile(const char* filename);
 	void bind(unsigned int unit);
 
 };

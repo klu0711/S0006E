@@ -18,7 +18,7 @@
 		MeshResource* getMeshResource();
 		Matrix4 getTransform();
 		void setTransform(Matrix4 mat);
-		void load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName, int texture);
+		uint load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName, int texture);
 		void draw();
 		LightingNode light;
 	private:

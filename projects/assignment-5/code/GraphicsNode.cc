@@ -55,9 +55,13 @@ void GraphicsNode::setTransform(Matrix4 mat)
 	transform = mat;
 }
 /// Run all the functions that need to be run to draw something but only the functions that don't need to be ran every frame
-void GraphicsNode::load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName, int texture)
+uint GraphicsNode::load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName, int texture)
 {
-	textureResource.get()->loadFromFile(filename.c_str());
+    uint texI;
+    if(texture >= 0)
+    {
+        texI = textureResource.get()->loadFromFile(filename.c_str());
+    }
 	shader.get()->loadVertexShader(vertexShaderName.c_str());
 	shader.get()->loadFragmentShader(fragmentShaderName.c_str());
 	shader.get()->linkShaders();
@@ -65,10 +69,16 @@ void GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 	//meshResource.get()->loadOBJFile(vertices, uv, normals);
 	//combinedbuffer = meshResource.get()->combineBuffers(vertices, uv, normals);
 	//meshResource.get()->convertToFloatPointer(vertices, indicies, normals);
-	textureResource.get()->bind(texture);
+    if(texture >= 0)
+    {
+        textureResource.get()->bind(texture);
+    }
 	light = LightingNode(Vector4D(5, 2, 0, 1), Vector4D(0.5f, 0.5f, 0.5f, 1), 1);
 	shader.get()->useProgram();
-	
+
+	if(texI >= 0)
+	    return texI;
+	return -1;
 
 }
 /// This functions runs every frame to draw something to the screen
@@ -89,7 +99,6 @@ void GraphicsNode::draw()
 	//shader->modifyUniformFloat("intensity", light.getIntensity());
 
 	meshResource.get()->bind();
-	int test = meshResource->getIndexSize();
 	glDrawElements(GL_TRIANGLES, meshResource->getIndexSize(), GL_UNSIGNED_INT, 0);
 	//glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	meshResource.get()->unBindBuffers();

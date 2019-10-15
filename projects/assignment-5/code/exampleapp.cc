@@ -159,7 +159,6 @@ namespace Example
 			std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
 
 			std::shared_ptr<TextureResource> footmanDiffuse = std::make_shared<TextureResource>();
-			std::shared_ptr<TextureResource> footmanNormalMap = std::make_shared<TextureResource>();
 			std::shared_ptr<MeshResource> mesh1 = std::make_shared<MeshResource>();
 
             s.loadSkeleton("Unit_Footman.constants");
@@ -170,30 +169,31 @@ namespace Example
             a.loadAnimations("Unit_Footman.nax3");
 
 
+
+
+            //Bind the normal map the the gpu
+
+            //Bind all the classes to the GraphicsNode for the footman
+            this->node2.setShaderClass(shader1);
+            this->node2.setMeshCLass(mesh1);
+            this->node2.setTextureclass(footmanDiffuse);
+            dMap = this->node2.load("Footman_Diffuse.tga", "customVertexShader.ver", "fragmentShader.frag", 0);
+            this->node2.light = LightingNode(Vector4D(0,2,-5,1), Vector4D(1,1,1,1), 1);
+            nMap = footmanNormalMap.get()->loadFromFile("Footman_Normal.tga");
+            footmanNormalMap.get()->bind(1);
+            // Change what texture is being used
+            shader1.get()->modifyUniformInt("diffuser", 0);
+            shader1.get()->modifyUniformInt("normalMap", 1);
+
             for (int i = 0; i < s.joints->size(); ++i)
             {
                 GraphicsNode* n = &s.joints->at(i).node;
                 n->setShaderClass(shader);
                 n->setMeshCLass(mesh);
                 n->setTextureclass(tex);
-                n->load("Footman_Diffuse.tga", "vertexShader.ver", "fragmentShader.frag", 0);
+                n->load("Footman_Diffuse.tga", "vertexShader.ver", "fragmentShader.frag", -1);
 
             }
-            //Bind the normal map the the gpu
-            footmanNormalMap.get()->loadFromFile("Footman_Normal.tga");
-            footmanNormalMap.get()->bind(1);
-            //Bind all the classes to the GraphicsNode for the footman
-            this->node2.setShaderClass(shader1);
-            this->node2.setMeshCLass(mesh1);
-            this->node2.setTextureclass(footmanDiffuse);
-            this->node2.load("Footman_Diffuse.tga", "customVertexShader.ver", "fragmentShader.frag", 0);
-            this->node2.light = LightingNode(Vector4D(0,2,5,1), Vector4D(1,1,1,1), 1);
-            // Change what texture is being used
-            shader1.get()->modifyUniformInt("diffuser", 0);
-            shader1.get()->modifyUniformInt("normalMap", 1);
-
-
-
 
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
@@ -218,6 +218,10 @@ namespace Example
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
 
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, dMap);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, nMap);
 			Matrix4 view = (Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
             // used to play animations
             using ms = std::chrono::duration<float, std::milli>;

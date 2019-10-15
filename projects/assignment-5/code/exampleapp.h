@@ -83,9 +83,12 @@ private:
     Vector4D scale = Vector4D(0.4,0.4,0.4,1);
     animation a;
     unsigned int clipToPlay = 0;
+    uint dMap;
+    uint nMap;
 
 	std::shared_ptr<Shader> shader = std::make_shared<Shader>();
 	std::shared_ptr<Shader> shader1 = std::make_shared<Shader>();
+    std::shared_ptr<TextureResource> footmanNormalMap = std::make_shared<TextureResource>();
 
 };
 } // namespace Example
