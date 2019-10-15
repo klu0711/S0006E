@@ -1,39 +1,55 @@
 #version 430
 layout(location=0) in vec3 pos; // 3 floats
-layout(location=1) in vec3 normalN; // 4 bytes
+layout(location=1) in vec3 normalN; // 4 bytes Norm
 layout(location=2) in vec2 uv; // 2 floats
-layout(location=3) in vec4 tangent; // 4 bytes
-layout(location=4) in vec4 biNormalN; // 4 bytes
-layout(location=5) in vec4 SkinWeights; // 4 bytes
+layout(location=3) in vec4 tangent; // 4 bytes Norm
+layout(location=4) in vec4 biNormalN; // 4 bytes Norm
+layout(location=5) in vec4 skinWeights; // 4 bytes Norm
 layout(location=6) in vec4 skinIndiciesN; // 4 bytes
 
+out VS_OUT
+{
+    vec3 FragPos;
+    vec2 Uv;
+    vec3 TangentLightPos;
+    vec3 TangentViewPos;
+    vec3 TangentFragPos;
+} vs_out;
 
-
-out vec3 position;
-out vec2 texCords2;
-out vec3 uNormal;
-out vec4 Color;
-out vec4 LightPos;
-out vec4 LightColor;
-out vec4 CameraPosition;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
 
 uniform mat4 transform;
-uniform mat4 objPosition;
+
 uniform vec4 lightPos;
-uniform vec4 lightColor;
 uniform vec4 cameraPosition;
-uniform mat4 bones[64];
+uniform mat4 bones[99];
 void main()
 {
+
+    vec4 normWeights = skinWeights;// / dot(skinWeights, vec4(1.0));
+    mat4 joint = bones[int(skinIndiciesN.x)] * normWeights.x + 
+                 bones[int(skinIndiciesN.y)] * normWeights.y + 
+                 bones[int(skinIndiciesN.z)] * normWeights.z +
+                 bones[int(skinIndiciesN.w)] * normWeights.w;
+    vec4 skinnedPos = joint * vec4(pos, 1);
 	// Assignment 5 shader
-	gl_Position = transform * vec4(pos, 1.0f);
-	texCords2 = uv;
-	uNormal = mat3(transpose(inverse(objPosition))) * vec3(normalN);
-	LightPos = lightPos;
-	LightColor = lightColor;
-	position = (objPosition * vec4(pos, 1.0f)).xyz;
-	//position = vec3(0,0,0);
-	CameraPosition = cameraPosition;
-	
-	// Skinning shader
+    vs_out.FragPos = vec3(skinnedPos);
+    vs_out.Uv = uv;
+    //gl_Position = projection * view * skinnedPos;
+    mat3 normalMatrix = transpose(inverse(mat3(1.0)));
+    vec3 T = (normalMatrix * vec3(tangent));
+    vec3 N = (normalMatrix * vec3(normalN));
+    T = normalize(T - dot(T,N) * N);
+    vec3 B = cross(N,T);
+    
+    mat3 TBN = transpose(mat3(T,B,N));
+    vs_out.TangentLightPos = TBN * vec3(lightPos);
+    vs_out.TangentViewPos = TBN * vec3(cameraPosition);
+    vs_out.TangentFragPos = TBN * vs_out.FragPos;
+    
+    gl_Position = projection * view * skinnedPos;
+
+
 }

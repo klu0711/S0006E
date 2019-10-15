@@ -125,6 +125,7 @@ public:
     void updateJoints(int joint);
     void worldSpaceConversion();
     void loadMesh(char* fileName);
+    int convertJointIndex(uint index);
     CoreGraphics::Nvx2Header* header;
 
     std::vector<CoreGraphics::PrimitiveGroup> primGroups;

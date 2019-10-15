@@ -79,13 +79,14 @@ void GraphicsNode::draw()
 	//textureResource.get()->loadFromFile(textureName.c_str());
 
 
+
 	shader.get()->useProgram();
 	shader.get()->modifyUniformMatrix("transform", transform.getPointer());
 
 
 	shader->modifyUniformVector("lightPos", light.getPosition());
-	shader->modifyUniformVector("lightColor", light.getColor());
-	shader->modifyUniformFloat("intensity", light.getIntensity());
+	//shader->modifyUniformVector("lightColor", light.getColor());
+	//shader->modifyUniformFloat("intensity", light.getIntensity());
 
 	meshResource.get()->bind();
 	int test = meshResource->getIndexSize();

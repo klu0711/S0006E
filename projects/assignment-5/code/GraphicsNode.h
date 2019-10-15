@@ -20,6 +20,7 @@
 		void setTransform(Matrix4 mat);
 		void load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName, int texture);
 		void draw();
+		LightingNode light;
 	private:
 
 		std::shared_ptr<Shader> shader;
@@ -33,6 +34,5 @@
 		std::vector<Vector4D> normals;
 		std::vector<Vector4D> combinedbuffer;
 
-		LightingNode light;
 
 	};

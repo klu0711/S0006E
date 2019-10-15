@@ -18,6 +18,7 @@
 		Matrix4 operator+(const Matrix4& rhs) const;
 		Matrix4 operator*(const float scalar) const;
 		Vector4D getPositionVec();
+		float returnFirst() {return matrix[0];}
 		void operator=(const Matrix4& rhs);
 		static Matrix4 rotX(float angle);
 		static Matrix4 rotY(float angle);

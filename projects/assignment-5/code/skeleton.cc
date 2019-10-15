@@ -192,13 +192,10 @@ void skeleton::loadSkeleton(char *fileName)
         char* a = (char*)Joints->GetText();
         skinJoints.reserve(21);
          sscanf(a, "%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i", &skinJoints[0], &skinJoints[1], &skinJoints[2], &skinJoints[3], &skinJoints[4], &skinJoints[5], &skinJoints[6], &skinJoints[7], &skinJoints[8], &skinJoints[9], &skinJoints[10], &skinJoints[11], &skinJoints[12],&skinJoints[13], &skinJoints[14], &skinJoints[15], &skinJoints[16],&skinJoints[17], &skinJoints[18], &skinJoints[19], &skinJoints[20]);
-
-
     }
+}
 
-
-
-
-
-
+int skeleton::convertJointIndex(uint index)
+{
+    return skinJoints[index];
 }
