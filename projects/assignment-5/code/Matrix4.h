@@ -17,6 +17,7 @@
 		Vector4D operator*(const Vector4D& rhs) const;
 		Matrix4 operator+(const Matrix4& rhs) const;
 		Matrix4 operator*(const float scalar) const;
+		static Matrix4 Perspective(float fieldOfView, float aspectRatio, float nearClip, float farClip);
 		Vector4D getPositionVec();
 		float returnFirst() {return matrix[0];}
 		void operator=(const Matrix4& rhs);
@@ -77,6 +78,20 @@
 		matrix[15] = 1;
 
 	}
+inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float nearClip, float farClip)
+{
+
+    Matrix4 result;
+
+    result = Matrix4(
+            1.0f/(aspectRatio * tan(fieldOfView/2)), 0, 0, 0,
+            0, 1.0f/(tan(fieldOfView/2)), 0, 0,
+            0, 0, ((-nearClip - farClip) / (nearClip - farClip)), -1,
+            0, 0, ( (2 * farClip * nearClip) / (farClip - nearClip)), 0
+    );
+
+    return result;
+}
 	inline Matrix4::Matrix4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p)
 	{
 		matrix[0] = a;
@@ -581,9 +596,9 @@
 		Vector4D s = (f.crossProduct(u)).normalize();
 		u = s.crossProduct(f);
 
-		float temp[] = {s.getVectorValue(0), s.getVectorValue(1), s.getVectorValue(2), -(s.dotProduct(position)),
-						u.getVectorValue(0), u.getVectorValue(1), u.getVectorValue(2), -(u.dotProduct(position)),
-						-f.getVectorValue(0), -f.getVectorValue(1) , -f.getVectorValue(2), f.dotProduct(position),
+		float temp[] = {s.getVectorValue(0), s.getVectorValue(1), s.getVectorValue(2), -(s.dot3(position)),
+						u.getVectorValue(0), u.getVectorValue(1), u.getVectorValue(2), -(u.dot3(position)),
+						-f.getVectorValue(0), -f.getVectorValue(1) , -f.getVectorValue(2), f.dot3(position),
 						0,0,0,1};
 		return Matrix4(temp);
 

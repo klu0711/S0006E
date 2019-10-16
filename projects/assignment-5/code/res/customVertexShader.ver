@@ -33,14 +33,14 @@ void main()
                  bones[int(skinIndiciesN.y)] * normWeights.y + 
                  bones[int(skinIndiciesN.z)] * normWeights.z +
                  bones[int(skinIndiciesN.w)] * normWeights.w;
-    vec4 skinnedPos = joint * vec4(pos, 1);
+    vec4 skinnedPos = model * joint * vec4(pos, 1);
 	// Assignment 5 shader
     vs_out.FragPos = vec3(skinnedPos);
     vs_out.Uv = uv;
     //gl_Position = projection * view * skinnedPos;
-    mat3 normalMatrix = transpose(inverse(mat3(1.0)));
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
     vec3 T = normalize(normalMatrix * vec3(tangent));
-    vec3 N = normalize(normalMatrix * vec3(normalN));
+    vec3 N = normalize(normalMatrix * mat3(joint) * vec3(normalN));
     T = normalize(T - dot(T,N) * N);
     vec3 B = cross(N,T);
     

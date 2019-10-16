@@ -60,7 +60,9 @@
 		Vector4D crossProduct(const Vector4D& vec) const;
 		float getVectorValue(int index);
 		float* getPointer();
-	};
+
+        float dot3(const Vector4D &vec) const;
+    };
 
 
 	/// Constructor when no arguments are provided (Defaut constructor
@@ -122,6 +124,10 @@
 		return Vector4D(vector[0] / length, vector[1] / length, vector[2] / length, 1);
 	}
 	/// Returns a float of the dot product of the vectors
+    inline float Vector4D::dot3(const Vector4D& vec) const
+    {
+        return ((vector[0] * vec.vector[0]) + (vector[1] * vec.vector[1]) + (vector[2] * vec.vector[2]));
+    }
 	inline float Vector4D::dotProduct(const Vector4D& vec) const
 	{
 		return ((vector[0] * vec.vector[0]) + (vector[1] * vec.vector[1]) + (vector[2] * vec.vector[2]) + (vector[3] * vec.vector[3]));

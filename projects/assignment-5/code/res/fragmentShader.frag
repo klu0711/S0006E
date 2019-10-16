@@ -27,13 +27,12 @@ void main()
     //Ambient color
     vec3 ambient = 0.1 * color;
     //diffuse
-    vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+    vec3 lightDir = normalize(fs_in.TangentFragPos - fs_in.TangentLightPos);
     float diff = max(dot(-lightDir, normal), 0.0);
     vec3 diffuse = diff * color;
     
     // Specular
-    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
-    vec3 reflectDir = reflect(-lightDir, normal);
+    vec3 viewDir = normalize(fs_in.TangentFragPos - fs_in.TangentViewPos);
     vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
     
