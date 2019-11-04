@@ -158,13 +158,6 @@ namespace Example
 
 			this->window->GetSize(windowSizeX, windowSizeY);
 
-			float n = 0.1, f = 1000, r = 0.1, l = -0.1, t = 0.1, b = -0.1;
-			/*perspectiveProjection = Matrix4(
-				2 * n / (r - l), 0, 0, 0,
-				0, 2 * n / (t - b), 0, 0,
-				((r + l) / (r - l)), ((t + b) / (t - b)), -((f + n) / (f - n)), -1,
-				0, 0, -((2 * f * n) / (f - n)), 0
-			);*/
 			perspectiveProjection = Matrix4::Perspective(nvgDegToRad(75.0f), (float)windowSizeX/(float)windowSizeY, 1000, 0.1);
 
 
@@ -231,9 +224,10 @@ namespace Example
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
-
+            // Bind the diffuse texture to slot zero
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, dMap);
+            // Bind the normal map to slot one
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, nMap);
 			Matrix4 view = (Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
@@ -260,13 +254,13 @@ namespace Example
                 GraphicsNode* n = &s.joints->at(k).node;
                 n->setTransform(Matrix4::transpose(perspectiveProjection) * view * (s.joints->at(k).transform) * Matrix4::scaleMat(scaleBalls));
                 // Update the joint matricies
-                s.updateJoints(0);
                 // reset joints to bind pose
                 jointMats[k] = s.joints->at(s.skinJoints[k]).transform * s.joints->at(s.skinJoints[k]).inverseBindPose ;
 
                 n->draw();
 
             }
+            s.updateJoints(0);
 
             glUseProgram(node2.getShader()->getProgram());
             node2.getShader()->modifyUniformMatrix("model", &rotModel[0]);
@@ -274,7 +268,7 @@ namespace Example
             node2.getShader()->modifyUniformMatrix("projection", &Matrix4::transpose(perspectiveProjection)[0]);
             node2.getShader()->modifyUniformVector("cameraPosition", cameraPos);
             //node2.light.setPosition(Vector4D(10 * sin(rotation),0,cos(rotation) * 10,1));
-            this->node2.draw();
+            //this->node2.draw();
             node2.getShader()->modifyUniformMats(21, jointMats);
             this->node2.setTransform(Matrix4::transpose(perspectiveProjection) * view);
 
@@ -307,7 +301,7 @@ namespace Example
 
 			glEnd();
             rotation += 0.01f;
-            rotModel = Matrix4::rotY(rotation);
+            //rotModel = Matrix4::rotY(rotation);
             //s.moveJoint(Matrix4::getPositionMatrix(x), 2);
             //std::this_thread::sleep_for(std::chrono::milliseconds(150));
 			this->window->SwapBuffers();
