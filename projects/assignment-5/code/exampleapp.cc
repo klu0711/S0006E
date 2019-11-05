@@ -268,7 +268,7 @@ namespace Example
             node2.getShader()->modifyUniformMatrix("projection", &Matrix4::transpose(perspectiveProjection)[0]);
             node2.getShader()->modifyUniformVector("cameraPosition", cameraPos);
             //node2.light.setPosition(Vector4D(10 * sin(rotation),0,cos(rotation) * 10,1));
-            //this->node2.draw();
+            this->node2.draw();
             node2.getShader()->modifyUniformMats(21, jointMats);
             this->node2.setTransform(Matrix4::transpose(perspectiveProjection) * view);
 

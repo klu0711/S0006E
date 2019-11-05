@@ -38,14 +38,7 @@ void skeleton::loadMesh(char *fileName)
 
     this->vertexDataPtr = ((uchar*)ptr) + this->groupDataSize;
     this->indexDataPtr = (((uchar*)this->vertexDataPtr) + this->vertexDataSize);
-
-    // Test for checking the so that the index buffer contains valid values
-   /* int* a = (int*) indexDataPtr;
-
-    for (int j = 0; j < 100; ++j) {
-        std::cout << a[j] << std::endl;
-    }*/
-
+    
 
     Nvx2Group * g = (Nvx2Group*) ptr;
     for (int i = 0; i < (size_t)this->numGroups; ++i)
@@ -154,42 +147,42 @@ void skeleton::loadSkeleton(char *fileName)
         std::cout << "XML load failed" << std::endl;
     }else
     {
-        TiXmlElement *Pjoint;
-        TiXmlElement *Joints;
+        TiXmlElement *p_joint;
+        TiXmlElement *p_skinJoints;
 
-        Pjoint = doc.FirstChildElement("Nebula3")->FirstChildElement("Model")->FirstChildElement("CharacterNodes")->FirstChildElement("CharacterNode")->FirstChildElement("Joint");
-        while(Pjoint)
+        p_joint = doc.FirstChildElement("Nebula3")->FirstChildElement("Model")->FirstChildElement("CharacterNodes")->FirstChildElement("CharacterNode")->FirstChildElement("Joint");
+        while(p_joint)
         {
             joint j;
-            j.parent = atoi(Pjoint->Attribute("parent"));
-            j.index = atoi(Pjoint->Attribute("index"));
+            j.parent = atoi(p_joint->Attribute("parent"));
+            j.index = atoi(p_joint->Attribute("index"));
             if(j.parent != -1)
             {
                 joints->at(j.parent).children.push_back(j.index);
             }
 
             float values[4];
-            sscanf(Pjoint->Attribute("position"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
+            sscanf(p_joint->Attribute("position"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
             Vector4D position(values);
             Matrix4 p = Matrix4::getPositionMatrix(position);
-            sscanf(Pjoint->Attribute("rotation"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
+            sscanf(p_joint->Attribute("rotation"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
             Vector4D rotation(values);
             Matrix4 r = Matrix4::getQmat(rotation);
-            sscanf(Pjoint->Attribute("scale"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
+            sscanf(p_joint->Attribute("scale"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
             Vector4D scale(values);
             Matrix4 s = Matrix4::scaleMat(scale);
 
             j.transform = p*r*s;
             j.localTransform = j.transform;
             joints->push_back(j);
-            Pjoint = Pjoint->NextSiblingElement("Joint");
+            p_joint = p_joint->NextSiblingElement("Joint");
 
         }
         worldSpaceConversion();
 
-        Joints = doc.FirstChildElement("Nebula3")->FirstChildElement("Model")->FirstChildElement("Skins")->FirstChildElement("Skin")->FirstChildElement("Fragment")->FirstChildElement("Joints");
+        p_skinJoints = doc.FirstChildElement("Nebula3")->FirstChildElement("Model")->FirstChildElement("Skins")->FirstChildElement("Skin")->FirstChildElement("Fragment")->FirstChildElement("Joints");
 
-        char* a = (char*)Joints->GetText();
+        char* a = (char*)p_skinJoints->GetText();
         skinJoints.reserve(21);
          sscanf(a, "%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i", &skinJoints[0], &skinJoints[1], &skinJoints[2], &skinJoints[3], &skinJoints[4], &skinJoints[5], &skinJoints[6], &skinJoints[7], &skinJoints[8], &skinJoints[9], &skinJoints[10], &skinJoints[11], &skinJoints[12],&skinJoints[13], &skinJoints[14], &skinJoints[15], &skinJoints[16],&skinJoints[17], &skinJoints[18], &skinJoints[19], &skinJoints[20]);
     }
