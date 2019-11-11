@@ -1,4 +1,4 @@
-`#pragma once
+#pragma once
 //------------------------------------------------------------------------------
 /**
 	Application class used for example application.
