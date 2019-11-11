@@ -26,11 +26,11 @@ namespace Example
 
 	Matrix4 perspectiveProjection;
 
-	Vector4D cameraPos = Vector4D(0.0f, 1.0f, 5.0f, 1);
-	Vector4D cameraFront = Vector4D(0.0f, 0.0f, -1.0f, 1);
-	Vector4D cameraUp = Vector4D(0.0f, 1.0f, 0.0f, 1);
+	vec4 cameraPos = vec4(0.0f, 1.0f, 5.0f, 1);
+	vec4 cameraFront = vec4(0.0f, 0.0f, -1.0f, 1);
+	vec4 cameraUp = vec4(0.0f, 1.0f, 0.0f, 1);
 
-	Vector4D position = Vector4D(0.0f, 0.0f, -1.0f, 1.0f);
+	vec4 position = vec4(0.0f, 0.0f, -1.0f, 1.0f);
 	Matrix4 rotX = Matrix4::rotX(0);
 	Matrix4 rotY = Matrix4::rotY(0);
 	bool click = false;
@@ -141,7 +141,7 @@ namespace Example
 				if (pitch < -89.0f)
 					pitch = -89.0f;
 
-				Vector4D front;
+				vec4 front;
 				front[0] = cos(yaw * radianConversion) * cos(pitch * radianConversion);
 				front[1] = sin(pitch * radianConversion);
 				front[2] = sin(yaw * radianConversion) * cos(pitch * radianConversion);
@@ -184,9 +184,8 @@ namespace Example
             this->node2.setMeshCLass(mesh1);
             this->node2.setTextureclass(footmanDiffuse);
             dMap = this->node2.load("Footman_Diffuse.tga", "customVertexShader.ver", "fragmentShader.frag", 0);
-            this->node2.light = LightingNode(Vector4D(0,2,-5,1), Vector4D(1,1,1,1), 1);
+            this->node2.light = LightingNode(vec4(0,2,-5,1), vec4(1,1,1,1), 1);
             nMap = footmanNormalMap.get()->loadFromFile("Footman_Normal.tga");
-            footmanNormalMap.get()->bind(1);
             // Change what texture is being used
             shader1.get()->modifyUniformInt("diffuser", 0);
             shader1.get()->modifyUniformInt("normalMap", 1);
@@ -236,17 +235,17 @@ namespace Example
             using ms = std::chrono::duration<float, std::milli>;
             float animationSpeed = std::chrono::duration_cast<ms>(clock.now() - start).count() / a.clips[clipToPlay].keyDuration;
             Matrix4 jointMats[21];
-            Vector4D scaleBalls(0.3, 0.3, 0.3, 1);
+            vec4 scaleBalls(0.3, 0.3, 0.3, 1);
             for (int k = 0; k < s.joints->size() ; ++k)
             {
                 //Load animation data for one key in a clip
-                Vector4D pos = a.getKey(clipToPlay, animationSpeed, k*4, 0);
+                vec4 pos = a.getKey(clipToPlay, animationSpeed, k*4, 0);
                 Matrix4 po = Matrix4::getPositionMatrix(pos);
-                Vector4D rot = a.getKey(clipToPlay, animationSpeed, k*4 + 1, 1);
+                vec4 rot = a.getKey(clipToPlay, animationSpeed, k*4 + 1, 1);
                 Matrix4 ro = Matrix4::getQmat(rot);
-                Vector4D scale = a.getKey(clipToPlay, animationSpeed, k*4 + 2, 0);
+                vec4 scale = a.getKey(clipToPlay, animationSpeed, k*4 + 2, 0);
                 Matrix4 sc = Matrix4::scaleMat(scale);
-                Vector4D vel = a.getKey(clipToPlay, animationSpeed, k*4 + 3, 0);
+                vec4 vel = a.getKey(clipToPlay, animationSpeed, k*4 + 3, 0);
                 Matrix4 res = po*ro*sc;
                 s.joints->at(k).localTransform = res;
 
@@ -267,15 +266,13 @@ namespace Example
             node2.getShader()->modifyUniformMatrix("view", &view[0]);
             node2.getShader()->modifyUniformMatrix("projection", &Matrix4::transpose(perspectiveProjection)[0]);
             node2.getShader()->modifyUniformVector("cameraPosition", cameraPos);
-            //node2.light.setPosition(Vector4D(10 * sin(rotation),0,cos(rotation) * 10,1));
+            //node2.light.setPosition(vec4(10 * sin(rotation),0,cos(rotation) * 10,1));
             this->node2.draw();
             node2.getShader()->modifyUniformMats(21, jointMats);
-            this->node2.setTransform(Matrix4::transpose(perspectiveProjection) * view);
 
-            Vector4D pos(0,0,0,0);
-            Vector4D x(0,cos(rotation)*0.1f,0,1);
+            vec4 pos(0,0,0,0);
+            vec4 x(0,cos(rotation)*0.1f,0,1);
 
-			Matrix4 worldToScreenSpaceMat = view * Matrix4::transpose(perspectiveProjection);
 
             // draw skeleton lines using the old openGL pipeline
 			glUseProgram(0);
@@ -291,8 +288,8 @@ namespace Example
                 joint Joint = s.joints->at(i);
                 if(Joint.parent != -1)
                 {
-                    Vector4D a = Joint.transform.getPositionVec();
-                    Vector4D b = s.joints->at(Joint.parent).transform.getPositionVec();
+                    vec4 a = Joint.transform.getPositionVec();
+                    vec4 b = s.joints->at(Joint.parent).transform.getPositionVec();
                     glVertex3f(a[0], a[1], a[2]);
                     glVertex3f(b[0], b[1], b[2]);
                 }

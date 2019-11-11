@@ -28,7 +28,7 @@
 		void setupFragmentShader();
 		void linkShaders();
 		void modifyUniformMatrix(std::string name, float* mat);
-		void modifyUniformVector(std::string name, Vector4D vec);
+		void modifyUniformVector(std::string name, vec4 vec);
 		void modifyUniformFloat(std::string name, float value);
 		void modifyUniformInt(std::string name, int value);
 		void modifyUniformMats(int count, Matrix4* jointMats);

@@ -30,9 +30,9 @@
 		float rotaion = 0;
 		std::vector<Vertex> vertices;
 		std::vector<int> indices;
-		std::vector<Vector4D> uv;
-		std::vector<Vector4D> normals;
-		std::vector<Vector4D> combinedbuffer;
+		std::vector<vec4> uv;
+		std::vector<vec4> normals;
+		std::vector<vec4> combinedbuffer;
 
 
 	};

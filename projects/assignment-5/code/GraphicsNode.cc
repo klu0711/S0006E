@@ -73,7 +73,7 @@ uint GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
     {
         textureResource.get()->bind(texture);
     }
-	light = LightingNode(Vector4D(5, 2, 0, 1), Vector4D(0.5f, 0.5f, 0.5f, 1), 1);
+	light = LightingNode(vec4(5, 2, 0, 1), vec4(0.5f, 0.5f, 0.5f, 1), 1);
 	shader.get()->useProgram();
 
 	if(texI >= 0)

@@ -15,7 +15,7 @@ void animation::loadAnimations(char *filename)
     Nax3Header* h = (Nax3Header*) ptr;
     header = h;
     ptr += sizeof(Nax3Header);
-    keyBuffer = (Vector4D*)malloc(h->numKeys* sizeof(Vector4D));
+    keyBuffer = (vec4*)malloc(h->numKeys* sizeof(vec4));
 
     clips = new clip[h->numClips];
     for (int i = 0; i < h->numClips; ++i) {
@@ -50,13 +50,13 @@ void animation::loadAnimations(char *filename)
             cu.isActive = naxCurve->isActive;
             cu.isStatic = naxCurve->isStatic;
             cu.curveType = naxCurve->curveType;
-            cu.staticKey = Vector4D(naxCurve->staticKeyX, naxCurve->staticKeyY, naxCurve->staticKeyZ, naxCurve->staticKeyW);
+            cu.staticKey = vec4(naxCurve->staticKeyX, naxCurve->staticKeyY, naxCurve->staticKeyZ, naxCurve->staticKeyW);
             cl.curves[curveIndex] = cu;
 
         }
         clips[i] = cl;
         // load the blob of data that contains the keyframes
-        memcpy(keyBuffer, ptr, h->numKeys*sizeof(Vector4D));
+        memcpy(keyBuffer, ptr, h->numKeys*sizeof(vec4));
 
 
 

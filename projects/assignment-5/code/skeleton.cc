@@ -163,13 +163,13 @@ void skeleton::loadSkeleton(char *fileName)
 
             float values[4];
             sscanf(p_joint->Attribute("position"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
-            Vector4D position(values);
+            vec4 position(values);
             Matrix4 p = Matrix4::getPositionMatrix(position);
             sscanf(p_joint->Attribute("rotation"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
-            Vector4D rotation(values);
+            vec4 rotation(values);
             Matrix4 r = Matrix4::getQmat(rotation);
             sscanf(p_joint->Attribute("scale"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
-            Vector4D scale(values);
+            vec4 scale(values);
             Matrix4 s = Matrix4::scaleMat(scale);
 
             j.transform = p*r*s;

@@ -80,7 +80,7 @@ private:
 	GraphicsNode node9;
 	GraphicsNode node10;
 	skeleton s;
-    Vector4D scale = Vector4D(0.4,0.4,0.4,1);
+    vec4 scale = vec4(0.4,0.4,0.4,1);
     animation a;
     unsigned int clipToPlay = 0;
     uint dMap;

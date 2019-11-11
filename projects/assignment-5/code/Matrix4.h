@@ -14,24 +14,24 @@
 		float operator[](const int index) const;
 		float & operator[](const int index);
 		Matrix4 operator*(const Matrix4& rhs) const;
-		Vector4D operator*(const Vector4D& rhs) const;
+		vec4 operator*(const vec4& rhs) const;
 		Matrix4 operator+(const Matrix4& rhs) const;
 		Matrix4 operator*(const float scalar) const;
 		static Matrix4 Perspective(float fieldOfView, float aspectRatio, float nearClip, float farClip);
-		Vector4D getPositionVec();
+		vec4 getPositionVec();
 		float returnFirst() {return matrix[0];}
 		void operator=(const Matrix4& rhs);
 		static Matrix4 rotX(float angle);
 		static Matrix4 rotY(float angle);
 		static Matrix4 rotZ(float angle);
-		static Matrix4 rotVec(Vector4D& vec, const float angle);
-		static Matrix4 getQmat(Vector4D& vec);
-		static Matrix4 scaleMat(Vector4D& vec);
+		static Matrix4 rotVec(vec4& vec, const float angle);
+		static Matrix4 getQmat(vec4& vec);
+		static Matrix4 scaleMat(vec4& vec);
 		static Matrix4 transpose(const Matrix4& mat);
 		static Matrix4 inverse(const Matrix4& mat);
 		float* getPointer();
-		static Matrix4 getPositionMatrix(Vector4D& inVector);
-		static Matrix4 lookAt(Vector4D position, Vector4D target, Vector4D up);
+		static Matrix4 getPositionMatrix(vec4& inVector);
+		static Matrix4 lookAt(vec4 position, vec4 target, vec4 up);
 		static Matrix4 perspectiveProjection(float n, float f, float r, float l,float t, float b);
 		void print();
 	};
@@ -227,9 +227,9 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		return Matrix4(returnMatrix);
 	}
 	/// Rotate around a vector a certain, given angle
-	inline Matrix4 Matrix4::rotVec(Vector4D& vec, float angle)
+	inline Matrix4 Matrix4::rotVec(vec4& vec, float angle)
 	{
-		Vector4D normVec = vec.normalize();
+		vec4 normVec = vec.normalize();
 
 		float C[16] = { 0,-normVec[2],normVec[1],0,
 						normVec[2],0,-normVec[0],0,
@@ -243,7 +243,7 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		return rotMat;
 
 	}
-	inline Matrix4 Matrix4::getQmat(Vector4D &vec)
+	inline Matrix4 Matrix4::getQmat(vec4 &vec)
 	{
 	    float xx = vec[0] * vec[0];
 	    float xy = vec[0] * vec[1];
@@ -263,7 +263,7 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
                         0,0,0,1);
 
     }
-	inline Matrix4 Matrix4::scaleMat(Vector4D &vec)
+	inline Matrix4 Matrix4::scaleMat(vec4 &vec)
 	{
         float C[16] = { vec[0], 0, 0, 0,
                         0, vec[1] , 0, 0,
@@ -301,9 +301,9 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 
 	}
 	/// Product of a matrix and a vector	
-	inline Vector4D Matrix4::operator*(const Vector4D& rhs) const
+	inline vec4 Matrix4::operator*(const vec4& rhs) const
 	{
-		return(Vector4D(
+		return(vec4(
 			rhs[0] * matrix[0] + rhs[1] * matrix[1] + rhs[2] * matrix[2] + rhs[3] * matrix[3],
 			rhs[0] * matrix[4] + rhs[1] * matrix[5] + rhs[2] * matrix[6] + rhs[3] * matrix[7],
 			rhs[0] * matrix[8] + rhs[1] * matrix[9] + rhs[2] * matrix[10] + rhs[3] * matrix[11],
@@ -358,9 +358,9 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		return Matrix4(returnVector);
 
 	}
-	inline Vector4D Matrix4::getPositionVec()
+	inline vec4 Matrix4::getPositionVec()
 	{
-	    return Vector4D(matrix[3], matrix[7], matrix[11], matrix[15]);
+	    return vec4(matrix[3], matrix[7], matrix[11], matrix[15]);
 	}
 
 	inline void Matrix4::operator=(const Matrix4 & rhs)
@@ -564,7 +564,7 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 	}
 	/// Print function used for testing the output from a matrix
 
-	inline 	Matrix4 Matrix4::getPositionMatrix(Vector4D& inVector) {
+	inline 	Matrix4 Matrix4::getPositionMatrix(vec4& inVector) {
 		float tempArr[16];
 		tempArr[0] = 1;
 		tempArr[1] = 0;
@@ -589,11 +589,11 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		return Matrix4(tempArr);
 	}
 	/// Function for creating a "look at" matrix. The glm library already has one but by writing my own the project has less dependencies
-	inline Matrix4 Matrix4::lookAt(Vector4D position, Vector4D target, Vector4D up)
+	inline Matrix4 Matrix4::lookAt(vec4 position, vec4 target, vec4 up)
 	{
-		Vector4D f = (target - position);
-		Vector4D u = up.normalize();
-		Vector4D s = (f.crossProduct(u)).normalize();
+		vec4 f = (target - position);
+		vec4 u = up.normalize();
+		vec4 s = (f.crossProduct(u)).normalize();
 		u = s.crossProduct(f);
 
 		float temp[] = {s.getVectorValue(0), s.getVectorValue(1), s.getVectorValue(2), -(s.dot3(position)),
@@ -609,7 +609,7 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 							D[0],D[1],D[2],0,
 							0,0,0,1 };
 		 Matrix4 temp2 = Matrix4(temp);
-		 Matrix4 temp3 = Matrix4::getPositionMatrix(Vector4D(-pos.getVectorValue(0), -pos.getVectorValue(1), -pos.getVectorValue(2),1));*/
+		 Matrix4 temp3 = Matrix4::getPositionMatrix(vec4(-pos.getVectorValue(0), -pos.getVectorValue(1), -pos.getVectorValue(2),1));*/
 		 
 	}
 

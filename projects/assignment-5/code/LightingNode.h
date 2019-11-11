@@ -5,18 +5,18 @@
 class LightingNode
 {
 private:
-	Vector4D position;
-	Vector4D color;
+    vec4 position;
+    vec4 color;
 	float intensity;
 
 public:
-	LightingNode(Vector4D pos, Vector4D col, float intens);
+	LightingNode(vec4 pos, vec4 col, float intens);
 	LightingNode();
 	~LightingNode();
 	float getIntensity();
-	Vector4D getPosition();
-	Vector4D getColor();
+    vec4 getPosition();
+    vec4 getColor();
 	void setIntensity(float intens);
-	void setColor(Vector4D color);
-	void setPosition(Vector4D pos);
+	void setColor(vec4 color);
+	void setPosition(vec4 pos);
 };

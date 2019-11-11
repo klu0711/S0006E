@@ -25,9 +25,9 @@ bool MeshResource::loadOBJ(char* filename)
 	bool quad = false;
 
 	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
-	std::vector<Vector4D> temp_vertices;
-	std::vector<Vector4D> temp_indicies;
-	std::vector<Vector4D> temp_normals;
+	std::vector<vec4> temp_vertices;
+	std::vector<vec4> temp_indicies;
+	std::vector<vec4> temp_normals;
 	char* path = filename;
 	FILE * file = fopen(path, "r");
 	if (file == NULL) {
@@ -44,17 +44,17 @@ bool MeshResource::loadOBJ(char* filename)
 		}
 		// Compare the first char of each string
 		if (strcmp(lineheader, "v") == 0) {
-			Vector4D position;
+            vec4 position;
 			fscanf(file, "%f %f %f\n", &position[0], &position[1], &position[2]);
 			temp_vertices.push_back(position);
 		}
 		else if (strcmp(lineheader, "vt") == 0) {
-			Vector4D uv;
+            vec4 uv;
 			fscanf(file, "%f %f\n", &uv[0], &uv[1]);
 			temp_indicies.push_back(uv);
 		}
 		else if (strcmp(lineheader, "vn") == 0) {
-			Vector4D normal;
+            vec4 normal;
 			fscanf(file, "%f %f %f\n", &normal[0], &normal[1], &normal[2]);
 			temp_normals.push_back(normal);
 		}

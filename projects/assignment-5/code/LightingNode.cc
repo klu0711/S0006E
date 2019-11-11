@@ -1,6 +1,6 @@
 #include "LightingNode.h"
 
-LightingNode::LightingNode(Vector4D pos, Vector4D col, float intens)
+LightingNode::LightingNode(vec4 pos, vec4 col, float intens)
 {
 	position = pos;
 	color = col;
@@ -20,12 +20,12 @@ float LightingNode::getIntensity()
 	return intensity;
 }
 
-Vector4D LightingNode::getPosition()
+vec4 LightingNode::getPosition()
 {
 	return position;
 }
 
-Vector4D LightingNode::getColor()
+vec4 LightingNode::getColor()
 {
 	return color;
 }
@@ -35,12 +35,12 @@ void LightingNode::setIntensity(float intens)
 	intensity = intens;
 }
 
-void LightingNode::setColor(Vector4D color)
+void LightingNode::setColor(vec4 color)
 {
 	this->color = color;
 }
 
-void LightingNode::setPosition(Vector4D pos)
+void LightingNode::setPosition(vec4 pos)
 {
 	position = pos;
 }

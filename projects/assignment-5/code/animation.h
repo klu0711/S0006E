@@ -66,7 +66,7 @@ public:
     bool isActive;                 // 0 or 1
     bool isStatic;                 // 0 or 1
     unsigned char curveType;                // CoreAnimation::CurveType::Code
-    Vector4D staticKey;
+    vec4 staticKey;
 };
 
 class clip
@@ -86,25 +86,25 @@ public:
     curve* curves;
 
 };
-typedef Vector4D* keys;
+typedef vec4* keys;
 
 class animation {
 public:
     animation() {};
     ~animation(){free(keyBuffer); delete[](clips); };
-    Vector4D getKey(unsigned int clipIndex, float i, unsigned int curveIndex, unsigned int type)
+    vec4 getKey(unsigned int clipIndex, float i, unsigned int curveIndex, unsigned int type)
     {
         int flooredI = (int)floor(i);
         float diff = i-flooredI;
         // i / floor i
         if(type == 0) // lerp for vectors
         {
-            return Vector4D::vLerp(keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI)%clips[clipIndex].numKeys * clips[clipIndex].keyStride],
+            return vec4::vLerp(keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI)%clips[clipIndex].numKeys * clips[clipIndex].keyStride],
                     keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI + 1)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], diff);
 
         }else if(type == 1) // slerp for quaternions
         {
-            return Vector4D::Slerp(keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI)%clips[clipIndex].numKeys * clips[clipIndex].keyStride],
+            return vec4::Slerp(keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI)%clips[clipIndex].numKeys * clips[clipIndex].keyStride],
                     keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + (flooredI + 1)%clips[clipIndex].numKeys * clips[clipIndex].keyStride], diff);
         }
         return keyBuffer[clips[clipIndex].curves[curveIndex].firstKeyIndex + ((int)floor(i))%clips[clipIndex].numKeys * clips[clipIndex].keyStride];
