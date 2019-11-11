@@ -591,14 +591,14 @@ inline mat4 mat4::Perspective(float fieldOfView, float aspectRatio, float nearCl
 	/// Function for creating a "look at" matrix. The glm library already has one but by writing my own the project has less dependencies
 	inline mat4 mat4::lookAt(vec4 position, vec4 target, vec4 up)
 	{
-		vec4 f = (target - position);
-		vec4 u = up.normalize();
-		vec4 s = (f.crossProduct(u)).normalize();
-		u = s.crossProduct(f);
+		vec4 cameraForward = (target - position);
+		vec4 cameraUp = up.normalize3();
+		vec4 cameraRight = (cameraForward.crossProduct(cameraUp)).normalize3();
+        cameraUp = cameraRight.crossProduct(cameraForward);
 
-		float temp[] = {s.getVectorValue(0), s.getVectorValue(1), s.getVectorValue(2), -(s.dot3(position)),
-						u.getVectorValue(0), u.getVectorValue(1), u.getVectorValue(2), -(u.dot3(position)),
-						-f.getVectorValue(0), -f.getVectorValue(1) , -f.getVectorValue(2), f.dot3(position),
+		float temp[] = {cameraRight.getVectorValue(0), cameraRight.getVectorValue(1), cameraRight.getVectorValue(2), -(cameraRight.dot3(position)),
+                        cameraUp.getVectorValue(0), cameraUp.getVectorValue(1), cameraUp.getVectorValue(2), -(cameraUp.dot3(position)),
+						-cameraForward.getVectorValue(0), -cameraForward.getVectorValue(1) , -cameraForward.getVectorValue(2), cameraForward.dot3(position),
 						0,0,0,1};
 		return mat4(temp);
 

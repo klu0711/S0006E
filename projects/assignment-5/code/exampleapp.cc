@@ -146,7 +146,7 @@ namespace Example
 				front[1] = sin(pitch * radianConversion);
 				front[2] = sin(yaw * radianConversion) * cos(pitch * radianConversion);
 				front[3] = 1;
-				cameraFront = front.normalize();
+				cameraFront = front.normalize3();
 			}
 		});
 
@@ -164,46 +164,21 @@ namespace Example
 			std::shared_ptr<TextureResource> tex = std::make_shared<TextureResource>();
 			std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
 
-			std::shared_ptr<TextureResource> footmanDiffuse = std::make_shared<TextureResource>();
-			std::shared_ptr<MeshResource> mesh1 = std::make_shared<MeshResource>();
 
-            s.loadSkeleton("Unit_Footman.constants");
-            s.loadMesh("Unit_Footman.nvx2");
-            glEnable(GL_DEPTH_TEST);
-            mesh->setupMesh("sphere.obj");
-            mesh1->setupMeshSkin(s.indexDataPtr, s.vertexDataPtr, s.indexDataSize, s.vertexDataSize, s.numVertices, s.header->numIndices);
-            a.loadAnimations("Unit_Footman.nax3");
-
-
-
-
-            //Bind the normal map the the gpu
-
-            //Bind all the classes to the GraphicsNode for the footman
-            this->node2.setShaderClass(shader1);
-            this->node2.setMeshCLass(mesh1);
-            this->node2.setTextureclass(footmanDiffuse);
-            dMap = this->node2.load("Footman_Diffuse.tga", "customVertexShader.ver", "fragmentShader.frag", 0);
-            this->node2.light = LightingNode(vec4(0,2,-5,1), vec4(1,1,1,1), 1);
-            nMap = footmanNormalMap.get()->loadFromFile("Footman_Normal.tga");
-            // Change what texture is being used
-            shader1.get()->modifyUniformInt("diffuser", 0);
-            shader1.get()->modifyUniformInt("normalMap", 1);
-
-            for (int i = 0; i < s.joints->size(); ++i)
-            {
-                GraphicsNode* n = &s.joints->at(i).node;
-                n->setShaderClass(shader);
-                n->setMeshCLass(mesh);
-                n->setTextureclass(tex);
-                n->load("Footman_Diffuse.tga", "vertexShader.ver", "fragmentShader.frag", -1);
-
-            }
+            mesh.get()->loadOBJ("tractor.obj");
+            node.setShaderClass(shader);
+            node.setMeshCLass(mesh);
+            node.setTextureclass(tex);
+            node.load("tractor.png", "vertexShader.ver", "fShader.frag", 0 );
+            node.light.setPosition(cameraPos);
+            node.getShader()->modifyUniformInt("diffuser", 0);
+            //node.getShader()->modifyUniformFloat("intensity", 1);
 
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
 
 			glDisable(GL_FRAMEBUFFER_SRGB);
+			glEnable(GL_DEPTH_TEST);
 			return true;
 		}
 		return false;
@@ -223,84 +198,12 @@ namespace Example
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
-            // Bind the diffuse texture to slot zero
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, dMap);
-            // Bind the normal map to slot one
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, nMap);
-			mat4 view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
-
-            // used to play animations
-            using ms = std::chrono::duration<float, std::milli>;
-            float animationSpeed = std::chrono::duration_cast<ms>(clock.now() - start).count() / a.clips[clipToPlay].keyDuration;
-            mat4 jointMats[21];
-            vec4 scaleBalls(0.3, 0.3, 0.3, 1);
-            for (int k = 0; k < s.joints->size() ; ++k)
-            {
-                //Load animation data for one key in a clip
-                vec4 pos = a.getKey(clipToPlay, animationSpeed, k*4, 0);
-                mat4 po = mat4::getPositionMatrix(pos);
-                vec4 rot = a.getKey(clipToPlay, animationSpeed, k*4 + 1, 1);
-                mat4 ro = mat4::getQmat(rot);
-                vec4 scale = a.getKey(clipToPlay, animationSpeed, k*4 + 2, 0);
-                mat4 sc = mat4::scaleMat(scale);
-                vec4 vel = a.getKey(clipToPlay, animationSpeed, k*4 + 3, 0);
-                mat4 res = po*ro*sc;
-                s.joints->at(k).localTransform = res;
-
-                // Draw balls
-                GraphicsNode* n = &s.joints->at(k).node;
-                n->setTransform(mat4::transpose(perspectiveProjection) * view * (s.joints->at(k).transform) * mat4::scaleMat(scaleBalls));
-                // Update the joint matricies
-                // reset joints to bind pose
-                jointMats[k] = s.joints->at(s.skinJoints[k]).transform * s.joints->at(s.skinJoints[k]).inverseBindPose ;
-
-                n->draw();
-
-            }
-            s.updateJoints(0);
-
-            glUseProgram(node2.getShader()->getProgram());
-            node2.getShader()->modifyUniformMatrix("model", &rotModel[0]);
-            node2.getShader()->modifyUniformMatrix("view", &view[0]);
-            node2.getShader()->modifyUniformMatrix("projection", &mat4::transpose(perspectiveProjection)[0]);
-            node2.getShader()->modifyUniformVector("cameraPosition", cameraPos);
-            //node2.light.setPosition(vec4(10 * sin(rotation),0,cos(rotation) * 10,1));
-            this->node2.draw();
-            node2.getShader()->modifyUniformMats(21, jointMats);
-
-            vec4 pos(0,0,0,0);
-            vec4 x(0,cos(rotation)*0.1f,0,1);
+            mat4 view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
+			node.setTransform(mat4::transpose(perspectiveProjection) * view);
+			node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
+			node.draw();
 
 
-            // draw skeleton lines using the old openGL pipeline
-			glUseProgram(0);
-			glMatrixMode(GL_MODELVIEW);
-			auto viewMat = mat4::transpose(view);
-			glLoadMatrixf((GLfloat*)&viewMat);
-            glMatrixMode(GL_PROJECTION);
-            auto dood = (perspectiveProjection);
-            glLoadMatrixf((GLfloat*)&dood);
-			glBegin(GL_LINES);
-			glColor3f(255, 0, 0);
-            for (int i = 0; i < s.joints->size(); ++i) {
-                joint Joint = s.joints->at(i);
-                if(Joint.parent != -1)
-                {
-                    vec4 a = Joint.transform.getPositionVec();
-                    vec4 b = s.joints->at(Joint.parent).transform.getPositionVec();
-                    glVertex3f(a[0], a[1], a[2]);
-                    glVertex3f(b[0], b[1], b[2]);
-                }
-
-            }
-
-			glEnd();
-            rotation += 0.01f;
-            //rotModel = mat4::rotY(rotation);
-            //s.moveJoint(mat4::getPositionMatrix(x), 2);
-            //std::this_thread::sleep_for(std::chrono::milliseconds(150));
 			this->window->SwapBuffers();
 		}
 	}

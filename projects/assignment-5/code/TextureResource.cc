@@ -16,7 +16,7 @@ TextureResource::~TextureResource()
 uint TextureResource::loadFromFile(const char * filename)
 {
 	int width, heigth, numComponents;
-	//stbi_set_flip_vertically_on_load(1);
+	stbi_set_flip_vertically_on_load(1);
 	unsigned char*  imageData = stbi_load(filename, &width, &heigth, &numComponents, 4);
 
 	if (imageData == NULL)
@@ -44,7 +44,7 @@ uint TextureResource::loadFromFile(const char * filename)
 /// choose and active texture to use for drawing textures from
 void TextureResource::bind(unsigned int unit)
 {
-	//assert(unit >= 0 && unit <= 31);
-	//glActiveTexture(GL_TEXTURE0 + unit);
-	//glBindTexture(GL_TEXTURE_2D, texture);
+	assert(unit >= 0 && unit <= 31);
+	glActiveTexture(GL_TEXTURE0 + unit);
+	glBindTexture(GL_TEXTURE_2D, texture);
 }

@@ -55,7 +55,9 @@
 		float operator[](const int index) const;
 		float & operator[](const int index);
 		float length() const;
+		float length3() const;
 		vec4 normalize() const;
+		vec4 normalize3() const;
 		float dotProduct(const vec4& vec) const;
 		vec4 crossProduct(const vec4& vec) const;
 		float getVectorValue(int index);
@@ -117,11 +119,21 @@
 	{
 		return sqrt(pow(vector[0], 2) + pow(vector[1], 2) + pow(vector[2], 2) +  pow(vector[3], 2));
 	}
+	inline float vec4::length3() const
+	{
+        return sqrt(pow(vector[0], 2) + pow(vector[1], 2) + pow(vector[2], 2));
+	}
 	/// Divides all the values of the vector with the length of the vector (normalization)
 	inline vec4 vec4::normalize() const
 	{
 		float length = this->length();
 		return vec4(vector[0] / length, vector[1] / length, vector[2] / length, vector[3] / length);
+	}
+
+	inline vec4 vec4::normalize3() const
+	{
+		float length = this->length3();
+		return vec4(vector[0] / length, vector[1] / length, vector[2] / length,1);
 	}
 	/// Returns a float of the dot product of the vectors
     inline float vec4::dot3(const vec4& vec) const

@@ -17,7 +17,7 @@ MeshResource::~MeshResource()
 /// Load an obj file
 bool MeshResource::loadOBJ(char* filename)
 {
-
+    MeshResource::setupHandles();
 	std::map<std::string, int> indexMap;
 	std::vector<int> indexBuffer;
 	std::vector<Vertex> vertexBuffer;

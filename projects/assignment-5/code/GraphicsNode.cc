@@ -65,8 +65,7 @@ uint GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 	shader.get()->loadVertexShader(vertexShaderName.c_str());
 	shader.get()->loadFragmentShader(fragmentShaderName.c_str());
 	shader.get()->linkShaders();
-	//meshResource.get()->setupHandles();
-	//meshResource.get()->loadOBJFile(vertices, uv, normals);
+	meshResource.get()->bindAttrPointer();
 	//combinedbuffer = meshResource.get()->combineBuffers(vertices, uv, normals);
 	//meshResource.get()->convertToFloatPointer(vertices, indicies, normals);
     if(texture >= 0)
@@ -95,8 +94,8 @@ void GraphicsNode::draw()
 
 
 	shader->modifyUniformVector("lightPos", light.getPosition());
-	//shader->modifyUniformVector("lightColor", light.getColor());
-	//shader->modifyUniformFloat("intensity", light.getIntensity());
+	shader->modifyUniformVector("lightColor", light.getColor());
+	shader->modifyUniformFloat("intensity", light.getIntensity());
 
 	meshResource.get()->bind();
 	glDrawElements(GL_TRIANGLES, meshResource->getIndexSize(), GL_UNSIGNED_INT, 0);
