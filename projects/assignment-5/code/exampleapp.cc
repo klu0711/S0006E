@@ -24,15 +24,15 @@ namespace Example
 
 	TextureResource tex;
 
-	Matrix4 perspectiveProjection;
+	mat4 perspectiveProjection;
 
 	vec4 cameraPos = vec4(0.0f, 1.0f, 5.0f, 1);
 	vec4 cameraFront = vec4(0.0f, 0.0f, -1.0f, 1);
 	vec4 cameraUp = vec4(0.0f, 1.0f, 0.0f, 1);
 
 	vec4 position = vec4(0.0f, 0.0f, -1.0f, 1.0f);
-	Matrix4 rotX = Matrix4::rotX(0);
-	Matrix4 rotY = Matrix4::rotY(0);
+	mat4 rotX = mat4::rotX(0);
+	mat4 rotY = mat4::rotY(0);
 	bool click = false;
 	bool firstMouse = true;
 
@@ -158,7 +158,7 @@ namespace Example
 
 			this->window->GetSize(windowSizeX, windowSizeY);
 
-			perspectiveProjection = Matrix4::Perspective(nvgDegToRad(75.0f), (float)windowSizeX/(float)windowSizeY, 1000, 0.1);
+			perspectiveProjection = mat4::Perspective(nvgDegToRad(75.0f), (float)windowSizeX/(float)windowSizeY, 1000, 0.1);
 
 
 			std::shared_ptr<TextureResource> tex = std::make_shared<TextureResource>();
@@ -215,9 +215,9 @@ namespace Example
 		float rotation = 0;
 		float movementn = 0;
         std::chrono::high_resolution_clock clock = std::chrono::high_resolution_clock();
-        Matrix4 ideMat = Matrix4();
+        mat4 ideMat = mat4();
 		auto start = clock.now();
-        Matrix4 rotModel;
+        mat4 rotModel;
 		while (this->window->IsOpen())
 		{
 
@@ -229,29 +229,29 @@ namespace Example
             // Bind the normal map to slot one
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, nMap);
-			Matrix4 view = (Matrix4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
+			mat4 view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
 
             // used to play animations
             using ms = std::chrono::duration<float, std::milli>;
             float animationSpeed = std::chrono::duration_cast<ms>(clock.now() - start).count() / a.clips[clipToPlay].keyDuration;
-            Matrix4 jointMats[21];
+            mat4 jointMats[21];
             vec4 scaleBalls(0.3, 0.3, 0.3, 1);
             for (int k = 0; k < s.joints->size() ; ++k)
             {
                 //Load animation data for one key in a clip
                 vec4 pos = a.getKey(clipToPlay, animationSpeed, k*4, 0);
-                Matrix4 po = Matrix4::getPositionMatrix(pos);
+                mat4 po = mat4::getPositionMatrix(pos);
                 vec4 rot = a.getKey(clipToPlay, animationSpeed, k*4 + 1, 1);
-                Matrix4 ro = Matrix4::getQmat(rot);
+                mat4 ro = mat4::getQmat(rot);
                 vec4 scale = a.getKey(clipToPlay, animationSpeed, k*4 + 2, 0);
-                Matrix4 sc = Matrix4::scaleMat(scale);
+                mat4 sc = mat4::scaleMat(scale);
                 vec4 vel = a.getKey(clipToPlay, animationSpeed, k*4 + 3, 0);
-                Matrix4 res = po*ro*sc;
+                mat4 res = po*ro*sc;
                 s.joints->at(k).localTransform = res;
 
                 // Draw balls
                 GraphicsNode* n = &s.joints->at(k).node;
-                n->setTransform(Matrix4::transpose(perspectiveProjection) * view * (s.joints->at(k).transform) * Matrix4::scaleMat(scaleBalls));
+                n->setTransform(mat4::transpose(perspectiveProjection) * view * (s.joints->at(k).transform) * mat4::scaleMat(scaleBalls));
                 // Update the joint matricies
                 // reset joints to bind pose
                 jointMats[k] = s.joints->at(s.skinJoints[k]).transform * s.joints->at(s.skinJoints[k]).inverseBindPose ;
@@ -264,7 +264,7 @@ namespace Example
             glUseProgram(node2.getShader()->getProgram());
             node2.getShader()->modifyUniformMatrix("model", &rotModel[0]);
             node2.getShader()->modifyUniformMatrix("view", &view[0]);
-            node2.getShader()->modifyUniformMatrix("projection", &Matrix4::transpose(perspectiveProjection)[0]);
+            node2.getShader()->modifyUniformMatrix("projection", &mat4::transpose(perspectiveProjection)[0]);
             node2.getShader()->modifyUniformVector("cameraPosition", cameraPos);
             //node2.light.setPosition(vec4(10 * sin(rotation),0,cos(rotation) * 10,1));
             this->node2.draw();
@@ -277,7 +277,7 @@ namespace Example
             // draw skeleton lines using the old openGL pipeline
 			glUseProgram(0);
 			glMatrixMode(GL_MODELVIEW);
-			auto viewMat = Matrix4::transpose(view);
+			auto viewMat = mat4::transpose(view);
 			glLoadMatrixf((GLfloat*)&viewMat);
             glMatrixMode(GL_PROJECTION);
             auto dood = (perspectiveProjection);
@@ -298,8 +298,8 @@ namespace Example
 
 			glEnd();
             rotation += 0.01f;
-            //rotModel = Matrix4::rotY(rotation);
-            //s.moveJoint(Matrix4::getPositionMatrix(x), 2);
+            //rotModel = mat4::rotY(rotation);
+            //s.moveJoint(mat4::getPositionMatrix(x), 2);
             //std::this_thread::sleep_for(std::chrono::milliseconds(150));
 			this->window->SwapBuffers();
 		}

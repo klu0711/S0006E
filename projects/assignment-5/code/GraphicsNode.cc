@@ -5,7 +5,7 @@
 
 GraphicsNode::GraphicsNode()
 {
-	transform = Matrix4::rotY(1);
+	transform = mat4::rotY(1);
 }
 
 GraphicsNode::~GraphicsNode()
@@ -45,12 +45,12 @@ MeshResource* GraphicsNode::getMeshResource()
 	return meshResource.get();
 }
 /// return the stored transform
-Matrix4 GraphicsNode::getTransform()
+mat4 GraphicsNode::getTransform()
 {
 	return transform;
 }
 /// Change the stored transform
-void GraphicsNode::setTransform(Matrix4 mat)
+void GraphicsNode::setTransform(mat4 mat)
 {
 	transform = mat;
 }

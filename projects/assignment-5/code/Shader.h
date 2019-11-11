@@ -31,7 +31,7 @@
 		void modifyUniformVector(std::string name, vec4 vec);
 		void modifyUniformFloat(std::string name, float value);
 		void modifyUniformInt(std::string name, int value);
-		void modifyUniformMats(int count, Matrix4* jointMats);
+		void modifyUniformMats(int count, mat4* jointMats);
 		void useProgram();
 		unsigned int getProgram(){return this->program;}
 	};

@@ -10,7 +10,7 @@ public:
     std::string name;
     int index;
     int parentIndex;
-    Matrix4 transform;
+    mat4 transform;
 };
 
 

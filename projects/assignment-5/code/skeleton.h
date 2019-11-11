@@ -101,9 +101,9 @@ struct joint
     int parent = -1;
     int index;
     std::vector<int> children;
-    Matrix4 inverseBindPose;
-    Matrix4 transform;
-    Matrix4 localTransform;
+    mat4 inverseBindPose;
+    mat4 transform;
+    mat4 localTransform;
     GraphicsNode node;
 };
 
@@ -120,7 +120,7 @@ public:
     std::vector<int> skinJoints;
     skeleton();
     ~skeleton();
-    void moveJoint(Matrix4 transform, int joint);
+    void moveJoint(mat4 transform, int joint);
     void loadSkeleton(char* fileName);
     void updateJoints(int joint);
     void worldSpaceConversion();

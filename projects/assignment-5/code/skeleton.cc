@@ -98,7 +98,7 @@ void skeleton::loadMesh(char *fileName)
    // std::cout << this->vertexComponents.size() << std::endl;
 }
 
-void skeleton::moveJoint(Matrix4 transform, int joint)
+void skeleton::moveJoint(mat4 transform, int joint)
 {
     joints->at(joint).localTransform = joints->at(joint).localTransform * transform;
     updateJoints(joint);
@@ -132,7 +132,7 @@ void skeleton::worldSpaceConversion()
 
     }
     for (int j = 0; j < joints->size(); ++j) {
-        joints->at(j).inverseBindPose = Matrix4::inverse(joints->at(j).transform);
+        joints->at(j).inverseBindPose = mat4::inverse(joints->at(j).transform);
     }
 }
 
@@ -164,13 +164,13 @@ void skeleton::loadSkeleton(char *fileName)
             float values[4];
             sscanf(p_joint->Attribute("position"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
             vec4 position(values);
-            Matrix4 p = Matrix4::getPositionMatrix(position);
+            mat4 p = mat4::getPositionMatrix(position);
             sscanf(p_joint->Attribute("rotation"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
             vec4 rotation(values);
-            Matrix4 r = Matrix4::getQmat(rotation);
+            mat4 r = mat4::getQmat(rotation);
             sscanf(p_joint->Attribute("scale"), "%f,%f,%f,%f", &values[0], &values[1], &values[2], &values[3]);
             vec4 scale(values);
-            Matrix4 s = Matrix4::scaleMat(scale);
+            mat4 s = mat4::scaleMat(scale);
 
             j.transform = p*r*s;
             j.localTransform = j.transform;

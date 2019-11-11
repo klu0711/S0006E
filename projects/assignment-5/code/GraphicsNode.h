@@ -16,8 +16,8 @@
 		Shader* getShader();
 		TextureResource* getTextureResource();
 		MeshResource* getMeshResource();
-		Matrix4 getTransform();
-		void setTransform(Matrix4 mat);
+        mat4 getTransform();
+		void setTransform(mat4 mat);
 		uint load(std::string filename, std::string vertexShaderName, std::string fragmentShaderName, int texture);
 		void draw();
 		LightingNode light;
@@ -26,7 +26,7 @@
 		std::shared_ptr<Shader> shader;
 		std::shared_ptr<TextureResource> textureResource;
 		std::shared_ptr<MeshResource> meshResource;
-		Matrix4 transform;
+        mat4 transform;
 		float rotaion = 0;
 		std::vector<Vertex> vertices;
 		std::vector<int> indices;

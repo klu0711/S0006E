@@ -1,53 +1,53 @@
 #pragma once
 #include <math.h>
 #include "Vector4D.h"
-	class Matrix4
+	class mat4
 	{
 	private:
 		float matrix[16];
 	public:
-		Matrix4();
-		Matrix4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p);
-		Matrix4(const Matrix4& mat);
-		Matrix4(float mat[16]);
-		~Matrix4();
+		mat4();
+		mat4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p);
+		mat4(const mat4& mat);
+		mat4(float mat[16]);
+		~mat4();
 		float operator[](const int index) const;
 		float & operator[](const int index);
-		Matrix4 operator*(const Matrix4& rhs) const;
+		mat4 operator*(const mat4& rhs) const;
 		vec4 operator*(const vec4& rhs) const;
-		Matrix4 operator+(const Matrix4& rhs) const;
-		Matrix4 operator*(const float scalar) const;
-		static Matrix4 Perspective(float fieldOfView, float aspectRatio, float nearClip, float farClip);
+		mat4 operator+(const mat4& rhs) const;
+		mat4 operator*(const float scalar) const;
+		static mat4 Perspective(float fieldOfView, float aspectRatio, float nearClip, float farClip);
 		vec4 getPositionVec();
 		float returnFirst() {return matrix[0];}
-		void operator=(const Matrix4& rhs);
-		static Matrix4 rotX(float angle);
-		static Matrix4 rotY(float angle);
-		static Matrix4 rotZ(float angle);
-		static Matrix4 rotVec(vec4& vec, const float angle);
-		static Matrix4 getQmat(vec4& vec);
-		static Matrix4 scaleMat(vec4& vec);
-		static Matrix4 transpose(const Matrix4& mat);
-		static Matrix4 inverse(const Matrix4& mat);
+		void operator=(const mat4& rhs);
+		static mat4 rotX(float angle);
+		static mat4 rotY(float angle);
+		static mat4 rotZ(float angle);
+		static mat4 rotVec(vec4& vec, const float angle);
+		static mat4 getQmat(vec4& vec);
+		static mat4 scaleMat(vec4& vec);
+		static mat4 transpose(const mat4& mat);
+		static mat4 inverse(const mat4& mat);
 		float* getPointer();
-		static Matrix4 getPositionMatrix(vec4& inVector);
-		static Matrix4 lookAt(vec4 position, vec4 target, vec4 up);
-		static Matrix4 perspectiveProjection(float n, float f, float r, float l,float t, float b);
+		static mat4 getPositionMatrix(vec4& inVector);
+		static mat4 lookAt(vec4 position, vec4 target, vec4 up);
+		static mat4 perspectiveProjection(float n, float f, float r, float l,float t, float b);
 		void print();
 	};
 
 	/// Getter
-	inline float Matrix4::operator[](const int index) const
+	inline float mat4::operator[](const int index) const
 	{
 		return matrix[index];
 	}
 	/// Setter
-	inline float & Matrix4::operator[](const int index)
+	inline float & mat4::operator[](const int index)
 	{
 		return matrix[index];
 	}
 	/// Copy constructor
-	inline Matrix4::Matrix4(const Matrix4& mat)
+	inline mat4::mat4(const mat4& mat)
 	{
 		for (int i = 0; i < 16; i++)
 		{
@@ -55,7 +55,7 @@
 		}
 	}
 	/// Constructor for identity matrix
-	inline Matrix4::Matrix4()
+	inline mat4::mat4()
 	{
 		matrix[0] = 1.0f;
 		matrix[1] = 0.0f;
@@ -78,12 +78,12 @@
 		matrix[15] = 1;
 
 	}
-inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float nearClip, float farClip)
+inline mat4 mat4::Perspective(float fieldOfView, float aspectRatio, float nearClip, float farClip)
 {
 
-    Matrix4 result;
+    mat4 result;
 
-    result = Matrix4(
+    result = mat4(
             1.0f/(aspectRatio * tan(fieldOfView/2)), 0, 0, 0,
             0, 1.0f/(tan(fieldOfView/2)), 0, 0,
             0, 0, ((-nearClip - farClip) / (nearClip - farClip)), -1,
@@ -92,7 +92,7 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 
     return result;
 }
-	inline Matrix4::Matrix4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p)
+	inline mat4::mat4(float a, float b, float c, float d, float e, float f, float g, float h, float i, float j, float k, float l, float m, float n, float o, float p)
 	{
 		matrix[0] = a;
 		matrix[1] = b;
@@ -112,7 +112,7 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		matrix[15] = p;
 	}
 	/// Constructor that takes an array and builds a new matrix
-	inline Matrix4::Matrix4(float mat[16])
+	inline mat4::mat4(float mat[16])
 	{
 		matrix[0] = mat[0];
 		matrix[1] = mat[1];
@@ -133,12 +133,12 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 
 	}
 	/// Deconstructor
-	inline Matrix4::~Matrix4()
+	inline mat4::~mat4()
 	{
 
 	}
 	/// Rotation matrix around x-axis
-	inline Matrix4 Matrix4::rotX(float angle)
+	inline mat4 mat4::rotX(float angle)
 	{
 		const float cosAng = cos(angle);
 		const float sinAng = sin(angle);
@@ -164,11 +164,11 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		returnMatrix[14] = 0;
 		returnMatrix[15] = 1;
 
-		return Matrix4(returnMatrix);
+		return mat4(returnMatrix);
 
 	}
 	/// Rotation matrix around y-axis
-	inline Matrix4 Matrix4::rotY(float angle)
+	inline mat4 mat4::rotY(float angle)
 	{
 		const float cosAng = cos(angle);
 		const float sinAng = sin(angle);
@@ -194,11 +194,11 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		returnMatrix[14] = 0;
 		returnMatrix[15] = 1;
 
-		return Matrix4(returnMatrix);
+		return mat4(returnMatrix);
 
 	}
 	/// Rotation matrix around z-axis
-	inline Matrix4 Matrix4::rotZ(float angle)
+	inline mat4 mat4::rotZ(float angle)
 	{
 		const float cosAng = cos(angle);
 		const float sinAng = sin(angle);
@@ -224,10 +224,10 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		returnMatrix[14] = 0;
 		returnMatrix[15] = 1;
 
-		return Matrix4(returnMatrix);
+		return mat4(returnMatrix);
 	}
 	/// Rotate around a vector a certain, given angle
-	inline Matrix4 Matrix4::rotVec(vec4& vec, float angle)
+	inline mat4 mat4::rotVec(vec4& vec, float angle)
 	{
 		vec4 normVec = vec.normalize();
 
@@ -235,15 +235,15 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 						normVec[2],0,-normVec[0],0,
 						-normVec[1],normVec[0],0,0,
 						0,0,0, 1 };
-		Matrix4 matC(C);
-		Matrix4 I;
-		Matrix4 rotMat = I + (matC*sin(angle)) + (matC*matC)*(1 - cos(angle));
+		mat4 matC(C);
+		mat4 I;
+		mat4 rotMat = I + (matC*sin(angle)) + (matC*matC)*(1 - cos(angle));
 		rotMat.matrix[15] = 1;
 
 		return rotMat;
 
 	}
-	inline Matrix4 Matrix4::getQmat(vec4 &vec)
+	inline mat4 mat4::getQmat(vec4 &vec)
 	{
 	    float xx = vec[0] * vec[0];
 	    float xy = vec[0] * vec[1];
@@ -257,13 +257,13 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
         float zz = vec[2] * vec[2];
         float zw = vec[2] * vec[3];
 
-        return Matrix4(1-2*(yy+zz), 2*(xy-zw), 2*(xz+yw), 0,
+        return mat4(1-2*(yy+zz), 2*(xy-zw), 2*(xz+yw), 0,
                         2*(xy+zw), 1-2*(xx+zz), 2*(yz-xw), 0,
                         2*(xz-yw), 2*(yz+xw), 1-2*(xx+yy), 0,
                         0,0,0,1);
 
     }
-	inline Matrix4 Matrix4::scaleMat(vec4 &vec)
+	inline mat4 mat4::scaleMat(vec4 &vec)
 	{
         float C[16] = { vec[0], 0, 0, 0,
                         0, vec[1] , 0, 0,
@@ -272,7 +272,7 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
         return C;
 	}
 	/// Product of two matrices
-	inline Matrix4 Matrix4::operator*(const Matrix4& rhs) const
+	inline mat4 mat4::operator*(const mat4& rhs) const
 	{
 		float returnMatrix[16];
 
@@ -296,12 +296,12 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		returnMatrix[14] = (matrix[12] * rhs.matrix[2]) + (matrix[13] * rhs.matrix[6]) + (matrix[14] * rhs.matrix[10]) + (matrix[15] * rhs.matrix[14]);
 		returnMatrix[15] = (matrix[12] * rhs.matrix[3]) + (matrix[13] * rhs.matrix[7]) + (matrix[14] * rhs.matrix[11]) + (matrix[15] * rhs.matrix[15]);
 
-		return Matrix4(returnMatrix);
+		return mat4(returnMatrix);
 
 
 	}
 	/// Product of a matrix and a vector	
-	inline vec4 Matrix4::operator*(const vec4& rhs) const
+	inline vec4 mat4::operator*(const vec4& rhs) const
 	{
 		return(vec4(
 			rhs[0] * matrix[0] + rhs[1] * matrix[1] + rhs[2] * matrix[2] + rhs[3] * matrix[3],
@@ -310,7 +310,7 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 			rhs[0] * matrix[12] + rhs[1] * matrix[13] + rhs[2] * matrix[14] + rhs[3] * matrix[15]));
 	}
 	/// Needed to perform rotation around a vector
-	inline Matrix4 Matrix4::operator+(const Matrix4& rhs) const
+	inline mat4 mat4::operator+(const mat4& rhs) const
 	{
 		float returnVector[16];
 		/// adds all the corresponding elements in both matricies to eachother
@@ -332,10 +332,10 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		returnVector[15] = matrix[15] + rhs.matrix[15];
 
 
-		return Matrix4(returnVector);
+		return mat4(returnVector);
 	}
 	/// Needed to perform rotation around a vector
-	inline Matrix4 Matrix4::operator*(const float scalar) const
+	inline mat4 mat4::operator*(const float scalar) const
 	{
 		float returnVector[16];
 		returnVector[0] = matrix[0] * scalar;
@@ -355,15 +355,15 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		returnVector[14] = matrix[14] * scalar;
 		returnVector[15] = matrix[15] * scalar;
 
-		return Matrix4(returnVector);
+		return mat4(returnVector);
 
 	}
-	inline vec4 Matrix4::getPositionVec()
+	inline vec4 mat4::getPositionVec()
 	{
 	    return vec4(matrix[3], matrix[7], matrix[11], matrix[15]);
 	}
 
-	inline void Matrix4::operator=(const Matrix4 & rhs)
+	inline void mat4::operator=(const mat4 & rhs)
 	{
 		matrix[0] = rhs.matrix[0];
 		matrix[1] = rhs.matrix[1];
@@ -386,7 +386,7 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		matrix[15] = rhs.matrix[15];
 	}
 	/// Transposes the given matrix and return the transpose as a new matrix
-	inline Matrix4 Matrix4::transpose(const Matrix4& mat)
+	inline mat4 mat4::transpose(const mat4& mat)
 	{
 		float returnMatrix[16];
 		returnMatrix[0] = mat.matrix[0];
@@ -409,10 +409,10 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		returnMatrix[11] = mat.matrix[14];
 		returnMatrix[15] = mat.matrix[15];
 
-		return Matrix4(returnMatrix);
+		return mat4(returnMatrix);
 	}
 	/// Calculate the invere of a matrix, if the determinant is zerothe function returns the same matrix otherwise the inverse is returned as a new matrix
-	inline Matrix4 Matrix4::inverse(const Matrix4& mat)
+	inline mat4 mat4::inverse(const mat4& mat)
 	{
 		float inv[16], determinant, out[16];
 
@@ -555,16 +555,16 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		out[15] = inv[15] * determinant;
 
 
-		return Matrix4(out);
+		return mat4(out);
 
 	}
-	inline float * Matrix4::getPointer()
+	inline float * mat4::getPointer()
 	{ 
 		return matrix;
 	}
 	/// Print function used for testing the output from a matrix
 
-	inline 	Matrix4 Matrix4::getPositionMatrix(vec4& inVector) {
+	inline 	mat4 mat4::getPositionMatrix(vec4& inVector) {
 		float tempArr[16];
 		tempArr[0] = 1;
 		tempArr[1] = 0;
@@ -586,10 +586,10 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 		tempArr[13] = 0;
 		tempArr[14] = 0;
 		tempArr[15] = 1;
-		return Matrix4(tempArr);
+		return mat4(tempArr);
 	}
 	/// Function for creating a "look at" matrix. The glm library already has one but by writing my own the project has less dependencies
-	inline Matrix4 Matrix4::lookAt(vec4 position, vec4 target, vec4 up)
+	inline mat4 mat4::lookAt(vec4 position, vec4 target, vec4 up)
 	{
 		vec4 f = (target - position);
 		vec4 u = up.normalize();
@@ -600,7 +600,7 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 						u.getVectorValue(0), u.getVectorValue(1), u.getVectorValue(2), -(u.dot3(position)),
 						-f.getVectorValue(0), -f.getVectorValue(1) , -f.getVectorValue(2), f.dot3(position),
 						0,0,0,1};
-		return Matrix4(temp);
+		return mat4(temp);
 
 
 		// Old implementation
@@ -608,13 +608,13 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 							U[0],U[1],U[2],0,
 							D[0],D[1],D[2],0,
 							0,0,0,1 };
-		 Matrix4 temp2 = Matrix4(temp);
-		 Matrix4 temp3 = Matrix4::getPositionMatrix(vec4(-pos.getVectorValue(0), -pos.getVectorValue(1), -pos.getVectorValue(2),1));*/
+		 mat4 temp2 = mat4(temp);
+		 mat4 temp3 = mat4::getPositionMatrix(vec4(-pos.getVectorValue(0), -pos.getVectorValue(1), -pos.getVectorValue(2),1));*/
 		 
 	}
 
-	inline Matrix4 Matrix4::perspectiveProjection(float n, float f, float r, float l, float t, float b)
+	inline mat4 mat4::perspectiveProjection(float n, float f, float r, float l, float t, float b)
 	{
-		return Matrix4();
+		return mat4();
 	}
 	
