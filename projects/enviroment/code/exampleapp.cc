@@ -7,12 +7,8 @@
 #include <cstring>
 #include "MeshResource.h"
 #include <chrono>
-#define KEY_UP 72
-#define KEY_DOWN 80
-#define KEY_LEFT 75
-#define KEY_RIGHT 77
-#define KEY_X 120
-//#define RADIANCON = 3.141592/180;
+#include <imgui.h>
+
 
 
 using namespace Display;
@@ -172,13 +168,38 @@ namespace Example
             node.load("tractor.png", "vertexShader.ver", "fShader.frag", 0 );
             node.light.setPosition(cameraPos);
             node.getShader()->modifyUniformInt("diffuser", 0);
-            //node.getShader()->modifyUniformFloat("intensity", 1);
             //Back face culling
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
 			glDisable(GL_FRAMEBUFFER_SRGB);
 			//Depth buffer
 			glEnable(GL_DEPTH_TEST);
+
+
+
+        window->SetUiRender([]
+        {
+            //ImGui::ShowDemoWindow();
+            ImGui::Begin("Test Tool", nullptr, ImGuiWindowFlags_MenuBar);
+            if(ImGui::BeginMenuBar())
+            {
+                if(ImGui::BeginMenu("File"))
+                {
+                    if(ImGui::MenuItem("Open", "press this")) {/*Do Stuff*/}
+                    if(ImGui::MenuItem("Save", "press this")) {/*Do Stuff*/}
+                    if(ImGui::MenuItem("Close", "press this")) {/*Do Stuff*/}
+                    if(ImGui::MenuItem("Test", "press this")) {/*Do Stuff*/}
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMenuBar();
+            }
+            vec4 vec;
+            ImGui::ColorEdit4("Color", &vec[0]);
+
+            ImGui::End();
+        });
+
+
 			return true;
 		}
 		return false;
@@ -196,15 +217,17 @@ namespace Example
 		while (this->window->IsOpen())
 		{
 
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			this->window->Update();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            this->window->Update();
             mat4 view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
-			node.setTransform(mat4::transpose(perspectiveProjection) * view);
-			node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
-			node.draw();
+            node.setTransform(mat4::transpose(perspectiveProjection) * view);
+            node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
+            node.draw();
 
 
-			this->window->SwapBuffers();
-		}
-	}
+
+
+            this->window->SwapBuffers();
+        }
+    }
 }
