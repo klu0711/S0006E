@@ -7,4 +7,6 @@ public:
     ~plane();
 
     vec4 normal, point;
+
+
 };

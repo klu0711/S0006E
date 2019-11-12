@@ -8,6 +8,7 @@
 #include "MeshResource.h"
 #include <chrono>
 #include <imgui.h>
+#include "debugLine.h"
 
 
 
@@ -161,19 +162,23 @@ namespace Example
 			std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
 
 
-            mesh.get()->loadOBJ("tractor.obj");
+          /*  mesh.get()->loadOBJ("tractor.obj");
             node.setShaderClass(shader);
             node.setMeshCLass(mesh);
             node.setTextureclass(tex);
             node.load("tractor.png", "vertexShader.ver", "fShader.frag", 0 );
             node.light.setPosition(cameraPos);
-            node.getShader()->modifyUniformInt("diffuser", 0);
+            node.getShader()->modifyUniformInt("diffuser", 0);*/
+
+
             //Back face culling
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_BACK);
+            //glEnable(GL_CULL_FACE);
+            //glCullFace(GL_BACK);
 			glDisable(GL_FRAMEBUFFER_SRGB);
 			//Depth buffer
-			glEnable(GL_DEPTH_TEST);
+			//glEnable(GL_DEPTH_TEST);
+
+
 
 
 
@@ -214,15 +219,18 @@ namespace Example
         mat4 ideMat = mat4();
 		auto start = clock.now();
         mat4 rotModel;
+        debugLine line = debugLine("lineShader.ver", "lineShader.frag");
+        line.addLine(vec4(0,0,0,1), vec4(0,0,-10,1));
 		while (this->window->IsOpen())
 		{
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             this->window->Update();
             mat4 view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
-            node.setTransform(mat4::transpose(perspectiveProjection) * view);
-            node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
-            node.draw();
+            line.draw(perspectiveProjection, view);
+            //node.setTransform(mat4::transpose(perspectiveProjection) * view);
+            //node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
+           // node.draw();
 
 
 
