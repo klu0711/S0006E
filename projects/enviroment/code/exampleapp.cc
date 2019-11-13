@@ -8,7 +8,7 @@
 #include "MeshResource.h"
 #include <chrono>
 #include <imgui.h>
-#include "debugLine.h"
+
 
 
 
@@ -37,7 +37,7 @@ namespace Example
 	int windowSizeY;
 
 	float fov = 60;
-    debugLine line;
+
 
 	float lastX, lastY, yaw = -90.0f, pitch = 0.0f;
 
@@ -162,14 +162,18 @@ namespace Example
 			std::shared_ptr<TextureResource> tex = std::make_shared<TextureResource>();
 			std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
 
+            //cubeMesh.get()->loadOBJ("cube.obj");
+            //cube.addMesh(cubeMesh);
+            //cube.init("lineShader.ver", "lineShader.frag");
+            //cube.addCube(vec4(1,1,1,1), vec4(1,1,1,1), 10);
 
-            mesh.get()->loadOBJ("cube.obj");
+            /*mesh.get()->loadOBJ("cube.obj");
             node.setShaderClass(shader);
             node.setMeshCLass(mesh);
             node.setTextureclass(tex);
             node.load("tractor.png", "vertexShader.ver", "fShader.frag", 0 );
             node.light.setPosition(cameraPos);
-            node.getShader()->modifyUniformInt("diffuser", 0);
+            node.getShader()->modifyUniformInt("diffuser", 0);*/
 
 
             //Back face culling
@@ -231,10 +235,11 @@ namespace Example
             mat4 view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
             mat4 transform = mat4::transpose(perspectiveProjection) * view;
             line.draw(transform);
-            node.getShader()->useProgram();
-            node.setTransform(transform);
-            node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
-            node.draw();
+            cube.draw(transform);
+           // node.getShader()->useProgram();
+            //node.setTransform(transform);
+            //node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
+            //node.draw();
 
 
 

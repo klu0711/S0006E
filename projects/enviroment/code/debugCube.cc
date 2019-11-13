@@ -28,6 +28,8 @@ void debugCube::init(const char *vertexShader, const char *fragmentShader)
     this->loadVertexShader(vertexShader);
     this->loadFragmentShader(fragmentShader);
     this->linkShaders();
+
+
 }
 
 void debugCube::loadVertexShader(const char* vertexShader)
@@ -132,25 +134,29 @@ void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime)
 
 }
 
+void debugCube::addMesh(std::shared_ptr<MeshResource> ptr)
+{
+    this->meshRes = ptr;
+}
+
 void debugCube::draw(mat4 transform)
 {
     glUseProgram(this->program);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     unsigned int uniform = glGetUniformLocation(this->program, "transform");
     glUniformMatrix4fv(uniform, 1, GL_TRUE, &transform[0]);
     meshRes.get()->bind();
 
-    for (int i = 0; i < cubes.size(); ++i)
+    for (int i = 0; i < 1; ++i)
     {
         if(cubes[i].lifetime == 0)
         {
             //cubes.erase(cubes.begin() + i);
         }
         glUniformMatrix4fv(uniform, 1, GL_TRUE, &(transform * cubes[i].transform)[0]);
-        glDrawElements(GL_TRIANGLES, meshRes.get()->getIndexSize(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, meshRes->getIndexSize(), GL_UNSIGNED_INT, 0);
 
         //cubes[i].lifetime -= 1;
 

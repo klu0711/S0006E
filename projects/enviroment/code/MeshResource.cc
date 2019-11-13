@@ -139,6 +139,7 @@ bool MeshResource::loadOBJ(char* filename)
 	bindVertexBuffer(vertexBuffer);
 	bindIndexBuffer(indexBuffer);
 
+
 }
 
 int MeshResource::getVertexSize()

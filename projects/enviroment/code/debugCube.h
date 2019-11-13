@@ -10,6 +10,7 @@ struct cube
     uint lifetime;
 };
 class debugCube {
+public:
     debugCube();
 
     ~debugCube();
@@ -19,6 +20,8 @@ class debugCube {
     void addCube(vec4 scale, vec4 point, uint lifetime);
 
     void draw(mat4 transform);
+
+    void addMesh(std::shared_ptr<MeshResource> ptr);
 
 private:
     std::vector<cube> cubes;
