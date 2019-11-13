@@ -37,7 +37,7 @@ namespace Example
 	int windowSizeY;
 
 	float fov = 60;
-
+    debugLine line;
 
 	float lastX, lastY, yaw = -90.0f, pitch = 0.0f;
 
@@ -62,7 +62,7 @@ namespace Example
 		window->SetKeyPressFunction([this](int32 key, int32, int32, int32)
 		{
 			float speed = 0.5f;
-			float cameraSpeed = 0.1;
+			float cameraSpeed = 1;
 			if (key == GLFW_KEY_W)
 			{
 				cameraPos = cameraPos + (cameraFront * cameraSpeed);
@@ -106,6 +106,7 @@ namespace Example
 			if(key == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
             {
                 node.light.setPosition(cameraPos);
+                line.addLine(vec4(0,0,0,1), vec4(0,6,-10,1));
             }
 		});
 
@@ -162,13 +163,13 @@ namespace Example
 			std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
 
 
-          /*  mesh.get()->loadOBJ("tractor.obj");
+            mesh.get()->loadOBJ("cube.obj");
             node.setShaderClass(shader);
             node.setMeshCLass(mesh);
             node.setTextureclass(tex);
             node.load("tractor.png", "vertexShader.ver", "fShader.frag", 0 );
             node.light.setPosition(cameraPos);
-            node.getShader()->modifyUniformInt("diffuser", 0);*/
+            node.getShader()->modifyUniformInt("diffuser", 0);
 
 
             //Back face culling
@@ -176,7 +177,7 @@ namespace Example
             //glCullFace(GL_BACK);
 			glDisable(GL_FRAMEBUFFER_SRGB);
 			//Depth buffer
-			//glEnable(GL_DEPTH_TEST);
+			glEnable(GL_DEPTH_TEST);
 
 
 
@@ -219,18 +220,21 @@ namespace Example
         mat4 ideMat = mat4();
 		auto start = clock.now();
         mat4 rotModel;
-        debugLine line = debugLine("lineShader.ver", "lineShader.frag");
-        line.addLine(vec4(0,0,0,1), vec4(0,0,-10,1));
+        line.init("lineShader.ver", "lineShader.frag");
+        line.addLine(vec4(0,0,0,1), vec4(4,2,-10,1));
+        line.addLine(vec4(0,0,0,1), vec4(0,2,-10,1));
 		while (this->window->IsOpen())
 		{
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             this->window->Update();
             mat4 view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
-            line.draw(perspectiveProjection, view);
-            //node.setTransform(mat4::transpose(perspectiveProjection) * view);
-            //node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
-           // node.draw();
+            mat4 transform = mat4::transpose(perspectiveProjection) * view;
+            line.draw(transform);
+            node.getShader()->useProgram();
+            node.setTransform(transform);
+            node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
+            node.draw();
 
 
 

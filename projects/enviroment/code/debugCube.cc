@@ -1,4 +1,4 @@
-#include "debugLine.h"
+#include "debugCube.h"
 #include "core/app.h"
 #include <iostream>
 #include <fstream>
@@ -7,19 +7,19 @@
 #include <string>
 
 
-debugLine::debugLine()
+debugCube::debugCube()
 {
 
 
 
 }
 
-debugLine::~debugLine()
+debugCube::~debugCube()
 {
 
 }
 
-void debugLine::init(const char *vertexShader, const char *fragmentShader)
+void debugCube::init(const char *vertexShader, const char *fragmentShader)
 {
     //Create program handle
     this->program = glCreateProgram();
@@ -30,7 +30,7 @@ void debugLine::init(const char *vertexShader, const char *fragmentShader)
     this->linkShaders();
 }
 
-void debugLine::loadVertexShader(const char* vertexShader)
+void debugCube::loadVertexShader(const char* vertexShader)
 {    //Load vertex Shader
 
     std::ifstream inFile;
@@ -66,7 +66,7 @@ void debugLine::loadVertexShader(const char* vertexShader)
     inFile.close();
 }
 
-void debugLine::loadFragmentShader(const char* fragmentShader)
+void debugCube::loadFragmentShader(const char* fragmentShader)
 {
     std::ifstream inFile;
     inFile.open(fragmentShader);
@@ -102,7 +102,7 @@ void debugLine::loadFragmentShader(const char* fragmentShader)
 
 }
 
-void debugLine::linkShaders()
+void debugCube::linkShaders()
 {
     this->program = glCreateProgram();
     glAttachShader(this->program, vertexShaderHandle);
@@ -120,39 +120,41 @@ void debugLine::linkShaders()
     }
 }
 
-void debugLine::addLine(vec4 p1, vec4 p2)
+void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime)
 {
-    points.push_back(p1[0]);
-    points.push_back(p1[1]);
-    points.push_back(p1[2]);
 
-    points.push_back(p2[0]);
-    points.push_back(p2[1]);
-    points.push_back(p2[2]);
-
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(float), &points[0], GL_STATIC_DRAW );
+    mat4 scalemat = mat4::scaleMat(scale);
+    mat4 moveMat = mat4::getPositionMatrix(point);
+    cube c;
+    c.transform = scalemat*moveMat;
+    c.lifetime = lifetime;
+    cubes.push_back(c);
 
 }
 
-void debugLine::draw(mat4 transform)
+void debugCube::draw(mat4 transform)
 {
     glUseProgram(this->program);
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
     unsigned int uniform = glGetUniformLocation(this->program, "transform");
     glUniformMatrix4fv(uniform, 1, GL_TRUE, &transform[0]);
+    meshRes.get()->bind();
 
-    glLineWidth(1.f);
-    for (int i = 0; i < points.size()/6; ++i)
+    for (int i = 0; i < cubes.size(); ++i)
     {
-        glDrawArrays(GL_LINES, i*2, i*2 + 2);
+        if(cubes[i].lifetime == 0)
+        {
+            //cubes.erase(cubes.begin() + i);
+        }
+        glUniformMatrix4fv(uniform, 1, GL_TRUE, &(transform * cubes[i].transform)[0]);
+        glDrawElements(GL_TRIANGLES, meshRes.get()->getIndexSize(), GL_UNSIGNED_INT, 0);
+
+        //cubes[i].lifetime -= 1;
+
     }
+    meshRes.get()->unBindBuffers();
 
-    //glDrawArrays(GL_LINES, 0, 2);
-
-    glDisableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

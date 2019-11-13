@@ -7,11 +7,11 @@ class debugLine
 {
 public:
 
-    debugLine(const char* vertexShader,const char* fragmentShader);
+    debugLine();
     ~debugLine();
-
+    void init(const char* vertexShader,const char* fragmentShader);
     void addLine(vec4 p1, vec4 p2);
-    void draw(mat4 perspective, mat4 view);
+    void draw(mat4 transform);
 
     std::vector<float> points;
     std::vector<int> indices;
