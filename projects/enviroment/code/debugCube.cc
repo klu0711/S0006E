@@ -23,12 +23,10 @@ void debugCube::init(const char *vertexShader, const char *fragmentShader)
 {
     //Create program handle
     this->program = glCreateProgram();
-    glGenBuffers(1, &this->VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
     this->loadVertexShader(vertexShader);
     this->loadFragmentShader(fragmentShader);
     this->linkShaders();
-
+    glBindVertexArray(0);
 
 }
 
@@ -122,7 +120,7 @@ void debugCube::linkShaders()
     }
 }
 
-void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime)
+void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime, bool drawWireFrame)
 {
 
     mat4 scalemat = mat4::scaleMat(scale);
@@ -130,6 +128,7 @@ void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime)
     cube c;
     c.transform = scalemat*moveMat;
     c.lifetime = lifetime;
+    c.wireframe = drawWireFrame;
     cubes.push_back(c);
 
 }
@@ -139,28 +138,35 @@ void debugCube::addMesh(std::shared_ptr<MeshResource> ptr)
     this->meshRes = ptr;
 }
 
-void debugCube::draw(mat4 transform)
+void debugCube::bindAttrPointers()
 {
-    glUseProgram(this->program);
-
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+}
+
+void debugCube::draw(mat4 transform)
+{
+
+    glUseProgram(this->program);
+    this->meshRes->bind();
     unsigned int uniform = glGetUniformLocation(this->program, "transform");
     glUniformMatrix4fv(uniform, 1, GL_TRUE, &transform[0]);
-    meshRes.get()->bind();
-
-    for (int i = 0; i < 1; ++i)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    for (int i = 0; i < cubes.size(); ++i)
     {
-        if(cubes[i].lifetime == 0)
+        if(this->cubes[i].lifetime < 1)
         {
-            //cubes.erase(cubes.begin() + i);
+            cubes.erase(cubes.begin() + i);
         }
+        (cubes[i].wireframe) ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glUniformMatrix4fv(uniform, 1, GL_TRUE, &(transform * cubes[i].transform)[0]);
-        glDrawElements(GL_TRIANGLES, meshRes->getIndexSize(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, this->meshRes->getIndexSize(), GL_UNSIGNED_INT, 0);
 
-        //cubes[i].lifetime -= 1;
+
+        cubes[i].lifetime -= 1;
 
     }
-    meshRes.get()->unBindBuffers();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    this->meshRes->unBindBuffers();
 
 }

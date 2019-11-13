@@ -8,6 +8,7 @@ struct cube
 {
     mat4 transform;
     uint lifetime;
+    bool wireframe;
 };
 class debugCube {
 public:
@@ -17,11 +18,13 @@ public:
 
     void init(const char *vertexShader, const char *fragmentShader);
 
-    void addCube(vec4 scale, vec4 point, uint lifetime);
+    void addCube(vec4 scale, vec4 point, uint lifetime, bool drawWireFrame);
 
     void draw(mat4 transform);
 
     void addMesh(std::shared_ptr<MeshResource> ptr);
+
+    void bindAttrPointers();
 
 private:
     std::vector<cube> cubes;
@@ -38,7 +41,6 @@ private:
     uint fragmentShaderHandle;
     const char *vertexShader;
     const char *fragmentShader;
-    uint VBO;
 
 
 };

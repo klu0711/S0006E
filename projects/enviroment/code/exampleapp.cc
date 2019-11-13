@@ -31,6 +31,7 @@ namespace Example
 	mat4 rotX = mat4::rotX(0);
 	mat4 rotY = mat4::rotY(0);
 	bool click = false;
+	bool rightClick = false;
 	bool firstMouse = true;
 
 	int windowSizeX;
@@ -106,6 +107,7 @@ namespace Example
 			if(key == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
             {
                 node.light.setPosition(cameraPos);
+                rightClick = true;
                 line.addLine(vec4(0,0,0,1), vec4(0,6,-10,1));
             }
 		});
@@ -146,11 +148,20 @@ namespace Example
 				front[3] = 1;
 				cameraFront = front.normalize3();
 			}
+
+			if(rightClick == true)
+            {
+			    this->convertedMouseX = (x - (screenWidth/2) / (float)screenWidth);
+			    this->convertedMouseY = (y - (screenHeigth/2) / (float)screenHeight);
+
+			    rightClick = false;
+            }
 		});
 
 
 		if (this->window->Open())
 		{
+		    window->GetSize(screenWidth, screenHeight);
 			// set clear color to gray
 			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
@@ -161,19 +172,22 @@ namespace Example
 
 			std::shared_ptr<TextureResource> tex = std::make_shared<TextureResource>();
 			std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
+            std::shared_ptr<MeshResource> cubeMesh = std::make_shared<MeshResource>();
+            cubeMesh->loadOBJ("cube.obj");
+            cube.bindAttrPointers();
+            cube.addMesh(cubeMesh);
+            cube.init("lineShader.ver", "lineShader.frag");
+            cube.addCube(vec4(5,1,1,1), vec4(1,1,1,1), 1000, false);
+            cube.addCube(vec4(5,1,1,1), vec4(3,3,3,1), 1001, true);
+            cubeMesh->unBindBuffers();
 
-            //cubeMesh.get()->loadOBJ("cube.obj");
-            //cube.addMesh(cubeMesh);
-            //cube.init("lineShader.ver", "lineShader.frag");
-            //cube.addCube(vec4(1,1,1,1), vec4(1,1,1,1), 10);
-
-            /*mesh.get()->loadOBJ("cube.obj");
+            mesh->loadOBJ("tractor.obj");
             node.setShaderClass(shader);
             node.setMeshCLass(mesh);
             node.setTextureclass(tex);
             node.load("tractor.png", "vertexShader.ver", "fShader.frag", 0 );
             node.light.setPosition(cameraPos);
-            node.getShader()->modifyUniformInt("diffuser", 0);*/
+            node.getShader()->modifyUniformInt("diffuser", 0);
 
 
             //Back face culling
@@ -232,14 +246,15 @@ namespace Example
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             this->window->Update();
+
             mat4 view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
             mat4 transform = mat4::transpose(perspectiveProjection) * view;
             line.draw(transform);
             cube.draw(transform);
-           // node.getShader()->useProgram();
-            //node.setTransform(transform);
-            //node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
-            //node.draw();
+            node.getShader()->useProgram();
+            node.setTransform(transform);
+            node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
+            node.draw();
 
 
 

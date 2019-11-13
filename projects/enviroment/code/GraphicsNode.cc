@@ -66,8 +66,6 @@ uint GraphicsNode::load(std::string filename, std::string vertexShaderName, std:
 	shader.get()->loadFragmentShader(fragmentShaderName.c_str());
 	shader.get()->linkShaders();
 	meshResource.get()->bindAttrPointer();
-	//combinedbuffer = meshResource.get()->combineBuffers(vertices, uv, normals);
-	//meshResource.get()->convertToFloatPointer(vertices, indicies, normals);
     if(texture >= 0)
     {
         textureResource.get()->bind(texture);

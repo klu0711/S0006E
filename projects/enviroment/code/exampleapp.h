@@ -44,9 +44,14 @@ private:
 	Display::Window* window;
 	GraphicsNode node;
 	std::shared_ptr<Shader> shader = std::make_shared<Shader>();
-	std::shared_ptr<MeshResource> cubeMesh = std::make_shared<MeshResource>();
 	debugCube cube;
     debugLine line;
+
+    int screenWidth;
+    int screenHeight;
+
+    float convertedMouseX;
+    float convertedMouseY;
 
 
 
