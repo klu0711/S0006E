@@ -12,6 +12,7 @@
 
 
 
+
 using namespace Display;
 
 namespace Example
@@ -24,7 +25,7 @@ namespace Example
 	mat4 perspectiveProjection;
     mat4 view;
 
-	vec4 cameraPos = vec4(0.0f, 1.0f, 5.0f, 1);
+	vec4 cameraPos = vec4(0.0f, 0.0f, 20.0f, 1);
 	vec4 cameraFront = vec4(0.0f, 0.0f, -1.0f, 1);
 	vec4 cameraUp = vec4(0.0f, 1.0f, 0.0f, 1);
 
@@ -38,7 +39,7 @@ namespace Example
 	int windowSizeX;
 	int windowSizeY;
 
-	float fov = 60;
+	float fov = 90;
 
 
 	float lastX, lastY, yaw = -90.0f, pitch = 0.0f;
@@ -108,6 +109,7 @@ namespace Example
 			if(key == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
             {
                 node.light.setPosition(cameraPos);
+                line.clearLines();
                 rightClick = true;
             }
 		});
@@ -151,15 +153,17 @@ namespace Example
 
 			if(rightClick == true)
             {
-			    this->convertedMouseX = ((x - (this->screenWidth/2)) / (float)screenWidth);
-			    this->convertedMouseY = ((y - (this->screenHeight/2)) / (float)screenHeight);
+			    this->convertedMouseX = ((x - ((float)this->screenWidth/(float)2)) / (float)this->screenWidth) * 2;
+			    this->convertedMouseY = ((y - ((float)this->screenHeight/(float)2)) / (float)this->screenHeight * -2);
+                //this->convertedMouseX = -1;
+			    //this->convertedMouseY = 1;
 
-			    vec4 ray_clip(this->convertedMouseX, -this->convertedMouseY, -1.0f, 1.0f);
+			    vec4 ray_clip(this->convertedMouseX, this->convertedMouseY, -1.0f, 1.0f);
 
-			    vec4 ray_eye = mat4::inverse(mat4::transpose(perspectiveProjection)) * ray_clip;
+			    vec4 ray_eye = mat4::inverse((perspectiveProjection)) * ray_clip;
 
 			    ray_eye = vec4(ray_eye[0], ray_eye[1], -1, 0.0);
-			    vec4 ray_world = (mat4::inverse(view) * ray_eye);
+			    vec4 ray_world = (mat4::inverse(mat4::transpose(view))) * ray_eye;
 
 			    ray_world = ray_world.normalize3();
 
@@ -177,7 +181,7 @@ namespace Example
 
 			this->window->GetSize(windowSizeX, windowSizeY);
 
-			perspectiveProjection = mat4::Perspective(nvgDegToRad(75.0f), (float)windowSizeX/(float)windowSizeY, 1000, 0.1);
+			perspectiveProjection = mat4::Perspective(nvgDegToRad(fov), (float)windowSizeX/(float)windowSizeY, 0.1f, 1000);
 
 
 			std::shared_ptr<TextureResource> tex = std::make_shared<TextureResource>();
@@ -201,8 +205,8 @@ namespace Example
 
 
             //Back face culling
-            //glEnable(GL_CULL_FACE);
-            //glCullFace(GL_BACK);
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
 			glDisable(GL_FRAMEBUFFER_SRGB);
 			//Depth buffer
 			glEnable(GL_DEPTH_TEST);
@@ -219,7 +223,7 @@ namespace Example
             {
                 if(ImGui::BeginMenu("File"))
                 {
-                    if(ImGui::MenuItem("Open", "press this")) {/*Do Stuff*/}
+                    if(ImGui::MenuItem("clear lines", "press this")) {/*Do Stuff*/}
                     if(ImGui::MenuItem("Save", "press this")) {/*Do Stuff*/}
                     if(ImGui::MenuItem("Close", "press this")) {/*Do Stuff*/}
                     if(ImGui::MenuItem("Test", "press this")) {/*Do Stuff*/}
@@ -242,11 +246,8 @@ namespace Example
 
 	void ExampleApp::Run()
 	{
-		float rotation = 0;
-		float movementn = 0;
-        std::chrono::high_resolution_clock clock = std::chrono::high_resolution_clock();
+
         mat4 ideMat = mat4();
-		auto start = clock.now();
         mat4 rotModel;
         line.init("lineShader.ver", "lineShader.frag");
         //line.addLine(vec4(0,0,0,1), vec4(4,2,-10,1));
@@ -258,7 +259,7 @@ namespace Example
             this->window->Update();
 
             view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
-            mat4 transform = mat4::transpose(perspectiveProjection) * view;
+            mat4 transform = view * perspectiveProjection;
             line.draw(transform);
             cube.draw(transform);
             node.getShader()->useProgram();

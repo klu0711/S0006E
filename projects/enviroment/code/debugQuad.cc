@@ -1,4 +1,4 @@
-#include "debugLine.h"
+#include "debugQuad.h"
 #include "core/app.h"
 #include <iostream>
 #include <fstream>
@@ -7,37 +7,30 @@
 #include <string>
 
 
-debugLine::debugLine()
+debugQuad::debugQuad()
 {
 
 
 
 }
 
-debugLine::~debugLine()
+debugQuad::~debugQuad()
 {
 
 }
 
-
-
-void debugLine::init(const char *vertexShader, const char *fragmentShader)
+void debugQuad::init(const char *vertexShader, const char *fragmentShader)
 {
     //Create program handle
     this->program = glCreateProgram();
-    glGenBuffers(1, &this->VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
     this->loadVertexShader(vertexShader);
     this->loadFragmentShader(fragmentShader);
     this->linkShaders();
+    glBindVertexArray(0);
+
 }
 
-void debugLine::clearLines()
-{
-    points.clear();
-}
-
-void debugLine::loadVertexShader(const char* vertexShader)
+void debugQuad::loadVertexShader(const char* vertexShader)
 {    //Load vertex Shader
 
     std::ifstream inFile;
@@ -73,7 +66,7 @@ void debugLine::loadVertexShader(const char* vertexShader)
     inFile.close();
 }
 
-void debugLine::loadFragmentShader(const char* fragmentShader)
+void debugQuad::loadFragmentShader(const char* fragmentShader)
 {
     std::ifstream inFile;
     inFile.open(fragmentShader);
@@ -109,7 +102,7 @@ void debugLine::loadFragmentShader(const char* fragmentShader)
 
 }
 
-void debugLine::linkShaders()
+void debugQuad::linkShaders()
 {
     this->program = glCreateProgram();
     glAttachShader(this->program, vertexShaderHandle);
@@ -127,42 +120,53 @@ void debugLine::linkShaders()
     }
 }
 
-void debugLine::addLine(ray r)
+void debugQuad::addCube(vec4 scale,  vec4 point, bool drawWireFrame)
 {
-    points.push_back(r.startPoint[0]);
-    points.push_back(r.startPoint[1]);
-    points.push_back(r.startPoint[2]);
-    vec4 p2 = r.startPoint + r.direction * this->length;
-    points.push_back(p2[0]);
-    points.push_back(p2[1]);
-    points.push_back(p2[2]);
 
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(float), &points[0], GL_STATIC_DRAW );
+    mat4 scalemat = mat4::scaleMat(scale);
+    mat4 moveMat = mat4::getPositionMatrix(point);
+    quad q;
+    q.transform = scalemat*moveMat;
+    q.lifetime = lifetime;
+    q.wireframe = drawWireFrame;
+    quads.push_back(q);
 
 }
 
-void debugLine::draw(mat4 transform)
+void debugQuad::addMesh(std::shared_ptr<MeshResource> ptr)
 {
-    if(points.size() > 0)
+    this->meshRes = ptr;
+}
+
+void debugQuad::bindAttrPointers()
+{
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+}
+
+void debugQuad::draw(mat4 transform)
+{
+
+    glUseProgram(this->program);
+    this->meshRes->bind();
+    unsigned int uniform = glGetUniformLocation(this->program, "transform");
+    glUniformMatrix4fv(uniform, 1, GL_FALSE, &transform[0]);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    for (int i = 0; i < quads.size(); ++i)
     {
-        glUseProgram(this->program);
-        glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-        unsigned int uniform = glGetUniformLocation(this->program, "transform");
-        glUniformMatrix4fv(uniform, 1, GL_FALSE, &transform[0]);
-
-        glLineWidth(1.f);
-        for (int i = 0; i < points.size()/6; ++i)
+        if(this->quads[i].lifetime < 1)
         {
-            glDrawArrays(GL_LINES, i*2, i*2 + 2);
+            quads.erase(quads.begin() + i);
         }
+        (quads[i].wireframe) ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glUniformMatrix4fv(uniform, 1, GL_FALSE, &(mat4::transpose(quads[i].transform) * transform)[0]);
+        glDrawElements(GL_TRIANGLES, this->meshRes->getIndexSize(), GL_UNSIGNED_INT, 0);
 
-        //glDrawArrays(GL_LINES, 0, 2);
 
-        glDisableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        quads[i].lifetime -= 1;
+
     }
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    this->meshRes->unBindBuffers();
+
 }

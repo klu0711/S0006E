@@ -150,7 +150,7 @@ void debugCube::draw(mat4 transform)
     glUseProgram(this->program);
     this->meshRes->bind();
     unsigned int uniform = glGetUniformLocation(this->program, "transform");
-    glUniformMatrix4fv(uniform, 1, GL_TRUE, &transform[0]);
+    glUniformMatrix4fv(uniform, 1, GL_FALSE, &transform[0]);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     for (int i = 0; i < cubes.size(); ++i)
     {
@@ -159,7 +159,7 @@ void debugCube::draw(mat4 transform)
             cubes.erase(cubes.begin() + i);
         }
         (cubes[i].wireframe) ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        glUniformMatrix4fv(uniform, 1, GL_TRUE, &(transform * cubes[i].transform)[0]);
+        glUniformMatrix4fv(uniform, 1, GL_FALSE, &(mat4::transpose(cubes[i].transform) * transform)[0]);
         glDrawElements(GL_TRIANGLES, this->meshRes->getIndexSize(), GL_UNSIGNED_INT, 0);
 
 

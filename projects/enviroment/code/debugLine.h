@@ -13,6 +13,8 @@ public:
     void addLine(ray r);
     void draw(mat4 transform);
 
+    void clearLines();
+
 
     std::vector<float> points;
     std::vector<int> indices;

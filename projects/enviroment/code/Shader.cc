@@ -120,7 +120,7 @@ void Shader::linkShaders()
 void Shader::modifyUniformMatrix(std::string name, float * mat)
 {
 	unsigned int uniform = glGetUniformLocation(this->program, name.c_str());
-	glUniformMatrix4fv(uniform, 1, GL_TRUE, mat);
+	glUniformMatrix4fv(uniform, 1, GL_FALSE, mat);
 
 }
 /// Modify a uniform vector in the shader

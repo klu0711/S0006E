@@ -86,8 +86,8 @@ inline mat4 mat4::Perspective(float fieldOfView, float aspectRatio, float nearCl
     result = mat4(
             1.0f/(aspectRatio * tan(fieldOfView/2)), 0, 0, 0,
             0, 1.0f/(tan(fieldOfView/2)), 0, 0,
-            0, 0, ((-nearClip - farClip) / (nearClip - farClip)), -1,
-            0, 0, ( (2 * farClip * nearClip) / (farClip - nearClip)), 0
+            0, 0, -((nearClip + farClip) / (farClip - nearClip)), -1,
+            0, 0, ( (-2 * farClip * nearClip) / (farClip - nearClip)), 0
     );
 
     return result;
@@ -600,7 +600,7 @@ inline mat4 mat4::Perspective(float fieldOfView, float aspectRatio, float nearCl
                         cameraUp.getVectorValue(0), cameraUp.getVectorValue(1), cameraUp.getVectorValue(2), -(cameraUp.dot3(position)),
 						-cameraForward.getVectorValue(0), -cameraForward.getVectorValue(1) , -cameraForward.getVectorValue(2), cameraForward.dot3(position),
 						0,0,0,1};
-		return mat4(temp);
+		return mat4(mat4::transpose(temp));
 		 
 	}
 
