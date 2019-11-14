@@ -23,6 +23,7 @@
 #include <chrono>
 #include "debugCube.h"
 #include "debugLine.h"
+#include "ray.h"
 namespace Example
 {
 class ExampleApp : public Core::App
@@ -46,7 +47,7 @@ private:
 	std::shared_ptr<Shader> shader = std::make_shared<Shader>();
 	debugCube cube;
     debugLine line;
-
+    std::vector<ray> rays;
     int screenWidth;
     int screenHeight;
 

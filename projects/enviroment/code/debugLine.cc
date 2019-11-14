@@ -120,12 +120,12 @@ void debugLine::linkShaders()
     }
 }
 
-void debugLine::addLine(vec4 p1, vec4 p2)
+void debugLine::addLine(ray r)
 {
-    points.push_back(p1[0]);
-    points.push_back(p1[1]);
-    points.push_back(p1[2]);
-
+    points.push_back(r.startPoint[0]);
+    points.push_back(r.startPoint[1]);
+    points.push_back(r.startPoint[2]);
+    vec4 p2 = r.direction * this->length;
     points.push_back(p2[0]);
     points.push_back(p2[1]);
     points.push_back(p2[2]);
@@ -137,22 +137,25 @@ void debugLine::addLine(vec4 p1, vec4 p2)
 
 void debugLine::draw(mat4 transform)
 {
-    glUseProgram(this->program);
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-    unsigned int uniform = glGetUniformLocation(this->program, "transform");
-    glUniformMatrix4fv(uniform, 1, GL_TRUE, &transform[0]);
-
-    glLineWidth(1.f);
-    for (int i = 0; i < points.size()/6; ++i)
+    if(points.size() > 0)
     {
-        glDrawArrays(GL_LINES, i*2, i*2 + 2);
+        glUseProgram(this->program);
+        glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+        unsigned int uniform = glGetUniformLocation(this->program, "transform");
+        glUniformMatrix4fv(uniform, 1, GL_TRUE, &transform[0]);
+
+        glLineWidth(1.f);
+        for (int i = 0; i < points.size()/6; ++i)
+        {
+            glDrawArrays(GL_LINES, i*2, i*2 + 2);
+        }
+
+        //glDrawArrays(GL_LINES, 0, 2);
+
+        glDisableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
-
-    //glDrawArrays(GL_LINES, 0, 2);
-
-    glDisableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

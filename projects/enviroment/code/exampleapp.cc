@@ -22,6 +22,7 @@ namespace Example
 	TextureResource tex;
 
 	mat4 perspectiveProjection;
+    mat4 view;
 
 	vec4 cameraPos = vec4(0.0f, 1.0f, 5.0f, 1);
 	vec4 cameraFront = vec4(0.0f, 0.0f, -1.0f, 1);
@@ -108,7 +109,6 @@ namespace Example
             {
                 node.light.setPosition(cameraPos);
                 rightClick = true;
-                line.addLine(vec4(0,0,0,1), vec4(0,6,-10,1));
             }
 		});
 
@@ -151,9 +151,19 @@ namespace Example
 
 			if(rightClick == true)
             {
-			    this->convertedMouseX = (x - (screenWidth/2) / (float)screenWidth);
-			    this->convertedMouseY = (y - (screenHeigth/2) / (float)screenHeight);
+			    this->convertedMouseX = ((x - (this->screenWidth/2)) / (float)screenWidth);
+			    this->convertedMouseY = ((y - (this->screenHeight/2)) / (float)screenHeight);
 
+			    vec4 ray_clip(this->convertedMouseX, -this->convertedMouseY, -1.0f, 1.0f);
+
+			    vec4 ray_eye = mat4::inverse(mat4::transpose(perspectiveProjection)) * ray_clip;
+
+			    ray_eye = vec4(ray_eye[0], ray_eye[1], -1, 0.0);
+			    vec4 ray_world = (mat4::inverse(view) * ray_eye);
+
+			    ray_world = ray_world.normalize3();
+
+                line.addLine(ray(cameraPos, ray_world));
 			    rightClick = false;
             }
 		});
@@ -239,15 +249,15 @@ namespace Example
 		auto start = clock.now();
         mat4 rotModel;
         line.init("lineShader.ver", "lineShader.frag");
-        line.addLine(vec4(0,0,0,1), vec4(4,2,-10,1));
-        line.addLine(vec4(0,0,0,1), vec4(0,2,-10,1));
+        //line.addLine(vec4(0,0,0,1), vec4(4,2,-10,1));
+        //line.addLine(vec4(0,0,0,1), vec4(0,2,-10,1));
 		while (this->window->IsOpen())
 		{
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             this->window->Update();
 
-            mat4 view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
+            view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
             mat4 transform = mat4::transpose(perspectiveProjection) * view;
             line.draw(transform);
             cube.draw(transform);

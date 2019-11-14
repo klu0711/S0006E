@@ -1,5 +1,15 @@
 #include "ray.h"
 
+ray::ray(vec4 start, vec4 direction)
+{
+    this->startPoint = start;
+    this->direction = direction;
+}
+
+ray::~ray()
+{
+
+}
 
 vec4 ray::intersect(const plane &p) const
 {

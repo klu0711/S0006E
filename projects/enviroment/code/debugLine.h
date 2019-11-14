@@ -2,7 +2,7 @@
 #include <vector>
 #include "Vector4D.h"
 #include "Matrix4.h"
-
+#include "ray.h"
 class debugLine
 {
 public:
@@ -10,8 +10,9 @@ public:
     debugLine();
     ~debugLine();
     void init(const char* vertexShader,const char* fragmentShader);
-    void addLine(vec4 p1, vec4 p2);
+    void addLine(ray r);
     void draw(mat4 transform);
+
 
     std::vector<float> points;
     std::vector<int> indices;
@@ -29,4 +30,5 @@ private:
     const char* vertexShader;
     const char* fragmentShader;
     uint VBO;
+    uint length = 30;
 };
