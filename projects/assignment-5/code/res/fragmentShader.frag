@@ -5,7 +5,7 @@ in VS_OUT
 {
     vec3 FragPos;
     vec2 Uv;
-    vec3 TangentLightPos;
+    vec3 TangentLightPos[128];
     vec3 TangentViewPos;
     vec3 TangentFragPos;
 }fs_in;
@@ -27,7 +27,7 @@ void main()
     //Ambient color
     vec3 ambient = 0.1 * color;
     //diffuse
-    vec3 lightDir = normalize(fs_in.TangentFragPos - fs_in.TangentLightPos);
+    vec3 lightDir = normalize(fs_in.TangentFragPos - fs_in.TangentLightPos[0]);
     float diff = max(dot(-lightDir, normal), 0.0);
     vec3 diffuse = diff * color;
     
