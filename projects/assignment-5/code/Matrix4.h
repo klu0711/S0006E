@@ -592,8 +592,8 @@ inline Matrix4 Matrix4::Perspective(float fieldOfView, float aspectRatio, float 
 	inline Matrix4 Matrix4::lookAt(Vector4D position, Vector4D target, Vector4D up)
 	{
 		Vector4D f = (target - position);
-		Vector4D u = up.normalize();
-		Vector4D s = (f.crossProduct(u)).normalize();
+		Vector4D u = up.normalize3();
+		Vector4D s = (f.crossProduct(u)).normalize3();
 		u = s.crossProduct(f);
 
 		float temp[] = {s.getVectorValue(0), s.getVectorValue(1), s.getVectorValue(2), -(s.dot3(position)),
