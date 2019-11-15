@@ -167,7 +167,9 @@ namespace Example
 
 			    ray_world = ray_world.normalize3();
 
-                line.addLine(ray(cameraPos, ray_world));
+			    ray r(cameraPos, ray_world);
+			    vec4 result  = r.intersect(quads.quads[0].quadPlane);
+                line.addLine(r);
 			    rightClick = false;
             }
 		});
@@ -202,6 +204,9 @@ namespace Example
             node.load("tractor.png", "vertexShader.ver", "fShader.frag", 0 );
             node.light.setPosition(cameraPos);
             node.getShader()->modifyUniformInt("diffuser", 0);
+
+            quads.init("lineShader.ver", "lineShader.frag");
+            quads.addQuad(vec4(0,10,0,1), vec4(1,1,1,1), mat4());
 
 
             //Back face culling
@@ -266,6 +271,7 @@ namespace Example
             node.setTransform(transform);
             node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
             node.draw();
+            quads.draw(transform);
 
 
 

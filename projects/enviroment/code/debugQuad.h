@@ -3,12 +3,11 @@
 #include "Matrix4.h"
 #include <vector>
 #include <memory>
-#include "MeshResource.h"
+#include "plane.h"
 struct quad
 {
+    plane quadPlane;
     mat4 transform;
-    uint lifetime;
-    bool wireframe;
 };
 class debugQuad {
 public:
@@ -18,23 +17,29 @@ public:
 
     void init(const char *vertexShader, const char *fragmentShader);
 
-    void addCube(vec4 scale, vec4 point, bool drawWireFrame);
+    void addQuad(vec4 position, vec4 scale, mat4 rotation);
 
     void draw(mat4 transform);
 
-    void addMesh(std::shared_ptr<MeshResource> ptr);
-
     void bindAttrPointers();
 
-private:
     std::vector<quad> quads;
-    std::shared_ptr<MeshResource> meshRes;
+
+private:
 
     void loadVertexShader(const char *vertexShader);
 
     void loadFragmentShader(const char *fragmentShader);
 
     void linkShaders();
+    float* vertexBuffer;
+    int* indexBuffer;
+
+    int sizeBuffer;
+    int sizeIndexBuffer;
+    uint EBO;
+    uint VBO;
+    uint VAO;
 
     uint program;
     uint vertexShaderHandle;

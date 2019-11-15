@@ -21,6 +21,7 @@
 #include "animation.h"
 #include "animation.h"
 #include <chrono>
+#include "debugQuad.h"
 #include "debugCube.h"
 #include "debugLine.h"
 #include "ray.h"
@@ -47,6 +48,7 @@ private:
 	std::shared_ptr<Shader> shader = std::make_shared<Shader>();
 	debugCube cube;
     debugLine line;
+    debugQuad quads = debugQuad();
     std::vector<ray> rays;
     int screenWidth;
     int screenHeight;
