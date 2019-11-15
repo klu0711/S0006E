@@ -167,8 +167,12 @@ void debugQuad::addQuad(vec4 position, vec4 scale, mat4 rotation)
     mat4 scaleMat = mat4::scaleMat(scale);
     mat4 rotMat = mat4();
     quad q;
-    q.transform = scaleMat * positionMat * rotMat;
+    q.transform = positionMat * rotMat * scaleMat;
 
+    q.v0 = vec4(-0.5f,	-0.5f,	0,1);
+    q.v1 = vec4( -0.5f,	0.5f,	0,1);
+    q.v2 = vec4( 0.5f,	0.5f,	0,1);
+    q.v3 = vec4( 0.5f,	-0.5f,	0,1);
     vec4 v = vec4(vertexBuffer[7] - vertexBuffer[0], vertexBuffer[8] - vertexBuffer[1], vertexBuffer[9] - vertexBuffer[2], 1);
     vec4 u = vec4(vertexBuffer[14] - vertexBuffer[0], vertexBuffer[15] - vertexBuffer[1], vertexBuffer[16] - vertexBuffer[2], 1);
 

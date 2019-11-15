@@ -8,6 +8,7 @@ struct quad
 {
     plane quadPlane;
     mat4 transform;
+    vec4 v0,v1,v2,v3;
 };
 class debugQuad {
 public:
