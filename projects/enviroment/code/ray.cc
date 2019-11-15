@@ -51,5 +51,26 @@ vec4 ray::intersectQuad(const quad &hitQuad) const
         return vec4(0,0,0,-1);
     f = 1/a;
 
+    s[0] = objSpacePoint[0] - hitQuad.v0[0];
+    s[1] = objSpacePoint[1] - hitQuad.v0[1];
+    s[2] = objSpacePoint[2] - hitQuad.v0[2];
+
+    u = f * (vec4(s[0], s[1], s[2], 1).dot3(vec4(h[0], h[1], h[2], 1)));
+
+    if(u < 0.0f || u > 1.0)
+        return vec4(0,0,0,-1);
+
+    temp = vec4(s[0], s[1], s[2], 1).crossProduct(vec4(e1[0], e1[1], e1[2], 1));
+    q[0] = temp[0];
+    q[1] = temp[1];
+    q[2] = temp[2];
+
+    v = f * (objSpaceDirection.dot3(vec4(q[0], q[1], q[2], 1)));
+
+    if (v < 0.0 || u + v > 1.0)
+        return vec4(0,0,0,-1);
+
+    
+
 
 }
