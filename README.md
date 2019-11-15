@@ -1,4 +1,4 @@
-# lab-env asdasd
+# lab-env 
 C++11 based application enviroment used for creating assignments, includes vec4 and mat4 libraries.
 
 # Requirements
