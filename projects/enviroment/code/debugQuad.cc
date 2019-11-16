@@ -198,6 +198,8 @@ void debugQuad::draw(mat4 transform)
     glBindVertexArray(this->VAO);
     unsigned int uniform = glGetUniformLocation(this->program, "transform");
     glUniformMatrix4fv(uniform, 1, GL_FALSE, &transform[0]);
+    uint uniformColor = glGetUniformLocation(this->program, "color");
+    glUniform4fv(uniformColor, 1, vec4(1,0,0,1).getPointer());
     for (int i = 0; i < quads.size(); ++i)
     {
         glUniformMatrix4fv(uniform, 1, GL_FALSE, &(mat4::transpose(quads[i].transform) * transform)[0]);

@@ -123,10 +123,10 @@ void debugCube::linkShaders()
 void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime, bool drawWireFrame)
 {
 
-    mat4 scalemat = mat4::scaleMat(scale);
+    mat4 scaleMat = mat4::scaleMat(scale);
     mat4 moveMat = mat4::getPositionMatrix(point);
     cube c;
-    c.transform = scalemat*moveMat;
+    c.transform = scaleMat * mat4::transpose(moveMat);
     c.lifetime = lifetime;
     c.wireframe = drawWireFrame;
     cubes.push_back(c);
@@ -151,6 +151,8 @@ void debugCube::draw(mat4 transform)
     this->meshRes->bind();
     unsigned int uniform = glGetUniformLocation(this->program, "transform");
     glUniformMatrix4fv(uniform, 1, GL_FALSE, &transform[0]);
+    uint uniformColor = glGetUniformLocation(this->program, "color");
+    glUniform4fv(uniformColor, 1, vec4(0,0,1,1).getPointer());
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     for (int i = 0; i < cubes.size(); ++i)
     {
@@ -159,7 +161,7 @@ void debugCube::draw(mat4 transform)
             cubes.erase(cubes.begin() + i);
         }
         (cubes[i].wireframe) ? glPolygonMode(GL_FRONT_AND_BACK, GL_LINE) : glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        glUniformMatrix4fv(uniform, 1, GL_FALSE, &(mat4::transpose(cubes[i].transform) * transform)[0]);
+        glUniformMatrix4fv(uniform, 1, GL_FALSE, &((cubes[i].transform) * transform)[0]);
         glDrawElements(GL_TRIANGLES, this->meshRes->getIndexSize(), GL_UNSIGNED_INT, 0);
 
 

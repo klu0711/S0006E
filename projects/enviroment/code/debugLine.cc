@@ -153,6 +153,8 @@ void debugLine::draw(mat4 transform)
 
         unsigned int uniform = glGetUniformLocation(this->program, "transform");
         glUniformMatrix4fv(uniform, 1, GL_FALSE, &transform[0]);
+        uint uniformColor = glGetUniformLocation(this->program, "color");
+        glUniform4fv(uniformColor, 1, vec4(0,1,0,1).getPointer());
 
         glLineWidth(1.f);
         for (int i = 0; i < points.size()/6; ++i)

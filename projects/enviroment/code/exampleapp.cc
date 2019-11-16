@@ -172,6 +172,11 @@ namespace Example
 			    ray r(cameraPos, ray_world);
 			    vec4 result  = r.intersectPlane(quads.quads[0].quadPlane);
 			    vec4 res = r.intersectQuad(quads.quads[0]);
+			    if(res[3] != -1)
+			    {
+			        res[3] = 1;
+                    cube.addCube(vec4(0.5,0.5,0.5,1), res , 10001, true);
+                }
                 line.addLine(r);
 			    rightClick = false;
             }
@@ -196,8 +201,8 @@ namespace Example
             cube.bindAttrPointers();
             cube.addMesh(cubeMesh);
             cube.init("lineShader.ver", "lineShader.frag");
-            cube.addCube(vec4(5,1,1,1), vec4(1,1,1,1), 1000, false);
-            cube.addCube(vec4(5,1,1,1), vec4(3,3,3,1), 1001, true);
+            //cube.addCube(vec4(5,1,1,1), vec4(1,1,1,1), 1000, false);
+            //cube.addCube(vec4(5,1,1,1), vec4(3,3,3,1), 1001, true);
             cubeMesh->unBindBuffers();
 
             mesh->loadOBJ("tractor.obj");
@@ -213,8 +218,8 @@ namespace Example
 
 
             //Back face culling
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_BACK);
+            //glEnable(GL_CULL_FACE);
+            //glCullFace(GL_BACK);
 			glDisable(GL_FRAMEBUFFER_SRGB);
 			//Depth buffer
 			glEnable(GL_DEPTH_TEST);
@@ -273,7 +278,7 @@ namespace Example
             node.getShader()->useProgram();
             node.setTransform(transform);
             node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
-            node.draw();
+            //node.draw();
             quads.draw(transform);
 
 

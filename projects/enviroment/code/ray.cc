@@ -30,8 +30,8 @@ vec4 ray::intersectQuad(const quad &hitQuad) const
 {
     float e1[3], e2[3], h[3], s[3], q[3];
     float a, f, u, v;
-    vec4 objSpacePoint = mat4::inverse(hitQuad.transform) * this->startPoint;
-    vec4 objSpaceDirection = mat4::inverse(hitQuad.transform) * this->direction;
+    vec4 objSpacePoint = mat4::inverse((hitQuad.transform)) * this->startPoint;
+    vec4 objSpaceDirection = mat4::inverse((hitQuad.transform)) * this->direction;
 
     e1[0] = hitQuad.v1[0] - hitQuad.v0[0];
     e1[1] = hitQuad.v1[1] - hitQuad.v0[1];
