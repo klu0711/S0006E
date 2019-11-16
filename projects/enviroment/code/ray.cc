@@ -70,7 +70,14 @@ vec4 ray::intersectQuad(const quad &hitQuad) const
     if (v < 0.0 || u + v > 1.0)
         return vec4(0,0,0,-1);
 
-    
+
+    float t = f * (vec4(e2[0], e2[1], e2[2], 1).dot3(vec4(q[0], q[1], q[2], 1)));
+
+    if(t > 0.00001)
+    {
+        //Intersection happened
+        return this->startPoint + (this->direction * t);
+    }
 
 
 }

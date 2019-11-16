@@ -171,6 +171,7 @@ namespace Example
 
 			    ray r(cameraPos, ray_world);
 			    vec4 result  = r.intersectPlane(quads.quads[0].quadPlane);
+			    vec4 res = r.intersectQuad(quads.quads[0]);
                 line.addLine(r);
 			    rightClick = false;
             }
@@ -208,7 +209,7 @@ namespace Example
             node.getShader()->modifyUniformInt("diffuser", 0);
 
             quads.init("lineShader.ver", "lineShader.frag");
-            quads.addQuad(vec4(0,10,0,1), vec4(5,5,1,1), mat4());
+            quads.addQuad(vec4(0,0,0,1), vec4(1,1,1,1), mat4());
 
 
             //Back face culling
