@@ -167,7 +167,7 @@ void debugQuad::addQuad(vec4 position, vec4 scale, mat4 rotation)
     mat4 scaleMat = mat4::scaleMat(scale);
     mat4 rotMat = mat4();
     quad q;
-    q.transform = positionMat * rotMat * scaleMat;
+    q.transform = mat4::transpose(positionMat);
 
     q.v0 = vec4(-0.5f,	-0.5f,	0,1);
     q.v1 = vec4( -0.5f,	0.5f,	0,1);
@@ -202,7 +202,7 @@ void debugQuad::draw(mat4 transform)
     glUniform4fv(uniformColor, 1, vec4(1,0,0,1).getPointer());
     for (int i = 0; i < quads.size(); ++i)
     {
-        glUniformMatrix4fv(uniform, 1, GL_FALSE, &(mat4::transpose(quads[i].transform) * transform)[0]);
+        glUniformMatrix4fv(uniform, 1, GL_FALSE, &((quads[i].transform) * transform)[0]);
         glDrawElements(GL_TRIANGLES, this->sizeIndexBuffer, GL_UNSIGNED_INT, 0);
 
     }
