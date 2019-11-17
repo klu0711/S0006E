@@ -167,8 +167,8 @@ void debugQuad::addQuad(vec4 position, vec4 scale, mat4 rotation)
     mat4 scaleMat = mat4::scaleMat(scale);
     mat4 rotMat = mat4();
     quad q;
-    q.transform = mat4::transpose(positionMat);
-
+    q.transform = mat4::transpose(positionMat) * scaleMat;
+    //q.transform[15] = 0;
     q.v0 = vec4(-0.5f,	-0.5f,	0,1);
     q.v1 = vec4( -0.5f,	0.5f,	0,1);
     q.v2 = vec4( 0.5f,	0.5f,	0,1);

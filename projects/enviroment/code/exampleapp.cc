@@ -155,8 +155,8 @@ namespace Example
             {
 			    this->convertedMouseX = ((x - ((float)this->screenWidth/(float)2)) / (float)this->screenWidth) * 2;
 			    this->convertedMouseY = ((y - ((float)this->screenHeight/(float)2)) / (float)this->screenHeight * -2);
-                //this->convertedMouseX = -1;
-			    //this->convertedMouseY = 1;
+                //this->convertedMouseX = 0;
+			    //this->convertedMouseY = 0;
 
 			    vec4 ray_clip(this->convertedMouseX, this->convertedMouseY, -1.0f, 1.0f);
 
@@ -167,7 +167,7 @@ namespace Example
 
 			    ray_world = ray_world.normalize3();
 			    cameraPos[3] = 1;
-			    ray_world[3] = 1;
+			    ray_world[3] = 0;//APPARENTLY THIS IS NESCESSARY OTHERWISE NOTHING WORKS????????? WHY
 
 			    ray r(cameraPos, ray_world);
 			    vec4 result  = r.intersectPlane(quads.quads[0].quadPlane);
@@ -214,7 +214,7 @@ namespace Example
             node.getShader()->modifyUniformInt("diffuser", 0);
 
             quads.init("lineShader.ver", "lineShader.frag");
-            quads.addQuad(vec4(0,0,0,1), vec4(1,1,1,1), mat4());
+            quads.addQuad(vec4(0,2,0,1), vec4(1,1,1,1), mat4());
 
 
             //Back face culling
