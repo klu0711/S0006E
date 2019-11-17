@@ -12,13 +12,10 @@ float buffer[] = {
         0,		1,		0,		1,	// color 0
         0.5f,	0.5f,	0,			// pos 2
         0,		0,		1,		1,
-        0.5f,   -0.5f,   0,
-        1,       0,      1,     1// color 0
 };
 
 int iBuffer[] =
-        { 2,1,0,
-          3,2,0};
+        { 2,1,0};
 debugQuad::debugQuad()
 {
 
@@ -172,7 +169,6 @@ void debugQuad::addQuad(vec4 position, vec4 scale, mat4 rotation)
     q.v0 = vec4(-0.5f,	-0.5f,	0,1);
     q.v1 = vec4( -0.5f,	0.5f,	0,1);
     q.v2 = vec4( 0.5f,	0.5f,	0,1);
-    q.v3 = vec4( 0.5f,	-0.5f,	0,1);
     vec4 v = vec4(vertexBuffer[7] - vertexBuffer[0], vertexBuffer[8] - vertexBuffer[1], vertexBuffer[9] - vertexBuffer[2], 1);
     vec4 u = vec4(vertexBuffer[14] - vertexBuffer[0], vertexBuffer[15] - vertexBuffer[1], vertexBuffer[16] - vertexBuffer[2], 1);
 

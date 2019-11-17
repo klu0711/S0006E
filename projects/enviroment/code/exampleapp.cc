@@ -214,7 +214,7 @@ namespace Example
             node.getShader()->modifyUniformInt("diffuser", 0);
 
             quads.init("lineShader.ver", "lineShader.frag");
-            quads.addQuad(vec4(0,2,0,1), vec4(1,1,1,1), mat4());
+            quads.addQuad(vec4(0,2,0,1), vec4(2,2,1,1), mat4());
 
 
             //Back face culling
