@@ -175,7 +175,7 @@ namespace Example
 			    if(res[3] != -1)
 			    {
 			        res[3] = 1;
-                    cube.addCube(vec4(0.5,0.5,0.5,1), res , 10001, true);
+                    cube.addCube(vec4(0.1,0.1,0.1,1), res , 120, true);
                 }
                 line.addLine(r);
 			    rightClick = false;
