@@ -64,9 +64,11 @@ private:
 	uint32 VBO;
 	uint32 VAO;
 public:
+    std::vector<Vertex> vertexBuffer;
+    std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
 
-
-
+    vec4 max;
+    vec4 min;
 	MeshResource();
 	~MeshResource();
 	bool loadOBJ(char* filename);

@@ -120,7 +120,7 @@ void debugCube::linkShaders()
     }
 }
 
-void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime, bool drawWireFrame)
+void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime, bool drawWireFrame, std::shared_ptr<MeshResource> childMesh)
 {
 
     mat4 scaleMat = mat4::scaleMat(scale);
@@ -129,6 +129,7 @@ void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime, bool drawWireFra
     c.transform = scaleMat * mat4::transpose(moveMat);
     c.lifetime = lifetime;
     c.wireframe = drawWireFrame;
+    c.childMesh = childMesh;
     cubes.push_back(c);
 
 }

@@ -46,8 +46,8 @@ private:
 	Display::Window* window;
 	GraphicsNode node;
 	std::shared_ptr<Shader> shader = std::make_shared<Shader>();
-	debugCube cube;
-    debugLine line;
+	debugCube cubes;
+    debugLine lines;
     debugQuad quads = debugQuad();
     std::vector<ray> rays;
     int screenWidth;

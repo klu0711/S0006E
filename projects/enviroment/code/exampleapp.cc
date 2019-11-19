@@ -109,7 +109,7 @@ namespace Example
 			if(key == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
             {
                 node.light.setPosition(cameraPos);
-                line.clearLines();
+                lines.clearLines();
                 rightClick = true;
             }
 		});
@@ -167,17 +167,25 @@ namespace Example
 
 			    ray_world = ray_world.normalize3();
 			    cameraPos[3] = 1;
-			    ray_world[3] = 0;//APPARENTLY THIS IS NESCESSARY OTHERWISE NOTHING WORKS????????? WHY
+			    ray_world[3] = 0;//APPARENTLY THIS IS NECESSARY OTHERWISE NOTHING WORKS????????? WHY
 
 			    ray r(cameraPos, ray_world);
-			    vec4 result  = r.intersectPlane(quads.quads[0].quadPlane);
-			    vec4 res = r.intersectQuad(quads.quads[0]);
-			    if(res[3] != -1)
-			    {
-			        res[3] = 1;
-                    cube.addCube(vec4(0.1,0.1,0.1,1), res , 120, true);
+                for (int i = 0; i < quads.quads.size(); ++i)
+                {
+                    vec4 res = r.intersectQuad(quads.quads[i]);
+                    if(res[3] != -1)
+                    {
+                        res[3] = 1;
+                        cubes.addCube(vec4(0.1,0.1,0.1,1), res , 120, true);
+                        break;
+                    }
+
                 }
-                line.addLine(r);
+			    vec4 result  = r.intersectPlane(quads.quads[0].quadPlane);
+                vec4 temp = r.intersectCube(cubes, cubes.cubes[0]);
+                cubes.addCube(vec4(0.1,0.1,0.1,1), temp , 120, true);
+                lines.addLine(r);
+
 			    rightClick = false;
             }
 		});
@@ -198,9 +206,9 @@ namespace Example
 			std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
             std::shared_ptr<MeshResource> cubeMesh = std::make_shared<MeshResource>();
             cubeMesh->loadOBJ("cube.obj");
-            cube.bindAttrPointers();
-            cube.addMesh(cubeMesh);
-            cube.init("lineShader.ver", "lineShader.frag");
+            cubes.bindAttrPointers();
+            cubes.addMesh(cubeMesh);
+            cubes.init("lineShader.ver", "lineShader.frag");
             //cube.addCube(vec4(5,1,1,1), vec4(1,1,1,1), 1000, false);
             //cube.addCube(vec4(5,1,1,1), vec4(3,3,3,1), 1001, true);
             cubeMesh->unBindBuffers();
@@ -212,6 +220,14 @@ namespace Example
             node.load("tractor.png", "vertexShader.ver", "fShader.frag", 0 );
             node.light.setPosition(cameraPos);
             node.getShader()->modifyUniformInt("diffuser", 0);
+
+            // AABB
+            vec4 midPoint =  (mesh->max + mesh->min) * 0.5f;
+            vec4 sizeAABB =  (mesh->max - mesh->min);
+
+
+            cubes.addCube(sizeAABB, midPoint, 100000, true, mesh);
+
 
             quads.init("lineShader.ver", "lineShader.frag");
             quads.addQuad(vec4(0,2,0,1), vec4(2,2,1,1), mat4());
@@ -262,7 +278,7 @@ namespace Example
 
         mat4 ideMat = mat4();
         mat4 rotModel;
-        line.init("lineShader.ver", "lineShader.frag");
+        lines.init("lineShader.ver", "lineShader.frag");
         //line.addLine(vec4(0,0,0,1), vec4(4,2,-10,1));
         //line.addLine(vec4(0,0,0,1), vec4(0,2,-10,1));
 		while (this->window->IsOpen())
@@ -273,12 +289,12 @@ namespace Example
 
             view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
             mat4 transform = view * perspectiveProjection;
-            line.draw(transform);
-            cube.draw(transform);
+            lines.draw(transform);
+            cubes.draw(transform);
             node.getShader()->useProgram();
             node.setTransform(transform);
             node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
-            //node.draw();
+            node.draw();
             quads.draw(transform);
 
 

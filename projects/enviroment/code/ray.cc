@@ -26,7 +26,7 @@ vec4 ray::intersectPlane(const plane &p) const
 }
 
 
-vec4 ray::intersectQuad(const quad &hitQuad) const
+vec4 ray::intersectQuad(quad hitQuad) const
 {
     float e1[3], e2[3], h[3], s[3], q[3];
     float a, f, u, v;
@@ -81,4 +81,28 @@ vec4 ray::intersectQuad(const quad &hitQuad) const
     }
 
 
+}
+
+vec4 ray::intersectCube(const debugCube & parentClass, const cube &hitCube) const
+{
+    if(hitCube.childMesh == nullptr)
+        return vec4(0,0,0,-1);
+    std::shared_ptr<MeshResource> m = parentClass.meshRes;
+    int i = m->vertexBuffer.size();
+    for (int i = 0; i < m->vertexBuffer.size(); i += 3)
+    {
+        int index = m->vertexIndices[i];
+        quad q;
+        q.transform = hitCube.transform;
+        q.v0 = vec4(m->vertexBuffer[index].pos[0], m->vertexBuffer[index].pos[1], m->vertexBuffer[index].pos[2], 1);
+        q.v1 = vec4(m->vertexBuffer[index + 1].pos[0], m->vertexBuffer[index + 1].pos[1], m->vertexBuffer[index + 1].pos[2], 1);
+        q.v2 = vec4(m->vertexBuffer[index + 2].pos[0], m->vertexBuffer[index + 2].pos[1], m->vertexBuffer[index + 2].pos[2], 1);
+        vec4 returnvalue = intersectQuad(q);
+        if(returnvalue[3] != -1)
+        {
+            return returnvalue;
+        }
+    }
+
+    return vec4(0,0,0,-1);
 }

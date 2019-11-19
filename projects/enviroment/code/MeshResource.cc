@@ -4,7 +4,8 @@
 
 MeshResource::MeshResource()
 {
-	
+	min = vec4(1000,10000,10000,1);
+	max = vec4(-10000,-10000,-10000,1);
 }
 
 
@@ -20,11 +21,9 @@ bool MeshResource::loadOBJ(char* filename)
     MeshResource::setupHandles();
 	std::map<std::string, int> indexMap;
 	std::vector<int> indexBuffer;
-	std::vector<Vertex> vertexBuffer;
 	int index = 0;
 	bool quad = false;
 
-	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
 	std::vector<vec4> temp_vertices;
 	std::vector<vec4> temp_indicies;
 	std::vector<vec4> temp_normals;
@@ -47,6 +46,19 @@ bool MeshResource::loadOBJ(char* filename)
             vec4 position;
 			fscanf(file, "%f %f %f\n", &position[0], &position[1], &position[2]);
 			temp_vertices.push_back(position);
+			if(position[0] > max[0])
+			    max[0] = position[0];
+			if(position[0] < min[0])
+                min[0] = position[0];
+			if(position[1] > max[1])
+                max[1] = position[1];
+			if(position[1] < min[1])
+                min[1] = position[1];
+			if(position[2] > max[2])
+                max[2] = position[2];
+			if(position[2] < min[2])
+                min[2] = position[2];
+
 		}
 		else if (strcmp(lineheader, "vt") == 0) {
             vec4 uv;
