@@ -169,10 +169,10 @@ void debugQuad::addQuad(vec4 position, vec4 scale, mat4 rotation)
     q.v0 = vec4(-0.5f,	-0.5f,	0,1);
     q.v1 = vec4( -0.5f,	0.5f,	0,1);
     q.v2 = vec4( 0.5f,	0.5f,	0,1);
-    vec4 v = vec4(vertexBuffer[7] - vertexBuffer[0], vertexBuffer[8] - vertexBuffer[1], vertexBuffer[9] - vertexBuffer[2], 1);
-    vec4 u = vec4(vertexBuffer[14] - vertexBuffer[0], vertexBuffer[15] - vertexBuffer[1], vertexBuffer[16] - vertexBuffer[2], 1);
+    vec4 v = q.v1 - q.v0;
+    vec4 u = q.v2 - q.v0;
 
-    vec4 normal(u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0], 1);
+    vec4 normal = v.crossProduct(u);
     q.quadPlane.normal = normal;
     q.quadPlane.point = position;
     this->quads.push_back(q);

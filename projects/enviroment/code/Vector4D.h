@@ -133,7 +133,7 @@
 	inline vec4 vec4::normalize3() const
 	{
 		float length = this->length3();
-		return vec4(vector[0] / length, vector[1] / length, vector[2] / length,0);
+		return vec4(vector[0] / length, vector[1] / length, vector[2] / length,1);
 	}
 	/// Returns a float of the dot product of the vectors
     inline float vec4::dot3(const vec4& vec) const

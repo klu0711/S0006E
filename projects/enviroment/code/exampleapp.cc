@@ -172,18 +172,27 @@ namespace Example
 			    ray r(cameraPos, ray_world);
                 for (int i = 0; i < quads.quads.size(); ++i)
                 {
-                    vec4 res = r.intersectQuad(quads.quads[i]);
-                    if(res[3] != -1)
+                    vec4 quadRes = r.intersectQuad(quads.quads[i]);
+                    if(quadRes[3] != -1)
                     {
-                        res[3] = 1;
-                        cubes.addCube(vec4(0.1,0.1,0.1,1), res , 120, true);
+                        quadRes[3] = 1;
+                        cubes.addCube(vec4(0.1,0.1,0.1,1), quadRes , 120, true);
                         break;
                     }
+                }
 
+                for (int j = 0; j < cubes.cubes.size(); ++j)
+                {
+                    vec4 cubeRes = r.intersectCube(cubes ,cubes.cubes[j]);
+
+                    if(cubeRes[3] != -1)
+                    {
+                        cubeRes[3] = 1;
+                        cubes.addCube(vec4(0.1, 0.1, 0.1, 1), cubeRes, 120, true);
+                        break;
+                    }
                 }
 			    vec4 result  = r.intersectPlane(quads.quads[0].quadPlane);
-                vec4 temp = r.intersectCube(cubes, cubes.cubes[0]);
-                cubes.addCube(vec4(0.1,0.1,0.1,1), temp , 120, true);
                 lines.addLine(r);
 
 			    rightClick = false;

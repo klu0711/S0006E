@@ -66,6 +66,7 @@ private:
 public:
     std::vector<Vertex> vertexBuffer;
     std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
+    std::vector<int> indexBuffer;
 
     vec4 max;
     vec4 min;

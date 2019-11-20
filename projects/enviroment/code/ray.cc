@@ -28,51 +28,44 @@ vec4 ray::intersectPlane(const plane &p) const
 
 vec4 ray::intersectQuad(quad hitQuad) const
 {
-    float e1[3], e2[3], h[3], s[3], q[3];
+    //Möller-Trumbore instersection algorithm modified by adding a normal direction check
+    vec4 edge1, edge2, h, s, q;
     float a, f, u, v;
     vec4 objSpacePoint = mat4::transpose(mat4::inverse((hitQuad.transform))) * this->startPoint;
     vec4 objSpaceDirection = mat4::transpose(mat4::inverse((hitQuad.transform))) * this->direction;
     //objSpaceDirection = objSpaceDirection.normalize3();
 
-    e1[0] = hitQuad.v1[0] - hitQuad.v0[0];
-    e1[1] = hitQuad.v1[1] - hitQuad.v0[1];
-    e1[2] = hitQuad.v1[2] - hitQuad.v0[2];
+    edge1 = hitQuad.v1 - hitQuad.v0;
+    edge2 = hitQuad.v2 - hitQuad.v0;
+    if(objSpaceDirection.dot3(hitQuad.quadPlane.normal) < 0)
+        return vec4(0,0,0,-1);
 
-    e2[0] = hitQuad.v2[0] - hitQuad.v0[0];
-    e2[1] = hitQuad.v2[1] - hitQuad.v0[1];
-    e2[2] = hitQuad.v2[2] - hitQuad.v0[2];
+    h = objSpaceDirection.crossProduct(edge2);
+   // vec4 temp = objSpaceDirection.crossProduct(vec4(e2[0], e2[1], e2[2], 1));
 
-    vec4 temp = objSpaceDirection.crossProduct(vec4(e2[0], e2[1], e2[2],1));
-    h[0] = temp[0];
-    h[1] = temp[1];
-    h[2] = temp[2];
-    a = vec4(e1[0], e1[1], e1[2], 1).dot3(vec4(h[0], h[1], h[2], 1));
+    a = edge1.dot3(h);
 
     if(a > -0.00001 && a < 0.00001)
         return vec4(0,0,0,-1);
     f = 1/a;
 
-    s[0] = objSpacePoint[0] - hitQuad.v0[0];
-    s[1] = objSpacePoint[1] - hitQuad.v0[1];
-    s[2] = objSpacePoint[2] - hitQuad.v0[2];
+    s = objSpacePoint - hitQuad.v0;
 
-    u = f * (vec4(s[0], s[1], s[2], 1).dot3(vec4(h[0], h[1], h[2], 1)));
+    u = f * (s).dot3(h);
 
     if(u < 0.0f || u > 1.0)
         return vec4(0,0,0,-1);
 
-    temp = vec4(s[0], s[1], s[2], 1).crossProduct(vec4(e1[0], e1[1], e1[2], 1));
-    q[0] = temp[0];
-    q[1] = temp[1];
-    q[2] = temp[2];
+    q = (s).crossProduct(edge1);
 
-    v = f * (objSpaceDirection.dot3(vec4(q[0], q[1], q[2], 1)));
+
+    v = f * (objSpaceDirection.dot3(q));
 
     if (v < 0.0 || u + v > 1.0)
         return vec4(0,0,0,-1);
 
 
-    float t = f * (vec4(e2[0], e2[1], e2[2], 1).dot3(vec4(q[0], q[1], q[2], 1)));
+    float t = f * (edge2).dot3(q);
 
     if(t > 0.00001)
     {
@@ -89,14 +82,19 @@ vec4 ray::intersectCube(const debugCube & parentClass, const cube &hitCube) cons
         return vec4(0,0,0,-1);
     std::shared_ptr<MeshResource> m = parentClass.meshRes;
     int i = m->vertexBuffer.size();
-    for (int i = 0; i < m->vertexBuffer.size(); i += 3)
+    for (int i = 0; i < m->indexBuffer.size(); i += 3)
     {
-        int index = m->vertexIndices[i];
         quad q;
         q.transform = hitCube.transform;
-        q.v0 = vec4(m->vertexBuffer[index].pos[0], m->vertexBuffer[index].pos[1], m->vertexBuffer[index].pos[2], 1);
-        q.v1 = vec4(m->vertexBuffer[index + 1].pos[0], m->vertexBuffer[index + 1].pos[1], m->vertexBuffer[index + 1].pos[2], 1);
-        q.v2 = vec4(m->vertexBuffer[index + 2].pos[0], m->vertexBuffer[index + 2].pos[1], m->vertexBuffer[index + 2].pos[2], 1);
+        q.v0 = vec4(m->vertexBuffer[m->indexBuffer[i]].pos[0], m->vertexBuffer[m->indexBuffer[i]].pos[1], m->vertexBuffer[m->indexBuffer[i]].pos[2], 1);
+        q.v1 = vec4(m->vertexBuffer[m->indexBuffer[i + 1]].pos[0], m->vertexBuffer[m->indexBuffer[i + 1]].pos[1], m->vertexBuffer[m->indexBuffer[i + 1]].pos[2], 1);
+        q.v2 = vec4(m->vertexBuffer[m->indexBuffer[i + 2]].pos[0], m->vertexBuffer[m->indexBuffer[i + 2]].pos[1], m->vertexBuffer[m->indexBuffer[i + 2]].pos[2], 1);
+        vec4 u = q.v1 - q.v0;
+        vec4 v = q.v2 - q.v0;
+
+        vec4 normal = (v.crossProduct(u)).normalize3();
+        q.quadPlane.normal = normal;
+
         vec4 returnvalue = intersectQuad(q);
         if(returnvalue[3] != -1)
         {

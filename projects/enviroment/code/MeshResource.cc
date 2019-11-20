@@ -20,7 +20,7 @@ bool MeshResource::loadOBJ(char* filename)
 {
     MeshResource::setupHandles();
 	std::map<std::string, int> indexMap;
-	std::vector<int> indexBuffer;
+
 	int index = 0;
 	bool quad = false;
 
