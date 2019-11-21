@@ -70,7 +70,9 @@ vec4 ray::intersectQuad(quad hitQuad) const
     if(t > 0.00001)
     {
         //Intersection happened
-        return this->startPoint + (this->direction * t);
+        vec4 returnValue = this->startPoint + (this->direction * t);
+        returnValue[3]= t;
+        return returnValue;
     }
 
 
@@ -78,18 +80,24 @@ vec4 ray::intersectQuad(quad hitQuad) const
 
 vec4 ray::intersectCube(const debugCube & parentClass, const cube &hitCube) const
 {
+    vec4 lowestDist(0,0,0,10000);
     if(hitCube.childMesh == nullptr)
         return vec4(0,0,0,-1);
     bool hit = false;
     std::shared_ptr<MeshResource> m = parentClass.meshRes;
-    int i = m->vertexBuffer.size();
     for (int i = 0; i < m->indexBuffer.size(); i += 3)
     {
         quad q;
         q.transform = hitCube.transform;
-        q.v0 = vec4(m->vertexBuffer[m->indexBuffer[i]].pos[0], m->vertexBuffer[m->indexBuffer[i]].pos[1], m->vertexBuffer[m->indexBuffer[i]].pos[2], 1);
-        q.v1 = vec4(m->vertexBuffer[m->indexBuffer[i + 1]].pos[0], m->vertexBuffer[m->indexBuffer[i + 1]].pos[1], m->vertexBuffer[m->indexBuffer[i + 1]].pos[2], 1);
-        q.v2 = vec4(m->vertexBuffer[m->indexBuffer[i + 2]].pos[0], m->vertexBuffer[m->indexBuffer[i + 2]].pos[1], m->vertexBuffer[m->indexBuffer[i + 2]].pos[2], 1);
+        q.v0 = vec4(m->vertexBuffer[m->indexBuffer[i]].pos[0],
+                    m->vertexBuffer[m->indexBuffer[i]].pos[1],
+                    m->vertexBuffer[m->indexBuffer[i]].pos[2], 1);
+        q.v1 = vec4(m->vertexBuffer[m->indexBuffer[i + 1]].pos[0],
+                    m->vertexBuffer[m->indexBuffer[i + 1]].pos[1],
+                    m->vertexBuffer[m->indexBuffer[i + 1]].pos[2], 1);
+        q.v2 = vec4(m->vertexBuffer[m->indexBuffer[i + 2]].pos[0],
+                    m->vertexBuffer[m->indexBuffer[i + 2]].pos[1],
+                    m->vertexBuffer[m->indexBuffer[i + 2]].pos[2], 1);
         vec4 u = q.v1 - q.v0;
         vec4 v = q.v2 - q.v0;
 
@@ -100,34 +108,42 @@ vec4 ray::intersectCube(const debugCube & parentClass, const cube &hitCube) cons
         if(returnvalue[3] != -1)
         {
            hit = true;
+           //return returnvalue;
         }
     }
     std::shared_ptr<MeshResource> childMesh = hitCube.childMesh;
     if(hit) {
         for (int j = 0; j < childMesh->indexBuffer.size(); j += 3) {
             quad q;
-            //TODO: set transform to the transform from the mesh
+            //TODO: set transform to the transform from the meshd
             q.transform = mat4();
-            q.v0 = vec4(childMesh->vertexBuffer[childMesh->indexBuffer[i]].pos[0],
-                        childMesh->vertexBuffer[childMesh->indexBuffer[i]].pos[1],
-                        childMesh->vertexBuffer[childMesh->indexBuffer[i]].pos[2], 1);
-            q.v1 = vec4(childMesh->vertexBuffer[childMesh->indexBuffer[i + 1]].pos[0],
-                        childMesh->vertexBuffer[childMesh->indexBuffer[i + 1]].pos[1],
-                        childMesh->vertexBuffer[childMesh->indexBuffer[i + 1]].pos[2], 1);
-            q.v2 = vec4(childMesh->vertexBuffer[childMesh->indexBuffer[i + 2]].pos[0],
-                        childMesh->vertexBuffer[childMesh->indexBuffer[i + 2]].pos[1],
-                        childMesh->vertexBuffer[childMesh->indexBuffer[i + 2]].pos[2], 1);
+            q.v0 = vec4(childMesh->vertexBuffer[childMesh->indexBuffer[j]].pos[0],
+                        childMesh->vertexBuffer[childMesh->indexBuffer[j]].pos[1],
+                        childMesh->vertexBuffer[childMesh->indexBuffer[j]].pos[2], 1);
+            q.v1 = vec4(childMesh->vertexBuffer[childMesh->indexBuffer[j + 1]].pos[0],
+                        childMesh->vertexBuffer[childMesh->indexBuffer[j + 1]].pos[1],
+                        childMesh->vertexBuffer[childMesh->indexBuffer[j + 1]].pos[2], 1);
+            q.v2 = vec4(childMesh->vertexBuffer[childMesh->indexBuffer[j + 2]].pos[0],
+                        childMesh->vertexBuffer[childMesh->indexBuffer[j + 2]].pos[1],
+                        childMesh->vertexBuffer[childMesh->indexBuffer[j + 2]].pos[2], 1);
             vec4 u = q.v1 - q.v0;
             vec4 v = q.v2 - q.v0;
 
             vec4 normal = (v.crossProduct(u)).normalize3();
             q.quadPlane.normal = normal;//childMesh->vertexBuffer[childMesh->indexBuffer[i]].normal;
 
-            vec4 returnvalue = intersectQuad(q);
-            if (returnvalue[3] != -1) {
-                return returnvalue;
+            vec4 returnValue = intersectQuad(q);
+            if (returnValue[3] != -1) {
+                if(returnValue[3] < lowestDist[3])
+                    lowestDist = returnValue;
             }
         }
+    }
+    if(lowestDist[3] != -1)
+    {
+        lowestDist[3] = 1;
+        return lowestDist;
+
     }
     return vec4(0,0,0,-1);
 }

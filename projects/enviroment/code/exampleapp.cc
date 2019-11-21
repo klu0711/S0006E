@@ -108,7 +108,7 @@ namespace Example
 			}
 			if(key == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
             {
-                node.light.setPosition(cameraPos);
+                //node.light.setPosition(cameraPos);
                 lines.clearLines();
                 rightClick = true;
             }
@@ -188,7 +188,7 @@ namespace Example
                     if(cubeRes[3] != -1)
                     {
                         cubeRes[3] = 1;
-                        cubes.addCube(vec4(0.1, 0.1, 0.1, 1), cubeRes, 120, true);
+                        cubes.addCube(vec4(0.5, 0.5, 0.5, 1), cubeRes, 200, true);
                         break;
                     }
                 }
