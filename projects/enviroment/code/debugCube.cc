@@ -120,18 +120,69 @@ void debugCube::linkShaders()
     }
 }
 
-void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime, bool drawWireFrame, std::shared_ptr<MeshResource> childMesh)
+void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime, bool drawWireFrame, std::shared_ptr<MeshResource> childMesh, mat4 childMeshTransform)
 {
 
     mat4 scaleMat = mat4::scaleMat(scale);
     mat4 moveMat = mat4::getPositionMatrix(point);
     cube c;
+    c.childMeshTransform = childMeshTransform;
     c.transform = scaleMat * mat4::transpose(moveMat);
     c.lifetime = lifetime;
     c.wireframe = drawWireFrame;
     c.childMesh = childMesh;
     cubes.push_back(c);
 
+}
+
+void debugCube::recalculateBoundingBox(uint index, mat4 transform)
+{
+    float a, b;
+    float Amin[3], Amax[3];
+    float Bmin[3], Bmax[3];
+    vec4 translation(transform[12], transform[13], transform[14], 1);
+    mat4 rotation = transform;
+    rotation[3] = 0;
+    rotation[7] = 0;
+    rotation[11] = 0;
+    rotation[15] = 1;
+    rotation[12] = 0;
+    rotation[13] = 0;
+    rotation[14] = 0;
+    Amin[0] = this->cubes[index].childMesh->min[0]; Amax[0] = this->cubes[index].childMesh->max[0];
+    Amin[1] = this->cubes[index].childMesh->min[1]; Amax[1] = this->cubes[index].childMesh->max[1];
+    Amin[2] = this->cubes[index].childMesh->min[2]; Amax[2] = this->cubes[index].childMesh->max[2];
+
+    Bmin[0] = Bmax[0] = translation[0];
+    Bmin[1] = Bmax[1] = translation[1];
+    Bmin[2] = Bmax[2] = translation[2];
+
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+            a = (float)(rotation[4 * j + i] * Amin[j]);
+            b = (float)(rotation[4 * j + i] * Amax[j]);
+            if (a < b)
+            {
+                Bmin[i] += a;
+                Bmax[i] += b;
+            }
+            else
+            {
+                Bmin[i] += b;
+                Bmax[i] += a;
+            }
+        }
+    }
+
+    vec4 midPoint =  (vec4(Bmax[0], Bmax[1], Bmax[2], 1) + vec4(Bmin[0], Bmin[1], Bmin[2], 1)) * 0.5f;
+    vec4 sizeAABB =  (vec4(Bmax[0], Bmax[1], Bmax[2], 1) - vec4(Bmin[0], Bmin[1], Bmin[2], 1));
+
+    mat4 scaleMat = mat4::scaleMat(sizeAABB);
+    mat4 moveMat = mat4::getPositionMatrix(midPoint);
+
+    this->cubes[index].transform = scaleMat * mat4::transpose(moveMat);
 }
 
 void debugCube::addMesh(std::shared_ptr<MeshResource> ptr)

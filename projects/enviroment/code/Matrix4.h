@@ -257,6 +257,10 @@ inline mat4 mat4::Perspective(float fieldOfView, float aspectRatio, float nearCl
         float zz = vec[2] * vec[2];
         float zw = vec[2] * vec[3];
 
+        auto m = mat4(1-2*(yy+zz), 2*(xy-zw), 2*(xz+yw), 0,
+                      2*(xy+zw), 1-2*(xx+zz), 2*(yz-xw), 0,
+                      2*(xz-yw), 2*(yz+xw), 1-2*(xx+yy), 0,
+                      0,0,0,1);
         return mat4(1-2*(yy+zz), 2*(xy-zw), 2*(xz+yw), 0,
                         2*(xy+zw), 1-2*(xx+zz), 2*(yz-xw), 0,
                         2*(xz-yw), 2*(yz+xw), 1-2*(xx+yy), 0,

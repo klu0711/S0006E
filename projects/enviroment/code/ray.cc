@@ -108,15 +108,15 @@ vec4 ray::intersectCube(const debugCube & parentClass, const cube &hitCube) cons
         if(returnvalue[3] != -1)
         {
            hit = true;
-           //return returnvalue;
+           break;
         }
     }
     std::shared_ptr<MeshResource> childMesh = hitCube.childMesh;
     if(hit) {
         for (int j = 0; j < childMesh->indexBuffer.size(); j += 3) {
             quad q;
-            //TODO: set transform to the transform from the meshd
-            q.transform = mat4();
+            //TODO: set transform to the transform from the mesh
+            q.transform = hitCube.childMeshTransform;
             q.v0 = vec4(childMesh->vertexBuffer[childMesh->indexBuffer[j]].pos[0],
                         childMesh->vertexBuffer[childMesh->indexBuffer[j]].pos[1],
                         childMesh->vertexBuffer[childMesh->indexBuffer[j]].pos[2], 1);

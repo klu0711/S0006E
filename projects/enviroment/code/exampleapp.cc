@@ -234,8 +234,10 @@ namespace Example
             vec4 midPoint =  (mesh->max + mesh->min) * 0.5f;
             vec4 sizeAABB =  (mesh->max - mesh->min);
 
-
-            cubes.addCube(sizeAABB, midPoint, 100000, true, mesh);
+            vec4 rot = vec4(0.4794255, 0, 0, 0.8775826);
+            //Cube 0
+            cubes.addCube(sizeAABB, midPoint, 100000, true, mesh , mat4::getQmat(rot));
+            cubes.recalculateBoundingBox(0, mat4::getQmat(rot));
 
 
             quads.init("lineShader.ver", "lineShader.frag");
@@ -290,6 +292,7 @@ namespace Example
         lines.init("lineShader.ver", "lineShader.frag");
         //line.addLine(vec4(0,0,0,1), vec4(4,2,-10,1));
         //line.addLine(vec4(0,0,0,1), vec4(0,2,-10,1));
+        vec4 rot = vec4(0.4794255, 0, 0, 0.8775826);
 		while (this->window->IsOpen())
 		{
 
@@ -301,7 +304,7 @@ namespace Example
             lines.draw(transform);
             cubes.draw(transform);
             node.getShader()->useProgram();
-            node.setTransform(transform);
+            node.setTransform(mat4::getQmat(rot) * transform);
             node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
             node.draw();
             quads.draw(transform);
