@@ -137,6 +137,42 @@ void debugCube::addCube(vec4 scale,  vec4 point, uint lifetime, bool drawWireFra
 
 void debugCube::recalculateBoundingBox(uint index, mat4 transform)
 {
+    this->cubes[index].childMeshTransform = transform;
+    transform = mat4::transpose(transform);
+    vec4 preMin = this->cubes[index].childMesh->min;
+    vec4 preMax = this->cubes[index].childMesh->max;
+    vec4 corners[8];
+    corners[0] = preMin;
+    corners[1] = vec4(preMin[0], preMax[1], preMin[2], 1);
+    corners[2] = vec4(preMin[0], preMax[1], preMax[2], 1);
+    corners[3] = vec4(preMin[0], preMin[1], preMax[2], 1);
+    corners[4] = vec4(preMax[0], preMin[1], preMin[2], 1);
+    corners[5] = vec4(preMax[0], preMax[1], preMin[2], 1);
+    corners[6] = preMax;
+    corners[7] = vec4(preMax[0], preMin[1], preMax[2], 1);
+
+    vec4 tmin = (transform * corners[0]);
+    tmin[3] = 1;
+    vec4 tmax = tmin;
+
+    for (int i = 0; i < 8; ++i)
+    {
+        vec4 point = (transform * corners[i]);
+        point[3] = 1;
+
+        tmin = vec4::min(tmin, point);
+        tmax = vec4::max(tmax, point);
+    }
+
+    vec4 midPoint =  (tmax + tmin) * 0.5f;
+    vec4 sizeAABB =  (tmax - tmin);
+
+    mat4 scaleMat = mat4::scaleMat(sizeAABB);
+    mat4 moveMat = mat4::getPositionMatrix(midPoint);
+
+    this->cubes[index].transform = scaleMat * mat4::transpose(moveMat);
+
+    /*
     float a, b;
     float Amin[3], Amax[3];
     float Bmin[3], Bmax[3];
@@ -153,6 +189,7 @@ void debugCube::recalculateBoundingBox(uint index, mat4 transform)
     Amin[1] = this->cubes[index].childMesh->min[1]; Amax[1] = this->cubes[index].childMesh->max[1];
     Amin[2] = this->cubes[index].childMesh->min[2]; Amax[2] = this->cubes[index].childMesh->max[2];
 
+    rotation = mat4::transpose(rotation);
     Bmin[0] = Bmax[0] = translation[0];
     Bmin[1] = Bmax[1] = translation[1];
     Bmin[2] = Bmax[2] = translation[2];
@@ -161,8 +198,8 @@ void debugCube::recalculateBoundingBox(uint index, mat4 transform)
     {
         for (int j = 0; j < 3; ++j)
         {
-            a = (float)(rotation[4 * j + i] * Amin[j]);
-            b = (float)(rotation[4 * j + i] * Amax[j]);
+            a = (float)(rotation[4 * i + j] * Amin[j]);
+            b = (float)(rotation[4 * i + j] * Amax[j]);
             if (a < b)
             {
                 Bmin[i] += a;
@@ -176,13 +213,13 @@ void debugCube::recalculateBoundingBox(uint index, mat4 transform)
         }
     }
 
-    vec4 midPoint =  (vec4(Bmax[0], Bmax[1], Bmax[2], 1) + vec4(Bmin[0], Bmin[1], Bmin[2], 1)) * 0.5f;
-    vec4 sizeAABB =  (vec4(Bmax[0], Bmax[1], Bmax[2], 1) - vec4(Bmin[0], Bmin[1], Bmin[2], 1));
+    vec4 midPoint =  ((vec4(Bmax[0], Bmax[1], Bmax[2], 0) + vec4(Bmin[0], Bmin[1], Bmin[2], 0))) * 0.5f;
+    vec4 sizeAABB =  (vec4(Bmax[0], Bmax[1], Bmax[2], 0) - vec4(Bmin[0], Bmin[1], Bmin[2], 0));
 
     mat4 scaleMat = mat4::scaleMat(sizeAABB);
     mat4 moveMat = mat4::getPositionMatrix(midPoint);
 
-    this->cubes[index].transform = scaleMat * mat4::transpose(moveMat);
+    this->cubes[index].transform = scaleMat * mat4::transpose(moveMat);*/
 }
 
 void debugCube::addMesh(std::shared_ptr<MeshResource> ptr)

@@ -192,7 +192,7 @@ namespace Example
                         break;
                     }
                 }
-			    vec4 result  = r.intersectPlane(quads.quads[0].quadPlane);
+			    //vec4 result  = r.intersectPlane(quads.quads[0].quadPlane);
                 lines.addLine(r);
 
 			    rightClick = false;
@@ -236,12 +236,12 @@ namespace Example
 
             vec4 rot = vec4(0.4794255, 0, 0, 0.8775826);
             //Cube 0
-            cubes.addCube(sizeAABB, midPoint, 100000, true, mesh , mat4::getQmat(rot));
-            cubes.recalculateBoundingBox(0, mat4::getQmat(rot));
+            cubes.addCube(sizeAABB, midPoint, 100000, true, mesh);
+            //cubes.recalculateBoundingBox(0, mat4::getQmat(rot));
 
 
             quads.init("lineShader.ver", "lineShader.frag");
-            quads.addQuad(vec4(0,2,0,1), vec4(2,2,1,1), mat4());
+            //quads.addQuad(vec4(0,2,0,1), vec4(2,2,1,1), mat4());
 
 
             //Back face culling
@@ -289,29 +289,33 @@ namespace Example
 
         mat4 ideMat = mat4();
         mat4 rotModel;
+        vec4 moveVec = vec4(0,0,0,0);
         lines.init("lineShader.ver", "lineShader.frag");
         //line.addLine(vec4(0,0,0,1), vec4(4,2,-10,1));
         //line.addLine(vec4(0,0,0,1), vec4(0,2,-10,1));
-        vec4 rot = vec4(0.4794255, 0, 0, 0.8775826);
+        float rot = 45;
 		while (this->window->IsOpen())
 		{
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             this->window->Update();
-
+            mat4 rotM = mat4::rotX(rot);
+            mat4 rotY = mat4::rotY(rot);
+            mat4 move = mat4::transpose(mat4::getPositionMatrix(moveVec));
             view = (mat4::lookAt(cameraPos, cameraPos + cameraFront, cameraUp));
             mat4 transform = view * perspectiveProjection;
             lines.draw(transform);
             cubes.draw(transform);
             node.getShader()->useProgram();
-            node.setTransform(mat4::getQmat(rot) * transform);
+            node.setTransform(move * rotM * rotY * transform);
+            cubes.recalculateBoundingBox(0,move *  rotM * rotY);
             node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
             node.draw();
             quads.draw(transform);
 
 
 
-
+            //rot += 0.01;
             this->window->SwapBuffers();
         }
     }

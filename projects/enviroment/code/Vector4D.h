@@ -22,6 +22,46 @@
             float retw = lerp(first[3], second[3], by);
             return vec4(retX, rety, retz, retw);
         }
+
+        static vec4 max(vec4 first, vec4 second)
+        {
+         vec4 result;
+         if(first[0] > second[0])
+             result[0] = first[0];
+         else
+             result[0] = second[0];
+         if(first[1] > second[1])
+             result[1] = first[1];
+         else
+             result[1] = second[1];
+         if(first[2] > second[2])
+             result[2] = first[2];
+         else
+             result[2] = second[2];
+         result[3] = 1;
+         return result;
+        }
+
+        static vec4 min(vec4 first, vec4 second)
+        {
+            vec4 result;
+            if(first[0] < second[0])
+                result[0] = first[0];
+            else
+                result[0] = second[0];
+            if(first[1] < second[1])
+                result[1] = first[1];
+            else
+                result[1] = second[1];
+            if(first[2] < second[2])
+                result[2] = first[2];
+            else
+                result[2] = second[2];
+
+            result[3] = 1;
+            return result;
+        }
+
         static vec4 Slerp(vec4 first, vec4 second, float by)
         {
             first.normalize();
