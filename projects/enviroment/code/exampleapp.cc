@@ -237,8 +237,6 @@ namespace Example
             vec4 rot = vec4(0.4794255, 0, 0, 0.8775826);
             //Cube 0
             cubes.addCube(sizeAABB, midPoint, 100000, true, mesh);
-            //cubes.recalculateBoundingBox(0, mat4::getQmat(rot));
-
 
             quads.init("lineShader.ver", "lineShader.frag");
             //quads.addQuad(vec4(0,2,0,1), vec4(2,2,1,1), mat4());
@@ -308,14 +306,14 @@ namespace Example
             cubes.draw(transform);
             node.getShader()->useProgram();
             node.setTransform(move * rotM * rotY * transform);
-            cubes.recalculateBoundingBox(0,move *  rotM * rotY);
+            cubes.recalculateBoundingBox(0, move *  rotM * rotY);
             node.getShader()->modifyUniformMatrix("objPosition", &ideMat[0]);
             node.draw();
             quads.draw(transform);
 
 
 
-            //rot += 0.01;
+            rot += 0.01;
             this->window->SwapBuffers();
         }
     }
