@@ -92,6 +92,8 @@
 		vec4 operator+(const vec4& rhs) const;
 		vec4 operator-(const vec4& rhs) const;
 		vec4 operator*(const float& rhs) const;
+		vec4 operator+=(const vec4& rhs) const;
+		vec4 operator-=(const vec4& rhs) const;
 		float operator[](const int index) const;
 		float & operator[](const int index);
 		float length() const;
@@ -107,7 +109,7 @@
     };
 
 
-	/// Constructor when no arguments are provided (Defaut constructor
+	/// Constructor when no arguments are provided (Default constructor
 	inline vec4::vec4()
 	{
 		vector[0] = 0;
@@ -154,6 +156,17 @@
 	{
 		return vector[index];
 	}
+
+	inline vec4 vec4::operator+=(const vec4 &rhs) const
+	{
+        return vec4(vector[0] + rhs[0], vector[1] + rhs[1], vector[2] + rhs[2], 1);
+	}
+
+	inline vec4 vec4::operator-=(const vec4 &rhs) const
+	{
+	    return vec4(vector[0] - rhs[0], vector[1] - rhs[1], vector[2] - rhs[2], 1);
+	}
+
 	/// Calculates the lenth of the vector
 	inline float vec4::length() const
 	{
